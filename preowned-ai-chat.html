@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Pre-Owned Chat Assistant | Henry Chen | Maple Honda</title>
+<meta name="description" content="Chat-style pre-owned vehicle assistant for Henry Chen at Maple Honda.">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--red:#cc0000;--darkred:#a50000;--bg:#fff;--soft:#fafafa;--border:#ebebeb;--text:#111;--muted:#666;--light:#fff5f5}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;color:var(--text);background:#fff;font-size:16px;line-height:1.6}
+a{color:inherit;text-decoration:none}
+nav{background:#fff;border-bottom:1px solid var(--border);padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:64px;position:sticky;top:0;z-index:100;box-shadow:0 1px 8px rgba(0,0,0,.06)}
+.logo{display:flex;align-items:center;gap:10px}
+.logo-img{height:26px;width:auto;display:block}
+.logo-text{font-size:17px;font-weight:700;color:var(--text)}
+.logo-text span{color:var(--red)}
+.nav-links{display:flex;align-items:center;gap:18px;margin-left:auto;flex-wrap:wrap}
+.nav-links a{font-size:14px;color:var(--muted);font-weight:500}
+.nav-links a:hover{color:var(--red)}
+.wrap{max-width:1100px;margin:0 auto;padding:32px 20px 60px}
+.header{text-align:center;margin-bottom:26px}
+.badge{display:inline-flex;align-items:center;gap:6px;background:var(--light);color:var(--red);font-size:13px;font-weight:600;padding:5px 14px;border-radius:20px;margin-bottom:14px;border:1px solid #ffd0d0}
+h1{font-size:clamp(28px,5vw,46px);line-height:1.1;margin-bottom:12px}
+.sub{font-size:18px;color:var(--muted);max-width:720px;margin:0 auto}
+.grid{display:grid;grid-template-columns:340px 1fr;gap:24px;align-items:start}
+.panel,.chat-shell{background:#fff;border:1px solid var(--border);border-radius:20px;box-shadow:0 6px 24px rgba(0,0,0,.05)}
+.panel{padding:24px}
+.panel h2{font-size:22px;margin-bottom:10px}
+.panel p{color:var(--muted);margin-bottom:14px}
+.panel ul{padding-left:18px;color:#333}
+.panel li{margin-bottom:8px}
+.mini{font-size:13px;color:#777;margin-top:12px}
+.chat-shell{display:flex;flex-direction:column;overflow:hidden;min-height:680px}
+.chat-top{padding:18px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:#fff}
+.chat-title{font-weight:800}
+.chat-state{font-size:12px;color:#666;background:#fafafa;border:1px solid var(--border);padding:6px 10px;border-radius:999px}
+.messages{padding:20px;height:520px;overflow-y:auto;background:linear-gradient(180deg,#fff,#fcfcfc)}
+.bubble{max-width:82%;padding:13px 15px;border-radius:16px;margin-bottom:12px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.bot{background:#fafafa;border:1px solid var(--border);color:#222;border-bottom-left-radius:6px}
+.user{background:var(--red);color:#fff;margin-left:auto;border-bottom-right-radius:6px}
+.options{display:flex;flex-wrap:wrap;gap:10px;margin:8px 0 16px}
+.option-btn{border:1px solid var(--border);background:#fff;padding:10px 12px;border-radius:999px;cursor:pointer;font-size:14px}
+.option-btn:hover{border-color:#bbb;background:#fafafa}
+.chat-input{padding:16px 18px;border-top:1px solid var(--border);background:#fff}
+.input-row{display:flex;gap:10px}
+.input-row input{flex:1;border:1.5px solid var(--border);border-radius:12px;padding:12px 14px;font-size:15px;font-family:inherit;background:#fafafa}
+.input-row input:focus{outline:none;border-color:var(--red);background:#fff;box-shadow:0 0 0 3px rgba(204,0,0,.08)}
+.send-btn,.secondary-btn{border:none;border-radius:12px;padding:12px 16px;font-weight:700;cursor:pointer}
+.send-btn{background:var(--red);color:#fff}
+.send-btn:hover{background:var(--darkred)}
+.secondary-btn{background:#f4f4f4;color:#333}
+.summary{padding:18px 20px;border-top:1px solid var(--border);background:#fff8f8}
+.summary h3{font-size:17px;margin-bottom:10px}
+.summary-list{display:grid;grid-template-columns:1fr 1fr;gap:8px 16px;font-size:14px}
+.summary-item{padding:8px 10px;background:#fff;border:1px solid #f0d1d1;border-radius:10px}
+.hidden{display:none !important}
+.success{margin-top:10px;background:#f0fff4;border:1px solid #6fcf97;border-radius:12px;padding:14px;color:#1a7040;font-weight:600}
+.small-note{font-size:12px;color:#777;margin-top:8px}
+@media(max-width:900px){.grid{grid-template-columns:1fr}.messages{height:440px}}
+</style>
+</head>
+<body>
+<nav>
+  <div class="logo">
+    <img src="honda-logo.png" alt="Honda Logo" class="logo-img">
+    <div class="logo-text"><span>Maple</span> Honda</div>
+  </div>
+  <div class="nav-links">
+    <a href="index.html#vehicles">New</a>
+    <a href="preowned.html">Pre-owned Form</a>
+    <a href="index.html#blog">Blog</a>
+    <a href="tel:6475236878">647-523-6878</a>
+  </div>
+</nav>
+
+<div class="wrap">
+  <div class="header">
+    <div class="badge">🤖 Guided intake assistant</div>
+    <h1>Pre-Owned Vehicle Chat Assistant</h1>
+    <p class="sub">A chat-style lead capture assistant that asks one question at a time and sends the full intake to your Formspree inbox.</p>
+  </div>
+
+  <div class="grid">
+    <aside class="panel">
+      <h2>What this does well</h2>
+      <p>It feels easier than a long form and collects the same core details in a more natural order.</p>
+      <ul>
+        <li>Phone and email first</li>
+        <li>Vehicle preferences next</li>
+        <li>Budget and trade-in after that</li>
+        <li>Financing-related qualifiers near the end</li>
+      </ul>
+      <p class="mini">This is a guided assistant for your static website. A true live AI agent would need a backend because API keys should not be exposed in the browser. citeturn925109search1turn925109search0</p>
+    </aside>
+
+    <section class="chat-shell">
+      <div class="chat-top">
+        <div class="chat-title">Henry’s Vehicle Finder</div>
+        <div class="chat-state" id="progressPill">Step 1</div>
+      </div>
+
+      <div class="messages" id="messages"></div>
+
+      <div class="summary hidden" id="summaryBox">
+        <h3>Quick summary before sending</h3>
+        <div class="summary-list" id="summaryList"></div>
+        <button class="send-btn" id="submitAllBtn" style="margin-top:14px;">Send to Henry →</button>
+        <div class="small-note">This sends the full intake to your Formspree inbox.</div>
+        <div class="success hidden" id="successMsg">Thanks — your request has been sent.</div>
+      </div>
+
+      <div class="chat-input" id="inputArea">
+        <div class="input-row" id="textInputRow">
+          <input type="text" id="textInput" placeholder="Type your answer here...">
+          <button class="send-btn" id="sendBtn">Send</button>
+        </div>
+        <div class="options hidden" id="optionRow"></div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<script>
+const endpoint = "https://formspree.io/f/xvzdpbvo";
+
+const questions = [
+  { key:"phone", label:"What is the best phone number to reach you?", required:true, type:"text", placeholder:"647-555-0123", validate:v=>v.trim().length >= 10, error:"Please enter a phone number." },
+  { key:"email", label:"What is your email address?", required:true, type:"text", placeholder:"john@email.com", validate:v=>/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()), error:"Please enter a valid email address." },
+  { key:"brand", label:"What brand are you looking for?", type:"text", placeholder:"Honda, Toyota, BMW..." },
+  { key:"model", label:"What model are you looking for?", type:"text", placeholder:"CR-V, Civic, RAV4..." },
+  { key:"model_year", label:"What model year or year range do you want?", type:"text", placeholder:"2022 or newer" },
+  { key:"trim", label:"Which trim do you prefer?", type:"text", placeholder:"EX-L, Touring, LX..." },
+  { key:"color", label:"Any preferred color?", type:"text", placeholder:"Black, white, gray..." },
+  { key:"budget", label:"What is your budget before tax?", type:"text", placeholder:"$25,000 to $32,000" },
+  { key:"max_mileage", label:"What maximum mileage are you comfortable with?", type:"text", placeholder:"Under 60,000 km" },
+  { key:"has_trade_in", label:"Do you have a trade-in?", type:"options", options:["Yes","No","Maybe"] },
+  { key:"trade_in_details", label:"What is your trade-in?", type:"text", placeholder:"2019 Honda Civic EX, 85,000 km", condition: data => data.has_trade_in === "Yes" || data.has_trade_in === "Maybe" },
+  { key:"accident_preference", label:"How do you feel about accident history?", type:"options", options:["No accident only","Minor claim is okay","Open to either if price is right"] },
+  { key:"credit_score_range", label:"What is your estimated credit score?", type:"options", options:["800+","720–799","680–719","620–679","Below 620","Not sure"] },
+  { key:"employment_status", label:"Do you currently have a job?", type:"options", options:["Full-time","Part-time","Self-employed","Contract","Student","Currently not employed"] },
+  { key:"canada_status", label:"What is your status in Canada?", type:"options", options:["Citizen","Permanent Resident","Work Permit","Study Permit","Other / prefer to discuss"] },
+  { key:"notes", label:"Anything else I should know?", type:"text", placeholder:"Must-have features, timeline, family size, financing questions..." }
+];
+
+const data = {};
+let currentIndex = -1;
+
+const messages = document.getElementById('messages');
+const optionRow = document.getElementById('optionRow');
+const textInputRow = document.getElementById('textInputRow');
+const textInput = document.getElementById('textInput');
+const sendBtn = document.getElementById('sendBtn');
+const progressPill = document.getElementById('progressPill');
+const summaryBox = document.getElementById('summaryBox');
+const summaryList = document.getElementById('summaryList');
+const submitAllBtn = document.getElementById('submitAllBtn');
+const successMsg = document.getElementById('successMsg');
+
+function bubble(text, who){
+  const div = document.createElement('div');
+  div.className = 'bubble ' + who;
+  div.textContent = text;
+  messages.appendChild(div);
+  messages.scrollTop = messages.scrollHeight;
+}
+
+function setOptions(options){
+  optionRow.innerHTML = '';
+  options.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.type = 'button';
+    btn.textContent = opt;
+    btn.onclick = () => handleAnswer(opt);
+    optionRow.appendChild(btn);
+  });
+}
+
+function nextQuestion(){
+  do {
+    currentIndex++;
+  } while (
+    currentIndex < questions.length &&
+    typeof questions[currentIndex].condition === 'function' &&
+    !questions[currentIndex].condition(data)
+  );
+
+  if(currentIndex >= questions.length){
+    finishChat();
+    return;
+  }
+
+  const q = questions[currentIndex];
+  progressPill.textContent = 'Step ' + (currentIndex + 1);
+  bubble(q.label, 'bot');
+
+  if(q.type === 'options'){
+    textInputRow.classList.add('hidden');
+    optionRow.classList.remove('hidden');
+    setOptions(q.options);
+  } else {
+    optionRow.classList.add('hidden');
+    textInputRow.classList.remove('hidden');
+    textInput.value = '';
+    textInput.placeholder = q.placeholder || 'Type your answer here...';
+    textInput.focus();
+  }
+}
+
+function handleAnswer(value){
+  const q = questions[currentIndex];
+  const clean = (value || '').trim();
+
+  if(q.validate && !q.validate(clean)){
+    bubble(q.error || 'Please enter a valid answer.', 'bot');
+    return;
+  }
+
+  data[q.key] = clean || 'Not provided';
+  bubble(clean || 'Not provided', 'user');
+  nextQuestion();
+}
+
+function finishChat(){
+  progressPill.textContent = 'Review';
+  optionRow.classList.add('hidden');
+  textInputRow.classList.add('hidden');
+  bubble('Perfect. Please review your answers below, then send them to Henry.', 'bot');
+
+  summaryList.innerHTML = '';
+  questions.forEach(q => {
+    if(data[q.key] && data[q.key] !== 'Not provided'){
+      const div = document.createElement('div');
+      div.className = 'summary-item';
+      div.innerHTML = '<strong>' + q.label + '</strong><div>' + data[q.key] + '</div>';
+      summaryList.appendChild(div);
+    }
+  });
+  summaryBox.classList.remove('hidden');
+}
+
+sendBtn.onclick = () => handleAnswer(textInput.value);
+textInput.addEventListener('keydown', function(e){
+  if(e.key === 'Enter'){
+    e.preventDefault();
+    handleAnswer(textInput.value);
+  }
+});
+
+submitAllBtn.onclick = async function(){
+  submitAllBtn.disabled = true;
+  submitAllBtn.textContent = 'Sending...';
+  try {
+    const formData = new FormData();
+    formData.append('source', 'Pre-Owned Chat Assistant');
+    Object.keys(data).forEach(k => formData.append(k, data[k]));
+    formData.append('message', Object.keys(data).map(k => k + ': ' + data[k]).join('\n'));
+
+    const res = await fetch(endpoint, {
+      method: 'POST',
+      headers: { 'Accept': 'application/json' },
+      body: formData
+    });
+
+    if(!res.ok) throw new Error('Submission failed');
+    successMsg.classList.remove('hidden');
+    submitAllBtn.textContent = 'Sent';
+  } catch (err) {
+    submitAllBtn.disabled = false;
+    submitAllBtn.textContent = 'Send to Henry →';
+    alert('Something went wrong. Please try again or call Henry directly at 647-523-6878.');
+  }
+};
+
+bubble('Hi, I’m Henry’s vehicle finder assistant. I’ll ask a few quick questions so Henry can understand exactly what you need.', 'bot');
+bubble('Let’s start with the two most important things first.', 'bot');
+nextQuestion();
+</script>
+</body>
+</html>
