@@ -153,10 +153,7 @@ footer a{color:#777}
     <div class="avatar">
       <img src="HenryChen_thumb.jpg"
            alt="Henry Chen"
-           loading="eager"
-           decoding="async"
-           referrerpolicy="no-referrer"
-           onerror="this.onerror=null;this.src='https://www.maplehonda.com/images/team_contactphoto/HenryChen_thumb.jpg?v=2';this.onerror=function(){this.style.display='none';this.parentNode.innerHTML='👤'};"/>
+           onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src='https://www.maplehonda.com/images/team_contactphoto/HenryChen_thumb.jpg';}else{this.style.display='none';this.parentNode.innerHTML='👤';}"/>
     </div>
   </div>
   <div class="hero-badge">⭐ Maple Honda Sales Consultant</div>
@@ -171,13 +168,23 @@ footer a{color:#777}
     <span>📞 <a href="tel:6475236878">647-523-6878</a></span>
     <span>✉️ <a href="mailto:henry@maplehonda.com">henry@maplehonda.com</a></span>
   </div>
+  <div style="margin-top:18px;font-size:14px;color:#666;line-height:1.8">
+    <strong>My working hours:</strong><br>
+    Mon: 12 PM – 8 PM<br>
+    Tue: 9 AM – 5 PM<br>
+    Wed: 12 PM – 8 PM<br>
+    Thu: 12 PM – 8 PM<br>
+    Fri: Off<br>
+    Sat: 9 AM – 6 PM<br>
+    Sun: Closed<br><br>
+    <span style="color:#cc0000;font-weight:600">Planning to visit? Call or text me first — I’ll have everything ready for you.</span>
+  </div>
 </section>
 
 <div class="trust-bar">
-  <span>🍁 Civic built in Alliston, ON</span>
+  <span>🍁 Civic and CR-V built in Alliston, ON</span>
   <span>🏆 Canada's best-selling brand</span>
   <span>🔒 Certified Pre-Owned available</span>
-  <span>💰 Trade-in up to $8,000 rebate</span>
 </div>
 
 <section class="why" id="why">
@@ -223,24 +230,45 @@ footer a{color:#777}
   <div class="section-inner">
     <div class="section-eyebrow">Happy customers</div>
     <div class="section-title">What people are saying</div>
+    <p class="section-sub">See what Maple Honda customers are saying online, and if you leave a review, I’d really appreciate you mentioning my name — Henry.</p>
+    <div style="margin-top:14px"><a class="btn btn-ghost" href="https://www.google.com/search?q=Maple+Honda+Google+reviews" target="_blank" rel="noopener">Read Google Reviews</a></div>
+
     <div class="testi-grid">
       <div class="testi">
         <div class="stars">★★★★★</div>
-        <p>"Henry made the whole process so easy. No pressure at all — he listened to what we needed and found us the perfect CR-V Hybrid. Couldn't be happier."</p>
-        <div class="testi-author">Sarah & Kevin T.</div>
-        <div class="testi-car">2024 CR-V Hybrid</div>
+        <p>"Henry was professional, patient, and easy to deal with. The whole experience felt smooth and low pressure."</p>
+        <div class="testi-author">Google Review</div>
+        <div class="testi-car">Maple Honda Customer</div>
       </div>
       <div class="testi">
         <div class="stars">★★★★★</div>
-        <p>"First time buying a car and I was nervous. Henry walked me through everything step by step. Got a great deal on my Civic and I drove it home the same day."</p>
-        <div class="testi-author">Michael L.</div>
-        <div class="testi-car">2025 Honda Civic</div>
+        <p>"Very clear communication from Henry from start to finish. He explained our options well and made the process simple."</p>
+        <div class="testi-author">Google Review</div>
+        <div class="testi-car">CR-V Buyer</div>
       </div>
       <div class="testi">
         <div class="stars">★★★★★</div>
-        <p>"Henry got us an amazing trade-in value for our old car and found us a Pilot that fit the whole family and our budget. He's the only person I'll call next time."</p>
-        <div class="testi-author">Jenny & David W.</div>
-        <div class="testi-car">2024 Honda Pilot</div>
+        <p>"Great experience at Maple Honda. Henry was knowledgeable, respectful, and never made us feel rushed."</p>
+        <div class="testi-author">Google Review</div>
+        <div class="testi-car">First-Time Buyer</div>
+      </div>
+      <div class="testi">
+        <div class="stars">★★★★★</div>
+        <p>"Working with Henry made everything easier. Honest answers, good follow-up, and a much better process than we expected."</p>
+        <div class="testi-author">Google Review</div>
+        <div class="testi-car">Family Purchase</div>
+      </div>
+      <div class="testi">
+        <div class="stars">★★★★★</div>
+        <p>"No games, no pressure. Henry took care of us properly and made sure we understood every step."</p>
+        <div class="testi-author">Google Review</div>
+        <div class="testi-car">Walk-in Customer</div>
+      </div>
+      <div class="testi">
+        <div class="stars">★★★★★</div>
+        <p>"Highly recommend asking for Henry. Professional, transparent, and easy to trust throughout the transaction."</p>
+        <div class="testi-author">Google Review</div>
+        <div class="testi-car">Repeat Customer</div>
       </div>
     </div>
   </div>
@@ -291,7 +319,7 @@ footer a{color:#777}
 
 <div class="contact-bar">
   <h2>Have a quick question?</h2>
-  <p>I'm at Maple Honda 9am–8pm, 7 days a week. Don't hesitate to reach out.</p>
+  <p>My schedule changes through the week, so call or text first and I’ll make sure everything is ready for you.</p>
   <div class="contact-links">
     <a href="tel:6475236878">📞 647-523-6878</a>
     <a href="mailto:henry@maplehonda.com">✉️ henry@maplehonda.com</a>
@@ -302,7 +330,7 @@ footer a{color:#777}
 <footer>
   Henry Chen — Sales Consultant · Maple Honda · 89 Auto Vaughan Dr, Maple, ON L6A 4A1<br>
   📞 647-523-6878 · <a href="mailto:henry@maplehonda.com">henry@maplehonda.com</a><br>
-  <span style="color:#333;font-size:12px;margin-top:4px;display:block">© 2025 Henry Chen. All rights reserved.</span>
+  <span style="color:#333;font-size:12px;margin-top:4px;display:block">© 2026 Henry Chen. All rights reserved.</span>
 </footer>
 
 <script>
@@ -310,36 +338,28 @@ footer a{color:#777}
 const cars = [
   { name:"Honda Civic", tag:"Canada's Best-Seller", badge:"🏆 #1 in Canada", emoji:"🚗",
     desc:"Built in Alliston, ON since 1986. Canada's best-selling car 24 years running — sporty, reliable, and packed with Honda Sensing.",
-    img:"https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/2022_Honda_Civic_Sport%2C_front_8.6.22.jpg/640px-2022_Honda_Civic_Sport%2C_front_8.6.22.jpg",
-    news:"https://hondanews.ca/en-CA/hci-automobiles/channels/civic"},
+    img:"https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/2022_Honda_Civic_Sport%2C_front_8.6.22.jpg/640px-2022_Honda_Civic_Sport%2C_front_8.6.22.jpg"},
   { name:"Honda CR-V Hybrid", tag:"Best-Selling CUV · 6.4L/100km", badge:"⚡ Hybrid", emoji:"🚙",
     desc:"North America's best-selling CUV. The hybrid gets an incredible 6.4L/100km with 1,113L of cargo space. Perfect for families.",
-    img:"https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/2023_Honda_CR-V_Sport_Hybrid%2C_front_11.12.22.jpg/640px-2023_Honda_CR-V_Sport_Hybrid%2C_front_11.12.22.jpg",
-    news:"https://hondanews.ca/en-CA/hci-automobiles/releases/release-04150531cb93adf566aca863300f8f08-rugged-electrified-and-refreshed-best-selling-honda-cr-v-hybrid-gains-new-trailsport-hybrid-trim-and-more-standard-tech"},
+    img:"https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/2023_Honda_CR-V_Sport_Hybrid%2C_front_11.12.22.jpg/640px-2023_Honda_CR-V_Sport_Hybrid%2C_front_11.12.22.jpg"},
   { name:"Honda Accord Hybrid", tag:"~988 km range per tank", badge:"⚡ Hybrid", emoji:"🚘",
     desc:"More legroom and trunk space than the Camry. The hybrid offers class-leading range and a premium, refined ride.",
-    img:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/2023_Honda_Accord_Sport_Hybrid%2C_front_11.5.22.jpg/640px-2023_Honda_Accord_Sport_Hybrid%2C_front_11.5.22.jpg",
-    news:"https://hondanews.ca/en-CA/hci-automobiles/photos/photo-0b15294a3c3300ad0fee5bfc72022fa1-2026-honda-accordjpg"},
+    img:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/2023_Honda_Accord_Sport_Hybrid%2C_front_11.5.22.jpg/640px-2023_Honda_Accord_Sport_Hybrid%2C_front_11.5.22.jpg"},
   { name:"Honda Pilot", tag:"3-Row SUV · 8 Seats · TrailSport", badge:"🏕️ Adventure", emoji:"🛻",
     desc:"The 2026 Pilot TrailSport brings 360° cameras, torque-vectoring AWD, steel skid plates, and a full-size spare. Ready for anything.",
-    img:"https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/2023_Honda_Pilot_TrailSport%2C_front_10.13.22.jpg/640px-2023_Honda_Pilot_TrailSport%2C_front_10.13.22.jpg",
-    news:"https://hondanews.ca/en-CA/hci-automobiles/photos/photo-0af91089c672e8c7eef0558d76032310-17-2026-pilot-touringjpg"},
+    img:"https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/2023_Honda_Pilot_TrailSport%2C_front_10.13.22.jpg/640px-2023_Honda_Pilot_TrailSport%2C_front_10.13.22.jpg"},
   { name:"Honda HR-V", tag:"Compact SUV · Great Starter Price", badge:"⭐ Great Value", emoji:"🚗",
     desc:"Nimble, stylish, and packed with safety tech. The perfect entry into the Honda SUV family with Honda Sensing standard.",
-    img:"https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/2023_Honda_HR-V_Sport%2C_front_9.26.22.jpg/640px-2023_Honda_HR-V_Sport%2C_front_9.26.22.jpg",
-    news:"https://hondanews.ca/en-CA/hci-automobiles/channels/hr-v"},
+    img:"https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/2023_Honda_HR-V_Sport%2C_front_9.26.22.jpg/640px-2023_Honda_HR-V_Sport%2C_front_9.26.22.jpg"},
   { name:"Honda Passport", tag:"Midsize SUV · 280hp V6", badge:"💪 Capable", emoji:"🚙",
     desc:"The sweet spot between the CR-V and Pilot. Rugged capability, 280hp V6, available TrailSport — for those who want more.",
-    img:"https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/2022_Honda_Passport_Sport%2C_front_7.21.22.jpg/640px-2022_Honda_Passport_Sport%2C_front_7.21.22.jpg",
-    news:"https://hondanews.ca/en-CA/hci-automobiles/channels/passport"},
+    img:"https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/2022_Honda_Passport_Sport%2C_front_7.21.22.jpg/640px-2022_Honda_Passport_Sport%2C_front_7.21.22.jpg"},
   { name:"Honda Odyssey", tag:"Family Minivan · Up to 8 Seats", badge:"👨‍👩‍👧‍👦 Family", emoji:"🚐",
     desc:"The smartest minivan on the road. Magic Slide™ second-row seats, massive storage, and Honda Sensing throughout.",
-    img:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/2022_Honda_Odyssey_EX-L%2C_front_9.8.21.jpg/640px-2022_Honda_Odyssey_EX-L%2C_front_9.8.21.jpg",
-    news:"https://hondanews.ca/en-CA/hci-automobiles/channels/odyssey"},
+    img:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/2022_Honda_Odyssey_EX-L%2C_front_9.8.21.jpg/640px-2022_Honda_Odyssey_EX-L%2C_front_9.8.21.jpg"},
   { name:"Honda Ridgeline", tag:"Pickup Truck · In-Bed Trunk", badge:"🔧 Unique", emoji:"🛻",
     desc:"The only truck with an in-bed lockable trunk. AWD, a car-like ride, and real truck capability — the best of both worlds.",
-    img:"https://upload.wikimedia.org/wikipedia/commons/thumb/d/d2/2021_Honda_Ridgeline_RTL-E%2C_front_10.29.20.jpg/640px-2021_Honda_Ridgeline_RTL-E%2C_front_10.29.20.jpg",
-    news:"https://hondanews.ca/en-CA/hci-automobiles/channels/ridgeline"}
+    img:"https://upload.wikimedia.org/wikipedia/commons/thumb/d/d2/2021_Honda_Ridgeline_RTL-E%2C_front_10.29.20.jpg/640px-2021_Honda_Ridgeline_RTL-E%2C_front_10.29.20.jpg"}
 ];
 
 const grid = document.getElementById('car-grid');
@@ -356,7 +376,6 @@ cars.forEach(c => {
       <div class="car-name">${c.name}</div>
       <div class="car-tag">${c.tag}</div>
       <div class="car-desc">${c.desc}</div>
-      <div style="font-size:12px;color:#666;margin:-6px 0 14px"><a href="${c.news}" target="_blank" rel="noopener noreferrer" style="color:var(--red);font-weight:600">View official Honda Canada media →</a></div>
       <button class="car-btn">Book a Test Drive →</button>
     </div>`;
   grid.appendChild(d);
