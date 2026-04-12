@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Henry Chen | Honda Sales Consultant | Maple Honda – Vaughan, ON</title>
+<meta name="description" content="Henry Chen – Honda Sales Consultant at Maple Honda, Vaughan ON. Honest advice, zero pressure. Book your test drive today."/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet"/>
+<style>
+@keyframes fadeUp{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
+@keyframes popIn{from{opacity:0;transform:scale(.93)}to{opacity:1;transform:scale(1)}}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(204,0,0,.35)}70%{box-shadow:0 0 0 10px rgba(204,0,0,0)}}
+
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --red:#cc0000;--darkred:#a50000;
+  --bg:#fff;--soft:#f7f6f4;--border:#e5e2dd;
+  --text:#0e0c0a;--muted:#6a645e;--light:#fff4f4;
+  --nav-h:68px
+}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;color:var(--text);background:var(--bg);font-size:16px;line-height:1.65}
+a{color:inherit;text-decoration:none}
+img{display:block}
+
+/* NAV */
+nav{
+  position:sticky;top:0;z-index:300;height:var(--nav-h);
+  background:rgba(255,255,255,.97);
+  border-bottom:1px solid var(--border);
+  box-shadow:0 2px 16px rgba(0,0,0,.05);
+  backdrop-filter:blur(14px);
+  padding:0 40px;
+  display:flex;align-items:center;justify-content:space-between;gap:20px
+}
+.nav-logo{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.nav-logo img{height:44px;width:auto}
+.nav-divider{width:1px;height:28px;background:var(--border)}
+.nav-name{font-size:15px;font-weight:700;white-space:nowrap}
+.nav-name span{color:var(--red)}
+.nav-links{display:flex;align-items:center;gap:4px}
+.nav-links a{
+  font-size:14px;color:var(--muted);font-weight:600;
+  padding:7px 13px;border-radius:7px;
+  transition:color .18s,background .18s;white-space:nowrap
+}
+.nav-links a:hover{color:var(--text);background:var(--soft)}
+.nav-phone{
+  font-size:14px;font-weight:700;
+  padding:7px 14px;border-radius:7px;
+  border:1.5px solid var(--border);
+  transition:border-color .18s,background .18s;white-space:nowrap
+}
+.nav-phone:hover{border-color:#bbb;background:var(--soft)}
+.nav-cta{
+  background:var(--red);color:#fff;
+  padding:10px 22px;border-radius:8px;
+  font-size:14px;font-weight:700;white-space:nowrap;
+  border:none;cursor:pointer;
+  box-shadow:0 2px 10px rgba(204,0,0,.28);
+  transition:background .18s,transform .12s,box-shadow .18s
+}
+.nav-cta:hover{background:var(--darkred);transform:translateY(-1px);box-shadow:0 4px 16px rgba(204,0,0,.38)}
+
+/* HERO */
+.hero{
+  background:#0d0b09;padding:72px 40px 64px;
+  text-align:center;position:relative;overflow:hidden
+}
+.hero-glow{
+  position:absolute;inset:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse 90% 55% at 50% -8%,rgba(204,0,0,.2),transparent 70%),
+    radial-gradient(ellipse 50% 40% at 15% 100%,rgba(204,0,0,.07),transparent 60%)
+}
+.hero-grid-bg{
+  position:absolute;inset:0;opacity:.035;pointer-events:none;
+  background-image:linear-gradient(rgba(255,255,255,.8) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.8) 1px,transparent 1px);
+  background-size:52px 52px
+}
+.hero-inner{position:relative;z-index:1;max-width:680px;margin:0 auto}
+
+.avatar-ring{
+  width:124px;height:124px;margin:0 auto 26px;border-radius:50%;
+  background:conic-gradient(var(--red) 0%,#ff6060 40%,var(--darkred) 100%);
+  padding:3px;
+  box-shadow:0 0 0 6px rgba(204,0,0,.18),0 10px 36px rgba(0,0,0,.45);
+  animation:fadeUp .5s ease both
+}
+.avatar-inner{
+  width:100%;height:100%;border-radius:50%;overflow:hidden;
+  background:#1a1a1a;border:2px solid #0d0b09
+}
+.avatar-inner img{width:100%;height:100%;object-fit:cover;object-position:center top}
+
+.hero-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.13);
+  color:rgba(255,255,255,.65);font-size:12px;font-weight:700;
+  letter-spacing:.09em;text-transform:uppercase;
+  padding:5px 16px;border-radius:20px;margin-bottom:20px;
+  animation:fadeUp .5s .08s ease both
+}
+.hero h1{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(30px,5.5vw,56px);font-weight:800;
+  line-height:1.1;color:#fff;letter-spacing:-.5px;margin-bottom:16px;
+  animation:fadeUp .5s .15s ease both
+}
+.hero h1 em{
+  font-style:normal;
+  background:linear-gradient(130deg,#ff5555,#cc0000);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent
+}
+.hero-sub{
+  font-size:18px;color:rgba(255,255,255,.55);
+  max-width:460px;margin:0 auto 34px;line-height:1.65;
+  animation:fadeUp .5s .22s ease both
+}
+.hero-btns{
+  display:flex;gap:12px;justify-content:center;flex-wrap:wrap;
+  margin-bottom:30px;animation:fadeUp .5s .28s ease both
+}
+.btn{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--red);color:#fff;
+  padding:13px 30px;border-radius:9px;
+  font-weight:700;font-size:15px;border:none;cursor:pointer;
+  box-shadow:0 4px 16px rgba(204,0,0,.35);
+  transition:background .18s,transform .12s,box-shadow .18s
+}
+.btn:hover{background:var(--darkred);transform:translateY(-2px);box-shadow:0 8px 24px rgba(204,0,0,.42)}
+.btn-outline{
+  background:rgba(255,255,255,.07);color:#fff;
+  border:1.5px solid rgba(255,255,255,.2);box-shadow:none;padding:12px 26px
+}
+.btn-outline:hover{background:rgba(255,255,255,.13);border-color:rgba(255,255,255,.35);transform:translateY(-2px)}
+
+.hero-meta{
+  display:flex;gap:18px;justify-content:center;flex-wrap:wrap;
+  font-size:13px;color:rgba(255,255,255,.38);
+  animation:fadeUp .5s .34s ease both
+}
+.hero-meta a{color:rgba(200,60,60,.85);font-weight:600}
+.hero-meta span{display:flex;align-items:center;gap:5px}
+
+.hours-card{
+  display:inline-block;margin-top:26px;
+  background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.1);
+  border-radius:14px;padding:18px 28px;text-align:left;
+  font-size:13px;color:rgba(255,255,255,.45);line-height:1.9;
+  animation:fadeUp .5s .38s ease both
+}
+.hours-card strong{
+  display:block;font-size:11px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.1em;
+  color:rgba(255,255,255,.65);margin-bottom:6px
+}
+.hours-note{margin-top:10px;font-size:12px;font-weight:700;color:rgba(255,100,100,.85)}
+
+/* TRUST BAR */
+.trust-bar{
+  background:var(--red);
+  display:flex;gap:0;justify-content:center;flex-wrap:wrap;
+  position:relative;overflow:hidden
+}
+.trust-bar::before{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(135deg,rgba(255,255,255,.06),transparent 50%)
+}
+.trust-item{
+  font-size:13px;font-weight:600;color:rgba(255,255,255,.92);
+  padding:13px 28px;display:flex;align-items:center;gap:8px;
+  border-right:1px solid rgba(255,255,255,.18);position:relative;z-index:1
+}
+.trust-item:last-child{border-right:none}
+
+/* SECTIONS */
+section{padding:80px 40px}
+.section-inner{max-width:1060px;margin:0 auto}
+.eyebrow{
+  display:flex;align-items:center;gap:8px;
+  font-size:11px;font-weight:700;color:var(--red);
+  letter-spacing:.12em;text-transform:uppercase;margin-bottom:10px
+}
+.eyebrow::before{content:'';width:20px;height:2px;background:var(--red);border-radius:2px;flex-shrink:0}
+.section-title{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(24px,3.5vw,38px);font-weight:800;
+  color:var(--text);margin-bottom:12px;letter-spacing:-.3px;line-height:1.2
+}
+.section-sub{font-size:16px;color:var(--muted);max-width:500px;line-height:1.7}
+
+/* WHY */
+.why{background:var(--soft)}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;margin-top:42px}
+.card{
+  background:#fff;border:1px solid var(--border);border-radius:16px;
+  padding:28px 24px;position:relative;overflow:hidden;
+  transition:box-shadow .22s,transform .22s
+}
+.card::after{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--red),#ff5555);
+  opacity:0;transition:opacity .22s
+}
+.card:hover{box-shadow:0 10px 36px rgba(0,0,0,.08);transform:translateY(-3px)}
+.card:hover::after{opacity:1}
+.card-icon{
+  width:48px;height:48px;background:var(--light);border-radius:13px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:22px;margin-bottom:16px;border:1px solid rgba(204,0,0,.1)
+}
+.card h3{font-size:16px;font-weight:700;margin-bottom:7px}
+.card p{font-size:14px;color:var(--muted);line-height:1.65}
+
+/* PROCESS */
+.process{background:#fff}
+.steps{
+  display:grid;grid-template-columns:repeat(6,1fr);
+  gap:0;margin-top:52px;position:relative
+}
+.steps::before{
+  content:'';position:absolute;
+  top:22px;left:calc(100%/12);right:calc(100%/12);
+  height:2px;background:var(--border);z-index:0
+}
+.step{text-align:center;padding:0 10px;position:relative;z-index:1}
+.step-num{
+  width:46px;height:46px;border-radius:50%;
+  background:var(--red);color:#fff;
+  display:flex;align-items:center;justify-content:center;
+  font-weight:700;font-size:15px;margin:0 auto 14px;
+  box-shadow:0 4px 14px rgba(204,0,0,.28);
+  border:3px solid #fff;position:relative;z-index:1
+}
+.step h4{font-size:13px;font-weight:700;margin-bottom:4px}
+.step p{font-size:12px;color:var(--muted);line-height:1.5}
+
+/* VEHICLES */
+.vehicles{background:var(--soft)}
+.car-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(268px,1fr));gap:22px;margin-top:42px}
+.car-card{
+  background:#fff;border:1px solid var(--border);border-radius:16px;
+  overflow:hidden;cursor:pointer;
+  transition:box-shadow .22s,transform .22s
+}
+.car-card:hover{box-shadow:0 14px 44px rgba(0,0,0,.1);transform:translateY(-4px)}
+.car-img{
+  height:170px;overflow:hidden;
+  background:linear-gradient(135deg,#f0eeeb,#e8e4df);
+  display:flex;align-items:center;justify-content:center;
+  font-size:58px;position:relative
+}
+.car-img img{width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0}
+.car-badge{
+  position:absolute;top:11px;left:11px;
+  background:var(--red);color:#fff;
+  font-size:10px;font-weight:700;padding:4px 10px;
+  border-radius:20px;letter-spacing:.05em;z-index:1
+}
+.car-info{padding:20px}
+.car-name{font-size:17px;font-weight:700;margin-bottom:3px}
+.car-tag{font-size:12px;color:var(--red);font-weight:600;margin-bottom:9px}
+.car-desc{font-size:13px;color:var(--muted);margin-bottom:16px;line-height:1.58}
+.car-btn{
+  width:100%;background:var(--red);color:#fff;
+  border:none;padding:11px;border-radius:9px;
+  font-weight:600;font-size:14px;cursor:pointer;
+  transition:background .18s
+}
+.car-btn:hover{background:var(--darkred)}
+
+/* TESTIMONIALS */
+.testimonials{background:#fff}
+.review-btn{
+  display:inline-flex;align-items:center;gap:8px;margin-top:18px;
+  background:var(--soft);color:var(--text);
+  border:1.5px solid var(--border);
+  padding:10px 20px;border-radius:9px;
+  font-size:14px;font-weight:600;
+  transition:border-color .18s,background .18s
+}
+.review-btn:hover{border-color:#bbb;background:#eee}
+.testi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:32px}
+.testi{
+  background:var(--soft);border:1px solid var(--border);
+  border-radius:14px;padding:24px;
+  transition:box-shadow .2s
+}
+.testi:hover{box-shadow:0 6px 20px rgba(0,0,0,.06)}
+.stars{color:#f5a623;font-size:14px;letter-spacing:2px;margin-bottom:11px}
+.testi blockquote{font-size:14px;color:#444;line-height:1.7;margin-bottom:14px;font-style:italic}
+.testi-author{font-size:13px;font-weight:700}
+.testi-label{font-size:12px;color:var(--muted);margin-top:2px}
+
+/* BLOG */
+.blog{background:var(--soft)}
+.blog-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:18px;margin-top:42px}
+.blog-card{
+  background:#fff;border:1px solid var(--border);border-radius:16px;
+  padding:28px;display:flex;flex-direction:column;
+  transition:box-shadow .22s,transform .22s
+}
+.blog-card:hover{box-shadow:0 10px 32px rgba(0,0,0,.08);transform:translateY(-3px)}
+.blog-card.featured{border:2px solid var(--red);box-shadow:0 4px 20px rgba(204,0,0,.1)}
+.blog-pill{
+  display:inline-flex;align-items:center;gap:5px;
+  font-size:11px;font-weight:700;letter-spacing:.1em;
+  text-transform:uppercase;margin-bottom:12px;color:var(--red)
+}
+.blog-pill::before{
+  content:'';width:7px;height:7px;border-radius:50%;
+  background:var(--red);animation:pulse 1.8s infinite;flex-shrink:0
+}
+.blog-card h3{
+  font-family:'Playfair Display',serif;
+  font-size:19px;line-height:1.3;margin-bottom:10px
+}
+.blog-card p{font-size:14px;color:var(--muted);line-height:1.68;margin-bottom:18px;flex:1}
+.blog-arrow{
+  font-size:14px;font-weight:700;color:var(--red);
+  display:inline-flex;align-items:center;gap:5px;
+  transition:gap .18s
+}
+.blog-arrow:hover{gap:10px}
+
+/* FORM */
+.form-section{background:linear-gradient(160deg,var(--soft),#fff 55%);padding:80px 40px}
+.form-wrap{
+  max-width:600px;margin:44px auto 0;
+  background:#fff;border-radius:20px;padding:44px;
+  border:1px solid var(--border);
+  box-shadow:0 8px 44px rgba(0,0,0,.06)
+}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.form-group{margin-bottom:18px;display:flex;flex-direction:column;gap:6px}
+.form-group label{font-size:13px;font-weight:700;color:#3a3632}
+.form-group input,.form-group select,.form-group textarea{
+  border:1.5px solid var(--border);border-radius:9px;
+  padding:11px 14px;font-size:15px;font-family:inherit;
+  background:var(--soft);color:var(--text);width:100%;
+  transition:border .18s,box-shadow .18s,background .18s
+}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{
+  outline:none;border-color:var(--red);
+  box-shadow:0 0 0 4px rgba(204,0,0,.07);background:#fff
+}
+.form-group textarea{resize:vertical;min-height:90px}
+.form-btn{
+  width:100%;background:var(--red);color:#fff;border:none;
+  padding:15px;border-radius:10px;font-size:16px;font-weight:700;
+  cursor:pointer;margin-top:4px;letter-spacing:.01em;
+  box-shadow:0 4px 16px rgba(204,0,0,.28);
+  transition:background .18s,transform .12s,box-shadow .18s
+}
+.form-btn:hover{background:var(--darkred);transform:translateY(-1px);box-shadow:0 6px 22px rgba(204,0,0,.38)}
+.form-note{font-size:12px;color:#aaa;text-align:center;margin-top:14px}
+.form-note a{color:var(--red);font-weight:600}
+
+/* CONTACT BAR */
+.contact-bar{
+  background:#0d0b09;color:#fff;
+  padding:60px 40px;text-align:center;
+  position:relative;overflow:hidden
+}
+.contact-bar::before{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse 60% 80% at 50% 110%,rgba(204,0,0,.14),transparent 70%)
+}
+.contact-bar h2{
+  font-family:'Playfair Display',serif;
+  font-size:30px;font-weight:800;margin-bottom:10px;position:relative
+}
+.contact-bar p{font-size:16px;color:rgba(255,255,255,.45);margin-bottom:30px;position:relative}
+.contact-links{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;position:relative}
+.contact-links a{
+  background:var(--red);color:#fff;padding:13px 26px;border-radius:9px;
+  font-weight:600;font-size:14px;
+  box-shadow:0 3px 12px rgba(204,0,0,.3);
+  transition:background .18s,transform .12s
+}
+.contact-links a:hover{background:var(--darkred);transform:translateY(-2px)}
+.contact-links a.sec{
+  background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);
+  color:rgba(255,255,255,.75);box-shadow:none
+}
+.contact-links a.sec:hover{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.3)}
+
+footer{
+  background:#080806;color:rgba(255,255,255,.28);
+  text-align:center;padding:24px 40px;
+  font-size:13px;line-height:1.85
+}
+footer a{color:rgba(255,255,255,.4)}
+
+/* MODAL */
+.modal-overlay{
+  position:fixed;inset:0;z-index:9999;
+  background:rgba(0,0,0,.62);
+  display:flex;align-items:center;justify-content:center;
+  padding:20px;backdrop-filter:blur(7px)
+}
+.modal-box{
+  background:#fff;border-radius:22px;padding:44px 36px;
+  max-width:500px;width:100%;text-align:center;
+  box-shadow:0 28px 80px rgba(0,0,0,.25);
+  animation:popIn .28s ease
+}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .steps{grid-template-columns:repeat(3,1fr)}
+  .steps::before{display:none}
+}
+@media(max-width:640px){
+  nav{padding:0 18px}
+  .hero{padding:52px 20px 48px}
+  section{padding:56px 20px}
+  .form-row{grid-template-columns:1fr}
+  .form-wrap{padding:28px 20px}
+  .nav-link-hide{display:none!important}
+  .steps{grid-template-columns:repeat(2,1fr)}
+  .trust-bar{flex-direction:column;align-items:center}
+  .trust-item{border-right:none;border-bottom:1px solid rgba(255,255,255,.15);width:100%;justify-content:center;padding:10px 20px}
+  .trust-item:last-child{border-bottom:none}
+  .contact-bar{padding:48px 20px}
+  .modal-box{padding:32px 22px}
+  .hours-card{padding:16px 20px}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">
+    <img src="honda-logo.png" alt="Honda"/>
+    <div class="nav-divider"></div>
+    <div class="nav-name"><span>Maple</span> Honda</div>
+  </div>
+  <div class="nav-links">
+    <a class="nav-link-hide" href="#why">Why Henry</a>
+    <a class="nav-link-hide" href="#vehicles">Models</a>
+    <a class="nav-link-hide" href="#blog">Blog</a>
+    <a class="nav-phone nav-link-hide" href="tel:6475236878">📞 647-523-6878</a>
+  </div>
+  <button class="nav-cta" onclick="document.getElementById('book').scrollIntoView({behavior:'smooth'})">Book a Test Drive</button>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-grid-bg"></div>
+  <div class="hero-inner">
+    <div class="avatar-ring">
+      <div class="avatar-inner">
+        <img src="HenryChen_thumb.jpg" alt="Henry Chen"
+          onerror="this.src='https://www.maplehonda.com/images/team_contactphoto/HenryChen_thumb.jpg';this.onerror=null;"/>
+      </div>
+    </div>
+    <div class="hero-badge">⭐ Sales Consultant · Maple Honda</div>
+    <h1>Your Trusted Honda Expert<br>in the <em>Greater Toronto Area</em></h1>
+    <p class="hero-sub">I'm Henry Chen — I help families and first-time buyers find the right Honda with honest advice and zero pressure.</p>
+    <div class="hero-btns">
+      <a class="btn" href="#book">📅 Book a Test Drive</a>
+      <a class="btn btn-outline" href="tel:6475236878">📞 Call Henry</a>
+    </div>
+    <div class="hero-meta">
+      <span>📍 89 Auto Vaughan Dr, Maple ON</span>
+      <span>📞 <a href="tel:6475236878">647-523-6878</a></span>
+      <span>✉️ <a href="mailto:henry@maplehonda.com">henry@maplehonda.com</a></span>
+    </div>
+    <div class="hours-card">
+      <strong>My Schedule</strong>
+      Mon 12–8 PM &nbsp;·&nbsp; Tue 9 AM–5 PM &nbsp;·&nbsp; Wed 12–8 PM &nbsp;·&nbsp;
+      Thu 12–8 PM &nbsp;·&nbsp; Fri: Off &nbsp;·&nbsp; Sat 9 AM–6 PM &nbsp;·&nbsp; Sun: Closed
+      <div class="hours-note">Planning to visit? Call or text first — I'll have everything ready.</div>
+    </div>
+  </div>
+</section>
+
+<!-- TRUST BAR -->
+<div class="trust-bar">
+  <div class="trust-item">🍁 Civic &amp; CR-V built in Alliston, Ontario</div>
+  <div class="trust-item">🏆 Canada's best-selling brand</div>
+  <div class="trust-item">🔒 Certified Pre-Owned available</div>
+  <div class="trust-item">💬 Mandarin spoken · 普通话服务</div>
+</div>
+
+<!-- WHY HENRY -->
+<section class="why" id="why">
+  <div class="section-inner">
+    <div class="eyebrow">Why book with Henry</div>
+    <div class="section-title">A better way to buy your Honda</div>
+    <p class="section-sub">I treat every customer the way I'd want to be treated — with honesty, clarity, and genuine respect for your time.</p>
+    <div class="cards">
+      <div class="card"><div class="card-icon">🤝</div><h3>Zero pressure</h3><p>No rush, no tricks. I'll walk you through every option so you feel fully confident before signing anything.</p></div>
+      <div class="card"><div class="card-icon">🏠</div><h3>Local &amp; trusted</h3><p>I'm part of the Vaughan community. Your neighbours, coworkers, and friends are already my customers.</p></div>
+      <div class="card"><div class="card-icon">💡</div><h3>Honest advice</h3><p>I'll help you compare models, trims, and payment options so you get the best value — not just the most expensive car.</p></div>
+      <div class="card"><div class="card-icon">🔑</div><h3>Start to finish</h3><p>From finding the right model to financing, trade-in appraisal, and delivery — I'm with you every step.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section class="process" id="process">
+  <div class="section-inner">
+    <div class="eyebrow">My process</div>
+    <div class="section-title">What to expect when you come in</div>
+    <p class="section-sub">A clear, relaxed experience — from first handshake to handing you the keys.</p>
+    <div class="steps">
+      <div class="step"><div class="step-num">1</div><h4>Meet &amp; Chat</h4><p>I learn what matters most to you</p></div>
+      <div class="step"><div class="step-num">2</div><h4>Find Your Car</h4><p>We land on the right model &amp; trim</p></div>
+      <div class="step"><div class="step-num">3</div><h4>Test Drive</h4><p>You get behind the wheel</p></div>
+      <div class="step"><div class="step-num">4</div><h4>Trade-In</h4><p>We appraise your current vehicle</p></div>
+      <div class="step"><div class="step-num">5</div><h4>Payment Options</h4><p>Lease, finance, or cash</p></div>
+      <div class="step"><div class="step-num">6</div><h4>Drive Home</h4><p>Delivery on your schedule</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- VEHICLES -->
+<section class="vehicles" id="vehicles">
+  <div class="section-inner">
+    <div class="eyebrow">Honda lineup</div>
+    <div class="section-title">Which Honda is right for you?</div>
+    <p class="section-sub">Click any model — I'll have it ready for your test drive.</p>
+    <div class="car-grid" id="car-grid"></div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials" id="testimonials">
+  <div class="section-inner">
+    <div class="eyebrow">Happy customers</div>
+    <div class="section-title">What people are saying</div>
+    <p class="section-sub">Real Google reviews from Maple Honda customers. If you've worked with me, I'd love a mention of my name.</p>
+    <a class="review-btn" href="https://www.google.com/search?q=Maple+Honda+Google+reviews" target="_blank" rel="noopener">⭐ Read Google Reviews</a>
+    <div class="testi-grid">
+      <div class="testi"><div class="stars">★★★★★</div><blockquote>"Henry was professional, patient, and easy to deal with. The whole experience felt smooth and low pressure."</blockquote><div class="testi-author">Google Review</div><div class="testi-label">Maple Honda Customer</div></div>
+      <div class="testi"><div class="stars">★★★★★</div><blockquote>"Very clear communication from start to finish. He explained our options well and made the whole process simple."</blockquote><div class="testi-author">Google Review</div><div class="testi-label">CR-V Buyer</div></div>
+      <div class="testi"><div class="stars">★★★★★</div><blockquote>"Great experience at Maple Honda. Henry was knowledgeable, respectful, and never made us feel rushed."</blockquote><div class="testi-author">Google Review</div><div class="testi-label">First-Time Buyer</div></div>
+      <div class="testi"><div class="stars">★★★★★</div><blockquote>"Working with Henry made everything easier. Honest answers, good follow-up, and a much better experience than we expected."</blockquote><div class="testi-author">Google Review</div><div class="testi-label">Family Purchase</div></div>
+      <div class="testi"><div class="stars">★★★★★</div><blockquote>"No games, no pressure. Henry took care of us properly and made sure we understood every step of the process."</blockquote><div class="testi-author">Google Review</div><div class="testi-label">Walk-in Customer</div></div>
+      <div class="testi"><div class="stars">★★★★★</div><blockquote>"Highly recommend asking for Henry. Professional, transparent, and easy to trust throughout the whole transaction."</blockquote><div class="testi-author">Google Review</div><div class="testi-label">Repeat Customer</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- BLOG -->
+<section class="blog" id="blog">
+  <div class="section-inner">
+    <div class="eyebrow">Weekly articles</div>
+    <div class="section-title">Henry's Honda Blog</div>
+    <p class="section-sub">Honest buying advice, ownership tips, and clear answers to the questions I hear most on the showroom floor.</p>
+    <div class="blog-grid">
+      <article class="blog-card featured">
+        <div class="blog-pill">Read Now</div>
+        <h3>The Essential Car Buyer's Guide</h3>
+        <p>A full guide for buyers who want to feel in control, avoid regret, and make a decision that fits real life — not just the showroom moment.</p>
+        <a class="blog-arrow" href="blog.html">Read the full guide →</a>
+      </article>
+      <article class="blog-card">
+        <div class="blog-pill">Read Now</div>
+        <h3>Lease vs. Finance in Ontario: What Actually Makes Sense?</h3>
+        <p>The real differences in plain language — monthly payments, interest, equity, and flexibility — so you can choose confidently.</p>
+        <a class="blog-arrow" href="blog2.html">Read the full article →</a>
+      </article>
+      <article class="blog-card">
+        <div class="blog-pill">Read Now</div>
+        <h3>New vs. Used Honda: Where's the Better Value Today?</h3>
+        <p>A straight comparison of pricing, warranty, interest rates, and long-term ownership cost. The answer depends on one key question.</p>
+        <a class="blog-arrow" href="blog3.html">Read the full article →</a>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- BOOK -->
+<section class="form-section" id="book">
+  <div class="section-inner" style="text-align:center">
+    <div class="eyebrow" style="justify-content:center">Get started</div>
+    <div class="section-title">Book your test drive</div>
+    <p class="section-sub" style="margin:0 auto">Fill out the form and I'll personally be in touch within a few hours to confirm your appointment.</p>
+  </div>
+  <div class="form-wrap">
+    <div class="form-row">
+      <div class="form-group"><label>First name *</label><input type="text" id="fname" placeholder="John" autocomplete="given-name"/></div>
+      <div class="form-group"><label>Last name</label><input type="text" id="lname" placeholder="Smith" autocomplete="family-name"/></div>
+    </div>
+    <div class="form-group"><label>Phone number *</label><input type="tel" id="phone" placeholder="647-555-0123" autocomplete="tel"/></div>
+    <div class="form-group"><label>Email address</label><input type="email" id="email" placeholder="john@email.com" autocomplete="email"/></div>
+    <div class="form-group">
+      <label>Vehicle I'm interested in *</label>
+      <select id="vehicle">
+        <option value="">— Select a model —</option>
+        <option>Honda Civic</option>
+        <option>Honda Civic Hybrid</option>
+        <option>Honda CR-V</option>
+        <option>Honda CR-V Hybrid</option>
+        <option>Honda Accord</option>
+        <option>Honda Accord Hybrid</option>
+        <option>Honda Pilot</option>
+        <option>Honda Passport</option>
+        <option>Honda HR-V</option>
+        <option>Honda Odyssey</option>
+        <option>Honda Ridgeline</option>
+        <option>Certified Pre-Owned Honda</option>
+        <option>Not sure yet — I'd like guidance</option>
+      </select>
+    </div>
+    <div class="form-group"><label>Preferred date &amp; time</label><input type="text" id="date" placeholder="e.g. Saturday afternoon, any weekday evening…"/></div>
+    <div class="form-group">
+      <label>Anything else I should know? <span style="font-weight:400;color:#bbb">(optional)</span></label>
+      <textarea id="notes" placeholder="Trade-in vehicle? Budget in mind? Family size? Anything helps…"></textarea>
+    </div>
+    <button class="form-btn" onclick="submitForm()">Request My Test Drive →</button>
+    <p class="form-note">Or call/text directly: <a href="tel:6475236878">647-523-6878</a></p>
+  </div>
+</section>
+
+<!-- CONTACT BAR -->
+<div class="contact-bar">
+  <h2>Have a quick question?</h2>
+  <p>Call or text first and I'll make sure everything is ready for you when you arrive.</p>
+  <div class="contact-links">
+    <a href="tel:6475236878">📞 647-523-6878</a>
+    <a href="mailto:henry@maplehonda.com">✉️ henry@maplehonda.com</a>
+    <a class="sec" href="https://maps.google.com/?q=89+Auto+Vaughan+Dr,+Maple,+ON+L6A+4A1" target="_blank" rel="noopener">📍 Get directions</a>
+  </div>
+</div>
+
+<footer>
+  Henry Chen — Sales Consultant · Maple Honda · 89 Auto Vaughan Dr, Maple, ON L6A 4A1<br>
+  📞 647-523-6878 · <a href="mailto:henry@maplehonda.com">henry@maplehonda.com</a><br>
+  <span style="opacity:.45;font-size:12px">© 2026 Henry Chen. All rights reserved.</span>
+</footer>
+
+<script>
+const cars = [
+  {name:"Honda Civic",tag:"Canada's Best-Seller",badge:"🏆 #1 in Canada",emoji:"🚗",
+   desc:"Built in Alliston, ON since 1986. Canada's best-selling car 24 years running — sporty, reliable, and packed with Honda Sensing.",
+   img:"https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/2022_Honda_Civic_Sport%2C_front_8.6.22.jpg/640px-2022_Honda_Civic_Sport%2C_front_8.6.22.jpg"},
+  {name:"Honda CR-V Hybrid",tag:"Best-Selling CUV · 6.4L/100km",badge:"⚡ Hybrid",emoji:"🚙",
+   desc:"North America's best-selling CUV. The hybrid gets 6.4L/100km with 1,113L cargo. Made for real family life.",
+   img:"https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/2023_Honda_CR-V_Sport_Hybrid%2C_front_11.12.22.jpg/640px-2023_Honda_CR-V_Sport_Hybrid%2C_front_11.12.22.jpg"},
+  {name:"Honda Accord Hybrid",tag:"~988 km range per tank",badge:"⚡ Hybrid",emoji:"🚘",
+   desc:"More rear legroom and trunk space than the Camry. Class-leading range and a refined, premium ride.",
+   img:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/2023_Honda_Accord_Sport_Hybrid%2C_front_11.5.22.jpg/640px-2023_Honda_Accord_Sport_Hybrid%2C_front_11.5.22.jpg"},
+  {name:"Honda Pilot",tag:"3-Row SUV · 8 Seats · TrailSport",badge:"🏕️ Adventure",emoji:"🛻",
+   desc:"2026 TrailSport: 360° cameras, torque-vectoring AWD, steel skid plates, full-size spare. Built for adventure.",
+   img:"https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/2023_Honda_Pilot_TrailSport%2C_front_10.13.22.jpg/640px-2023_Honda_Pilot_TrailSport%2C_front_10.13.22.jpg"},
+  {name:"Honda HR-V",tag:"Compact SUV · Great Starter Price",badge:"⭐ Great Value",emoji:"🚗",
+   desc:"Nimble, stylish, and packed with safety tech. The perfect entry into the Honda SUV family with Honda Sensing standard.",
+   img:"https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/2023_Honda_HR-V_Sport%2C_front_9.26.22.jpg/640px-2023_Honda_HR-V_Sport%2C_front_9.26.22.jpg"},
+  {name:"Honda Passport",tag:"Midsize SUV · 280hp V6",badge:"💪 Capable",emoji:"🚙",
+   desc:"The sweet spot between the CR-V and Pilot. Rugged 280hp V6, available TrailSport for those who want more.",
+   img:"https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/2022_Honda_Passport_Sport%2C_front_7.21.22.jpg/640px-2022_Honda_Passport_Sport%2C_front_7.21.22.jpg"},
+  {name:"Honda Odyssey",tag:"Family Minivan · Up to 8 Seats",badge:"👨‍👩‍👧‍👦 Family",emoji:"🚐",
+   desc:"The smartest minivan on the road. Magic Slide™ second-row seats, massive storage, Honda Sensing throughout.",
+   img:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/2022_Honda_Odyssey_EX-L%2C_front_9.8.21.jpg/640px-2022_Honda_Odyssey_EX-L%2C_front_9.8.21.jpg"},
+  {name:"Honda Ridgeline",tag:"Pickup Truck · In-Bed Trunk",badge:"🔧 Unique",emoji:"🛻",
+   desc:"The only truck with an in-bed lockable trunk. AWD, a car-like ride, and real truck capability.",
+   img:"https://upload.wikimedia.org/wikipedia/commons/thumb/d/d2/2021_Honda_Ridgeline_RTL-E%2C_front_10.29.20.jpg/640px-2021_Honda_Ridgeline_RTL-E%2C_front_10.29.20.jpg"}
+];
+
+const grid = document.getElementById('car-grid');
+cars.forEach(c => {
+  const id = 'ci-' + c.name.replace(/\W/g,'_');
+  const d = document.createElement('div');
+  d.className = 'car-card';
+  d.onclick = () => selectCar(c.name);
+  d.innerHTML = `
+    <div class="car-img" id="${id}">
+      <span class="car-badge">${c.badge}</span>
+      <span style="font-size:58px;position:relative;z-index:0">${c.emoji}</span>
+    </div>
+    <div class="car-info">
+      <div class="car-name">${c.name}</div>
+      <div class="car-tag">${c.tag}</div>
+      <div class="car-desc">${c.desc}</div>
+      <button class="car-btn">Book a Test Drive →</button>
+    </div>`;
+  grid.appendChild(d);
+  const img = new Image();
+  img.onload = () => {
+    const box = document.getElementById(id);
+    const badge = box.querySelector('.car-badge').outerHTML;
+    box.innerHTML = badge + `<img src="${c.img}" alt="${c.name}"/>`;
+  };
+  img.src = c.img;
+});
+
+function showThankYou() {
+  const o = document.createElement('div');
+  o.className = 'modal-overlay';
+  o.innerHTML = `
+    <div class="modal-box">
+      <div style="font-size:50px;margin-bottom:14px">🎉</div>
+      <h2 style="font-family:'Playfair Display',serif;font-size:22px;font-weight:800;margin-bottom:10px">Thank You for Booking!</h2>
+      <p style="font-size:15px;color:var(--red);font-weight:700;margin-bottom:20px">Henry will be in touch within a few hours to confirm.</p>
+      <div style="background:var(--soft);border:1px solid var(--border);border-radius:14px;padding:22px;text-align:left;margin-bottom:22px">
+        <p style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px">📋 Before you come in:</p>
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div style="display:flex;gap:12px"><span style="font-size:19px">🪪</span><div><div style="font-size:14px;font-weight:700">Bring your driver's licence</div><div style="font-size:13px;color:var(--muted)">Required for the test drive.</div></div></div>
+          <div style="display:flex;gap:12px"><span style="font-size:19px">👨‍👩‍👧</span><div><div style="font-size:14px;font-weight:700">Bring all decision makers</div><div style="font-size:13px;color:var(--muted)">Saves a second trip and keeps everyone on the same page.</div></div></div>
+          <div style="display:flex;gap:12px"><span style="font-size:19px">🚗</span><div><div style="font-size:14px;font-weight:700">Experience it first-hand</div><div style="font-size:13px;color:var(--muted)">The feeling of driving your new Honda has to be felt — not described.</div></div></div>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+        <a href="tel:6475236878" style="background:var(--red);color:#fff;padding:11px 20px;border-radius:8px;font-weight:600;font-size:14px">📞 647-523-6878</a>
+        <a href="mailto:henry@maplehonda.com" style="background:var(--soft);color:var(--text);padding:11px 20px;border-radius:8px;font-weight:600;font-size:14px;border:1px solid var(--border)">✉️ Email Henry</a>
+      </div>
+      <button onclick="this.closest('.modal-overlay').remove()" style="margin-top:18px;background:none;border:none;color:#aaa;font-size:13px;cursor:pointer;text-decoration:underline">Close</button>
+    </div>`;
+  document.body.appendChild(o);
+  o.addEventListener('click', e => { if(e.target===o) o.remove(); });
+}
+
+function selectCar(m) {
+  document.getElementById('vehicle').value = m;
+  document.getElementById('book').scrollIntoView({behavior:'smooth'});
+}
+
+async function submitForm() {
+  const f = document.getElementById('fname').value.trim();
+  const p = document.getElementById('phone').value.trim();
+  const v = document.getElementById('vehicle').value;
+  if (!f || !p || !v) { alert('Please fill in your first name, phone number, and vehicle of interest.'); return; }
+  const btn = document.querySelector('.form-btn');
+  btn.disabled = true; btn.textContent = 'Sending…'; btn.style.opacity = '.65';
+  const fd = new FormData();
+  fd.append('First Name', f);
+  fd.append('Last Name', document.getElementById('lname').value.trim());
+  fd.append('Phone', p);
+  fd.append('Email', document.getElementById('email').value.trim());
+  fd.append('Vehicle', v);
+  fd.append('Preferred Date', document.getElementById('date').value.trim());
+  fd.append('Notes', document.getElementById('notes').value.trim());
+  try {
+    const res = await fetch('https://formspree.io/f/meevjajg',{method:'POST',headers:{'Accept':'application/json'},body:fd});
+    const data = await res.json();
+    if (res.ok) { showThankYou(); btn.textContent = '✅ Request Sent!'; }
+    else { throw new Error(data.errors ? data.errors.map(e=>e.message).join(', '):'Submission failed'); }
+  } catch(e) {
+    btn.disabled = false; btn.style.opacity = '1'; btn.textContent = 'Request My Test Drive →';
+    alert('Something went wrong. Please call or text Henry at 647-523-6878.\n\nError: '+e.message);
+  }
+}
+</script>
+</body>
+</html>
