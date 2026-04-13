@@ -37,8 +37,21 @@ nav{
   padding:0 40px;
   display:flex;align-items:center;justify-content:space-between;gap:20px
 }
-.nav-logo{display:flex;align-items:center;gap:10px;flex-shrink:0}
-.nav-logo img{height:44px;width:auto}
+.nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.nav-logo img {
+  height: 32px;
+  width: auto;
+}
+
+.maple-red {
+  color: #cc0000;
+  font-weight: 700;
+}
 .nav-divider{width:1px;height:28px;background:var(--border)}
 .nav-name{font-size:15px;font-weight:700;white-space:nowrap}
 .nav-name span{color:var(--red)}
@@ -438,10 +451,12 @@ footer a{color:rgba(255,255,255,.4)}
 
 <!-- NAV -->
 <nav>
-  <div class="logo">
-    <img src="honda-logo.png" alt="Honda Logo" class="logo-img">
-    <div class="logo-text"><span>Maple</span> Honda</div>
-  </a>
+  <div class="nav-logo">
+  <img src="honda-logo.png" alt="Honda Logo">
+
+  <div class="nav-divider"></div>
+
+  <div class="nav-name maple-red">Maple Honda</div>
 </div>
 </a>
 <div class="nav-links">
