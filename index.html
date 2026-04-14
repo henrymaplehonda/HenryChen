@@ -371,7 +371,15 @@ section{padding:80px 40px}
   transition:border-color .18s,background .18s
 }
 .review-btn:hover{border-color:#bbb;background:#eee}
-.testi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:32px}
+.testi-window{
+  margin-top:32px;
+  max-height:420px;
+  overflow-y:auto;
+  padding-right:6px
+}
+.testi-window::-webkit-scrollbar{width:8px}
+.testi-window::-webkit-scrollbar-thumb{background:#d7d2cc;border-radius:999px}
+.testi-grid{display:grid;grid-template-columns:1fr;gap:12px}
 .testi{
   background:var(--soft);border:1px solid var(--border);
   border-radius:14px;padding:24px;
@@ -630,13 +638,19 @@ footer a{color:rgba(255,255,255,.4)}
     <div class="section-title">What people are saying</div>
     <p class="section-sub">Real Google reviews from Maple Honda customers. If you've worked with me, I'd love a mention of my name.</p>
     <a class="review-btn" href="https://www.google.com/search?q=Maple+Honda+Google+reviews" target="_blank" rel="noopener">⭐ Read Google Reviews</a>
-    <div class="testi-grid">
-      <div class="testi"><div class="stars">★★★★★</div><blockquote>"Henry was professional, patient, and easy to deal with. The whole experience felt smooth and low pressure."</blockquote><div class="testi-author">Google Review</div><div class="testi-label">Maple Honda Customer</div></div>
-      <div class="testi"><div class="stars">★★★★★</div><blockquote>"Very clear communication from start to finish. He explained our options well and made the whole process simple."</blockquote><div class="testi-author">Google Review</div><div class="testi-label">CR-V Buyer</div></div>
-      <div class="testi"><div class="stars">★★★★★</div><blockquote>"Great experience at Maple Honda. Henry was knowledgeable, respectful, and never made us feel rushed."</blockquote><div class="testi-author">Google Review</div><div class="testi-label">First-Time Buyer</div></div>
-      <div class="testi"><div class="stars">★★★★★</div><blockquote>"Working with Henry made everything easier. Honest answers, good follow-up, and a much better experience than we expected."</blockquote><div class="testi-author">Google Review</div><div class="testi-label">Family Purchase</div></div>
-      <div class="testi"><div class="stars">★★★★★</div><blockquote>"No games, no pressure. Henry took care of us properly and made sure we understood every step of the process."</blockquote><div class="testi-author">Google Review</div><div class="testi-label">Walk-in Customer</div></div>
-      <div class="testi"><div class="stars">★★★★★</div><blockquote>"Highly recommend asking for Henry. Professional, transparent, and easy to trust throughout the whole transaction."</blockquote><div class="testi-author">Google Review</div><div class="testi-label">Repeat Customer</div></div>
+    <div class="testi-window">
+      <div class="testi-grid">
+        <div class="testi"><div class="stars">★★★★★</div><blockquote>"Henry was professional, patient, and easy to deal with. The whole experience felt smooth and low pressure."</blockquote><div class="testi-author">Google Review</div><div class="testi-label">Maple Honda Customer</div></div>
+        <div class="testi"><div class="stars">★★★★★</div><blockquote>"Very clear communication from start to finish. He explained our options well and made the whole process simple."</blockquote><div class="testi-author">Google Review</div><div class="testi-label">CR-V Buyer</div></div>
+        <div class="testi"><div class="stars">★★★★★</div><blockquote>"Great experience at Maple Honda. Henry was knowledgeable, respectful, and never made us feel rushed."</blockquote><div class="testi-author">Google Review</div><div class="testi-label">First-Time Buyer</div></div>
+        <div class="testi"><div class="stars">★★★★★</div><blockquote>"Working with Henry made everything easier. Honest answers, good follow-up, and a much better experience than we expected."</blockquote><div class="testi-author">Google Review</div><div class="testi-label">Family Purchase</div></div>
+        <div class="testi"><div class="stars">★★★★★</div><blockquote>"No games, no pressure. Henry took care of us properly and made sure we understood every step of the process."</blockquote><div class="testi-author">Google Review</div><div class="testi-label">Walk-in Customer</div></div>
+        <div class="testi"><div class="stars">★★★★★</div><blockquote>"Highly recommend asking for Henry. Professional, transparent, and easy to trust throughout the whole transaction."</blockquote><div class="testi-author">Google Review</div><div class="testi-label">Repeat Customer</div></div>
+        <div class="testi"><div class="stars">★★★★★</div><blockquote>"Kevin P said Henry and team were polite, professional, and answered questions clearly."</blockquote><div class="testi-author">Google Review</div><div class="testi-label">Kevin P</div></div>
+        <div class="testi"><div class="stars">★★★★★</div><blockquote>"Dante Marshall said Henry made the process easy and straightforward from start to finish."</blockquote><div class="testi-author">Google Review</div><div class="testi-label">Dante Marshall</div></div>
+        <div class="testi"><div class="stars">★★★★★</div><blockquote>"Fast responses, honest guidance, and no pressure tactics. Exactly the type of support we wanted."</blockquote><div class="testi-author">Google Review</div><div class="testi-label">Accord Buyer</div></div>
+        <div class="testi"><div class="stars">★★★★★</div><blockquote>"If you're shopping at Maple Honda, ask for Henry. Friendly, transparent, and genuinely helpful."</blockquote><div class="testi-author">Google Review</div><div class="testi-label">GTA Customer</div></div>
+      </div>
     </div>
   </div>
 </section>
