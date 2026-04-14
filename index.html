@@ -4,29 +4,67 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 
-<title>Honda Dealer Vaughan | Henry Chen at Maple Honda | Civic, CR-V, Accord Deals</title>
-<meta name="description" content="Looking for a Honda dealer in Vaughan? Work with Henry Chen at Maple Honda for Civic, CR-V, Accord, Pilot, HR-V and Odyssey deals. Book your test drive today.">
-<link rel="canonical" href="https://hondabyhenry.ca/">
+<title>Honda Dealer Vaughan, Maple & GTA | New + Used Honda Deals | Henry Chen</title>
+<meta name="description" content="Looking for the best Honda dealer in Vaughan? Work with Henry Chen at Maple Honda for Civic, CR-V, Accord, Pilot, Passport, HR-V and Odyssey offers, trade-in support, and same-day test drives.">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+<link rel="canonical" href="https://www.hondabyhenry.ca/">
+<link rel="alternate" hreflang="en-ca" href="https://www.hondabyhenry.ca/">
 
-<meta property="og:title" content="Honda Dealer Vaughan | Henry Chen at Maple Honda">
-<meta property="og:description" content="Work with Henry Chen at Maple Honda in Vaughan for honest advice, Honda deals, and test drives.">
+<meta property="og:title" content="Honda Dealer Vaughan, Maple & GTA | Henry Chen at Maple Honda">
+<meta property="og:description" content="New + used Honda deals in Vaughan with transparent pricing, expert trade-in guidance, and fast test drive booking.">
 <meta property="og:type" content="website">
-<meta property="og:url" content="https://hondabyhenry.ca/">
-<meta property="og:image" content="https://hondabyhenry.ca/honda-logo.png">
+<meta property="og:locale" content="en_CA">
+<meta property="og:site_name" content="Honda by Henry">
+<meta property="og:url" content="https://www.hondabyhenry.ca/">
+<meta property="og:image" content="https://www.hondabyhenry.ca/honda-logo.png">
 
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Honda Dealer Vaughan | Henry Chen at Maple Honda">
-<meta name="twitter:description" content="Book your Honda test drive with Henry Chen at Maple Honda in Vaughan.">
+<meta name="twitter:title" content="Honda Dealer Vaughan, Maple & GTA | Henry Chen at Maple Honda">
+<meta name="twitter:description" content="Book your Honda test drive in Vaughan and compare Civic, CR-V, Accord, Pilot, Passport, and more.">
+<meta name="twitter:image" content="https://www.hondabyhenry.ca/honda-logo.png">
+
 <script type="application/ld+json">
 {
   "@context":"https://schema.org",
   "@type":"AutoDealer",
   "name":"Maple Honda - Henry Chen",
-  "url":"https://hondabyhenry.ca/",
-  "image":"https://hondabyhenry.ca/honda-logo.png",
+  "url":"https://www.hondabyhenry.ca/",
+  "image":"https://www.hondabyhenry.ca/honda-logo.png",
   "telephone":"+1-647-523-6878",
-  "areaServed":"Vaughan, Ontario",
+  "priceRange":"$$$",
+  "address":{
+    "@type":"PostalAddress",
+    "streetAddress":"89 Auto Vaughan Dr",
+    "addressLocality":"Maple",
+    "addressRegion":"ON",
+    "postalCode":"L6A 4A1",
+    "addressCountry":"CA"
+  },
+  "areaServed":["Vaughan","Maple","Richmond Hill","Woodbridge","Brampton","Toronto"],
   "brand":"Honda"
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"FAQPage",
+  "mainEntity":[
+    {
+      "@type":"Question",
+      "name":"Do you offer Honda test drives in Vaughan?",
+      "acceptedAnswer":{"@type":"Answer","text":"Yes. You can book a Civic, CR-V, Accord, Pilot, Passport, HR-V, Odyssey, or Ridgeline test drive directly with Henry Chen at Maple Honda."}
+    },
+    {
+      "@type":"Question",
+      "name":"Can I trade in my current vehicle at Maple Honda?",
+      "acceptedAnswer":{"@type":"Answer","text":"Yes. Henry provides transparent trade-in guidance and helps compare your trade value against financing and lease options."}
+    },
+    {
+      "@type":"Question",
+      "name":"Do you help first-time buyers in the GTA?",
+      "acceptedAnswer":{"@type":"Answer","text":"Yes. First-time buyers in Vaughan and the Greater Toronto Area can get help with model selection, financing basics, and ownership costs."}
+    }
+  ]
 }
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
@@ -309,6 +347,9 @@ section{padding:80px 40px}
   transition:background .18s
 }
 .car-btn:hover{background:var(--darkred)}
+.car-actions{display:flex;gap:10px}
+.car-btn-secondary{background:#fff;color:var(--red);border:1px solid var(--red);text-align:center;text-decoration:none;display:inline-flex;align-items:center;justify-content:center}
+.car-btn-secondary:hover{background:#fff4f4}
 
 /* TESTIMONIALS */
 .testimonials{background:#fff}
@@ -702,10 +743,10 @@ footer a{color:rgba(255,255,255,.4)}
 const cars = [
   {
     name:"Honda Civic",
-    tag:"Canada's Best-Seller",
+    tag:"Canada's Best-Seller · 4.9L/100km",
     badge:"🏆 #1 in Canada",
     emoji:"🚗",
-    desc:"Built in Alliston, ON since 1986. Canada's best-selling car 24 years running — sporty, reliable, and packed with Honda Sensing.",
+    desc:"Built in Alliston, ON since 1986. Canada's best-selling car 24 years running, with fuel economy as low as 4.9L/100km — sporty, reliable, and packed with Honda Sensing.",
     img:"https://wieck-honda-production.s3.amazonaws.com/photos/8167b82614b1d70815fbdd1456c228cdb91c03d0/preview-928x522.jpg"
   },
   {
@@ -718,7 +759,7 @@ const cars = [
   },
   {
     name:"Honda Accord Hybrid",
-    tag:"~988 km range per tank",
+    tag:"~915 km range per tank",
     badge:"⚡ Hybrid",
     emoji:"🚘",
     desc:"More rear legroom and trunk space than the Camry. Class-leading range and a refined, premium ride.",
@@ -730,7 +771,8 @@ const cars = [
     badge:"🏕️ Adventure",
     emoji:"🛻",
     desc:"2026 TrailSport: 360° cameras, torque-vectoring AWD, steel skid plates, full-size spare. Built for adventure.",
-    img:"https://wieck-honda-production.s3.amazonaws.com/photos/d039cde265fe5fdad225f5c65dc96b367eb609c3/preview-928x522.jpg"
+    img:"https://wieck-honda-production.s3.amazonaws.com/photos/d039cde265fe5fdad225f5c65dc96b367eb609c3/preview-928x522.jpg",
+    featuresUrl:"new-2026-honda-pilot-features.html"
   },
   {
     name:"Honda HR-V",
@@ -742,10 +784,10 @@ const cars = [
   },
   {
     name:"Honda Passport",
-    tag:"Midsize SUV · 280hp V6",
+    tag:"Midsize SUV · 285hp V6",
     badge:"💪 Capable",
     emoji:"🚙",
-    desc:"The sweet spot between the CR-V and Pilot. Rugged 280hp V6, available TrailSport for those who want more.",
+    desc:"The sweet spot between the CR-V and Pilot. Rugged 285hp V6, available TrailSport for those who want more.",
     img:"https://wieck-honda-production.s3.amazonaws.com/photos/d79c5a868257781fd833bce2f9c8228b0f4dc95c/preview-928x522.jpg"
   },
   {
@@ -781,7 +823,9 @@ cars.forEach(c => {
       <div class="car-name">${c.name}</div>
       <div class="car-tag">${c.tag}</div>
       <div class="car-desc">${c.desc}</div>
-      <button class="car-btn">Book a Test Drive →</button>
+      ${c.featuresUrl
+        ? `<div class="car-actions"><button class="car-btn">Book a Test Drive →</button><a class="car-btn car-btn-secondary" href="${c.featuresUrl}" onclick="event.stopPropagation()">Features</a></div>`
+        : `<button class="car-btn">Book a Test Drive →</button>`}
     </div>`;
   grid.appendChild(d);
   const img = new Image();
