@@ -708,15 +708,16 @@ footer a{color:rgba(255,255,255,.4)}
       <label>Vehicle I'm interested in *</label>
       <select id="vehicle">
         <option value="">— Select a model —</option>
+        <option>Honda Prelude</option>
         <option>Honda Civic</option>
         <option>Honda Civic Hybrid</option>
-        <option>Honda CR-V</option>
-        <option>Honda CR-V Hybrid</option>
         <option>Honda Accord</option>
         <option>Honda Accord Hybrid</option>
-        <option>Honda Pilot</option>
-        <option>Honda Passport</option>
         <option>Honda HR-V</option>
+        <option>Honda CR-V</option>
+        <option>Honda CR-V Hybrid</option>
+        <option>Honda Passport</option>
+        <option>Honda Pilot</option>
         <option>Honda Odyssey</option>
         <option>Honda Ridgeline</option>
         <option>Certified Pre-Owned Honda</option>
@@ -731,7 +732,6 @@ footer a{color:rgba(255,255,255,.4)}
     <button class="form-btn" onclick="submitForm()">Request My Test Drive →</button>
     <p class="form-note">Or call/text directly: <a href="tel:6475236878">647-523-6878</a></p>
   </div>
-</section>
 </section> <!-- END OF FORM SECTION -->
 
 <!-- LOCAL SEO (ADD HERE) -->
@@ -739,7 +739,7 @@ footer a{color:rgba(255,255,255,.4)}
   <div class="section-inner">
     <div class="section-title">Honda Dealer in Vaughan, Ontario</div>
     <p class="section-sub" style="max-width:900px">
-      If you're searching for a Honda dealer in Vaughan, Maple, or the Greater Toronto Area, Henry Chen at Maple Honda offers expert guidance on new and pre-owned Honda vehicles including Civic, CR-V, Accord, Pilot, HR-V, and Odyssey.
+      If you're searching for a Honda dealer in Vaughan, Maple, or the Greater Toronto Area, Henry Chen at Maple Honda offers expert guidance on new and pre-owned Honda vehicles including Civic, CR-V, Accord, Pilot, Prelude, HR-V, and Odyssey.
     </p>
     <p class="section-sub" style="max-width:900px;margin-top:14px">
       Customers from Vaughan, Richmond Hill, Markham, North York, and Toronto visit Maple Honda for Honda test drives, lease options, finance options, and clear advice without pressure.
@@ -747,8 +747,6 @@ footer a{color:rgba(255,255,255,.4)}
   </div>
 </section>
 
-<!-- CONTACT BAR -->
-<div class="contact-bar">
 <!-- CONTACT BAR -->
 <div class="contact-bar">
   <h2>Have a quick question?</h2>
@@ -772,21 +770,22 @@ footer a{color:rgba(255,255,255,.4)}
 <script>
 const cars = [
   {
+    name:"Honda Prelude",
+    tag:"Hybrid Coupe · Returning Icon",
+    badge:"🆕 New",
+    emoji:"🏎️",
+    desc:"The Prelude is back with sleek coupe styling and hybrid performance for drivers who want efficiency with real fun behind the wheel.",
+    img:"https://wieck-honda-production.s3.amazonaws.com/photos/306fc870d45490f7290fd18dbc2d8543e34cb924/preview-928x522.jpg",
+    featuresUrl:"feature-sheet-2026-honda-prelude.html"
+  },
+  {
     name:"Honda Civic",
     tag:"Canada's Best-Seller · 4.9L/100km",
     badge:"🏆 #1 in Canada",
     emoji:"🚗",
     desc:"Built in Alliston, ON since 1986. Canada's best-selling car 24 years running, with fuel economy as low as 4.9L/100km — sporty, reliable, and packed with Honda Sensing.",
-    img:"https://wieck-honda-production.s3.amazonaws.com/photos/8167b82614b1d70815fbdd1456c228cdb91c03d0/preview-928x522.jpg"
-  },
-  {
-    name:"Honda CR-V Hybrid",
-    tag:"Best-Selling CUV · 6.4L/100km",
-    badge:"⚡ Hybrid",
-    emoji:"🚙",
-    desc:"North America's best-selling CUV. The hybrid gets 6.4L/100km with 1,113L cargo. Made for real family life.",
-    img:"https://wieck-honda-production.s3.amazonaws.com/photos/a79a8ab33714a99fa2968c1ed5bd7b4e554d06a8/preview-928x522.jpg",
-    sheet:"feature-sheet-2026-honda-cr-v.html"
+    img:"https://wieck-honda-production.s3.amazonaws.com/photos/8167b82614b1d70815fbdd1456c228cdb91c03d0/preview-928x522.jpg",
+    featuresUrl:"feature-sheet-2025-26-honda-civic.html"
   },
   {
     name:"Honda Accord Hybrid",
@@ -795,16 +794,7 @@ const cars = [
     emoji:"🚘",
     desc:"More rear legroom and trunk space than the Camry. Class-leading range and a refined, premium ride.",
     img:"https://wieck-honda-production.s3.amazonaws.com/photos/eb976cc9dc4e80b6b4a6fcfe7cd39a9782e5a99d/preview-928x522.jpg",
-    sheet:"feature-sheet-2026-honda-accord.html"
-  },
-  {
-    name:"Honda Pilot",
-    tag:"3-Row SUV · 8 Seats · TrailSport",
-    badge:"🏕️ Adventure",
-    emoji:"🛻",
-    desc:"2026 TrailSport: 360° cameras, torque-vectoring AWD, steel skid plates, full-size spare. Built for adventure.",
-    img:"https://wieck-honda-production.s3.amazonaws.com/photos/d039cde265fe5fdad225f5c65dc96b367eb609c3/preview-928x522.jpg",
-    featuresUrl:"feature-sheet-2026-honda-pilot.html.html"
+    featuresUrl:"feature-sheet-2026-honda-accord.html"
   },
   {
     name:"Honda HR-V",
@@ -813,7 +803,16 @@ const cars = [
     emoji:"🚗",
     desc:"Nimble, stylish, and packed with safety tech. The perfect entry into the Honda SUV family with Honda Sensing standard.",
     img:"https://wieck-honda-production.s3.amazonaws.com/photos/999404f5163e677ed5c5ca0816d22218b04587d5/preview-928x522.jpg",
-    sheet:"feature-sheet-2026-honda-hr-v.html"
+    featuresUrl:"feature-sheet-2026-honda-hr-v.html"
+  },
+  {
+    name:"Honda CR-V Hybrid",
+    tag:"Best-Selling CUV · 6.4L/100km",
+    badge:"⚡ Hybrid",
+    emoji:"🚙",
+    desc:"North America's best-selling CUV. The hybrid gets 6.4L/100km with 1,113L cargo. Made for real family life.",
+    img:"https://wieck-honda-production.s3.amazonaws.com/photos/a79a8ab33714a99fa2968c1ed5bd7b4e554d06a8/preview-928x522.jpg",
+    featuresUrl:"feature-sheet-2026-honda-cr-v.html"
   },
   {
     name:"Honda Passport",
@@ -821,7 +820,17 @@ const cars = [
     badge:"💪 Capable",
     emoji:"🚙",
     desc:"The sweet spot between the CR-V and Pilot. Rugged 285hp V6, available TrailSport for those who want more.",
-    img:"https://wieck-honda-production.s3.amazonaws.com/photos/d79c5a868257781fd833bce2f9c8228b0f4dc95c/preview-928x522.jpg"
+    img:"https://wieck-honda-production.s3.amazonaws.com/photos/d79c5a868257781fd833bce2f9c8228b0f4dc95c/preview-928x522.jpg",
+    featuresUrl:"feature-sheet-2026-honda-passport.html"
+  },
+  {
+    name:"Honda Pilot",
+    tag:"3-Row SUV · 8 Seats · TrailSport",
+    badge:"🏕️ Adventure",
+    emoji:"🛻",
+    desc:"2026 TrailSport: 360° cameras, torque-vectoring AWD, steel skid plates, full-size spare. Built for adventure.",
+    img:"https://wieck-honda-production.s3.amazonaws.com/photos/d039cde265fe5fdad225f5c65dc96b367eb609c3/preview-928x522.jpg",
+    featuresUrl:"feature-sheet-2026-honda-pilot.html"
   },
   {
     name:"Honda Odyssey",
@@ -830,7 +839,7 @@ const cars = [
     emoji:"🚐",
     desc:"The smartest minivan on the road. Magic Slide™ second-row seats, massive storage, Honda Sensing throughout.",
     img:"https://wieck-honda-production.s3.amazonaws.com/photos/0f1cf64b1cd46b3ce3c3935a4fcc417d17e10a20/preview-928x522.jpg",
-    sheet:"feature-sheet-2026-honda-odyssey.html"
+    featuresUrl:"feature-sheet-2026-honda-odyssey.html"
   },
   {
     name:"Honda Ridgeline",
@@ -839,7 +848,7 @@ const cars = [
     emoji:"🛻",
     desc:"The only truck with an in-bed lockable trunk. AWD, a car-like ride, and real truck capability.",
     img:"https://wieck-honda-production.s3.amazonaws.com/photos/94284f22712a9dc313402114795c1deba18b4e18/preview-928x522.jpg",
-    sheet:"feature-sheet-2026-honda-ridgeline.html"
+    featuresUrl:"feature-sheet-2026-honda-ridgeline.html"
   }
 ];
 
