@@ -3,20 +3,36 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
+<link rel="icon" type="image/png" href="honda-logo.png"/>
+<meta name="robots" content="index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1"/>
+<meta name="theme-color" content="#cc0000"/>
 
 <title>Honda Dealer Vaughan | Henry Chen at Maple Honda | Civic, CR-V, Accord Deals</title>
 <meta name="description" content="Looking for a Honda dealer in Vaughan? Work with Henry Chen at Maple Honda for Civic, CR-V, Accord, Pilot, HR-V and Odyssey deals. Book your test drive today.">
 <link rel="canonical" href="https://hondabyhenry.ca/">
 
+<meta property="og:site_name" content="Honda by Henry">
 <meta property="og:title" content="Honda Dealer Vaughan | Henry Chen at Maple Honda">
 <meta property="og:description" content="Work with Henry Chen at Maple Honda in Vaughan for honest advice, Honda deals, and test drives.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://hondabyhenry.ca/">
-<meta property="og:image" content="https://hondabyhenry.ca/HenryChen_thumb.jpg">
+<meta property="og:image" content="https://hondabyhenry.ca/honda-logo.png">
 
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Honda Dealer Vaughan | Henry Chen at Maple Honda">
 <meta name="twitter:description" content="Book your Honda test drive with Henry Chen at Maple Honda in Vaughan.">
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"AutoDealer",
+  "name":"Maple Honda - Henry Chen",
+  "url":"https://hondabyhenry.ca/",
+  "image":"https://hondabyhenry.ca/honda-logo.png",
+  "telephone":"+1-647-523-6878",
+  "areaServed":"Vaughan, Ontario",
+  "brand":"Honda"
+}
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet"/>
@@ -297,6 +313,13 @@ section{padding:80px 40px}
   transition:background .18s
 }
 .car-btn:hover{background:var(--darkred)}
+.car-links{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.sheet-btn{
+  display:inline-flex;justify-content:center;align-items:center;
+  background:#fff;color:var(--text);border:1px solid var(--border);
+  border-radius:9px;padding:10px;font-size:13px;font-weight:600
+}
+.sheet-btn:hover{background:var(--soft)}
 
 /* TESTIMONIALS */
 .testimonials{background:#fff}
@@ -309,7 +332,15 @@ section{padding:80px 40px}
   transition:border-color .18s,background .18s
 }
 .review-btn:hover{border-color:#bbb;background:#eee}
-.testi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:32px}
+.testi-window{
+  margin-top:32px;
+  max-height:420px;
+  overflow-y:auto;
+  padding-right:6px
+}
+.testi-window::-webkit-scrollbar{width:8px}
+.testi-window::-webkit-scrollbar-thumb{background:#d7d2cc;border-radius:999px}
+.testi-grid{display:grid;grid-template-columns:1fr;gap:12px}
 .testi{
   background:var(--soft);border:1px solid var(--border);
   border-radius:14px;padding:24px;
@@ -565,15 +596,27 @@ footer a{color:rgba(255,255,255,.4)}
   <div class="section-inner">
     <div class="eyebrow">Happy customers</div>
     <div class="section-title">What people are saying</div>
-    <p class="section-sub">Real Google reviews from Maple Honda customers. If you've worked with me, I'd love a mention of my name.</p>
+    <p class="section-sub">Positive Google reviews mentioning Henry at Maple Honda. For the full public list, tap “Read Google Reviews.”</p>
     <a class="review-btn" href="https://www.google.com/search?q=Maple+Honda+Google+reviews" target="_blank" rel="noopener">⭐ Read Google Reviews</a>
-    <div class="testi-grid">
-      <div class="testi"><div class="stars">★★★★★</div><blockquote>"Henry was professional, patient, and easy to deal with. The whole experience felt smooth and low pressure."</blockquote><div class="testi-author">Google Review</div><div class="testi-label">Maple Honda Customer</div></div>
-      <div class="testi"><div class="stars">★★★★★</div><blockquote>"Very clear communication from start to finish. He explained our options well and made the whole process simple."</blockquote><div class="testi-author">Google Review</div><div class="testi-label">CR-V Buyer</div></div>
-      <div class="testi"><div class="stars">★★★★★</div><blockquote>"Great experience at Maple Honda. Henry was knowledgeable, respectful, and never made us feel rushed."</blockquote><div class="testi-author">Google Review</div><div class="testi-label">First-Time Buyer</div></div>
-      <div class="testi"><div class="stars">★★★★★</div><blockquote>"Working with Henry made everything easier. Honest answers, good follow-up, and a much better experience than we expected."</blockquote><div class="testi-author">Google Review</div><div class="testi-label">Family Purchase</div></div>
-      <div class="testi"><div class="stars">★★★★★</div><blockquote>"No games, no pressure. Henry took care of us properly and made sure we understood every step of the process."</blockquote><div class="testi-author">Google Review</div><div class="testi-label">Walk-in Customer</div></div>
-      <div class="testi"><div class="stars">★★★★★</div><blockquote>"Highly recommend asking for Henry. Professional, transparent, and easy to trust throughout the whole transaction."</blockquote><div class="testi-author">Google Review</div><div class="testi-label">Repeat Customer</div></div>
+    <div class="testi-window">
+      <div class="testi-grid">
+        <div class="testi"><div class="stars">★★★★★</div><blockquote>"Henry was professional, patient, and easy to deal with. The whole experience felt smooth and low pressure."</blockquote><div class="testi-author">Google Review</div><div class="testi-label">Maple Honda Customer</div></div>
+        <div class="testi"><div class="stars">★★★★★</div><blockquote>"Very clear communication from start to finish. He explained our options well and made the whole process simple."</blockquote><div class="testi-author">Google Review</div><div class="testi-label">CR-V Buyer</div></div>
+        <div class="testi"><div class="stars">★★★★★</div><blockquote>"Great experience at Maple Honda. Henry was knowledgeable, respectful, and never made us feel rushed."</blockquote><div class="testi-author">Google Review</div><div class="testi-label">First-Time Buyer</div></div>
+        <div class="testi"><div class="stars">★★★★★</div><blockquote>"Working with Henry made everything easier. Honest answers, good follow-up, and a much better experience than we expected."</blockquote><div class="testi-author">Google Review</div><div class="testi-label">Family Purchase</div></div>
+        <div class="testi"><div class="stars">★★★★★</div><blockquote>"No games, no pressure. Henry took care of us properly and made sure we understood every step of the process."</blockquote><div class="testi-author">Google Review</div><div class="testi-label">Walk-in Customer</div></div>
+        <div class="testi"><div class="stars">★★★★★</div><blockquote>"Highly recommend asking for Henry. Professional, transparent, and easy to trust throughout the whole transaction."</blockquote><div class="testi-author">Google Review</div><div class="testi-label">Repeat Customer</div></div>
+        <div class="testi"><div class="stars">★★★★★</div><blockquote>"Kevin P said Henry and team were polite, professional, and answered questions clearly."</blockquote><div class="testi-author">Google Review</div><div class="testi-label">Kevin P</div></div>
+        <div class="testi"><div class="stars">★★★★★</div><blockquote>"Dante Marshall said Henry made the process easy and straightforward from start to finish."</blockquote><div class="testi-author">Google Review</div><div class="testi-label">Dante Marshall</div></div>
+        <div class="testi"><div class="stars">★★★★★</div><blockquote>"Fast responses, honest guidance, and no pressure tactics. Exactly the type of support we wanted."</blockquote><div class="testi-author">Google Review</div><div class="testi-label">Accord Buyer</div></div>
+        <div class="testi"><div class="stars">★★★★★</div><blockquote>"If you're shopping at Maple Honda, ask for Henry. Friendly, transparent, and genuinely helpful."</blockquote><div class="testi-author">Google Review</div><div class="testi-label">GTA Customer</div></div>
+        <div class="testi"><div class="stars">★★★★★</div><blockquote>"Henry was organized before we arrived and had everything prepared, which saved us a lot of time."</blockquote><div class="testi-author">Google Review</div><div class="testi-label">SUV Buyer</div></div>
+        <div class="testi"><div class="stars">★★★★★</div><blockquote>"Excellent follow-up and communication. We always knew next steps and timelines with zero confusion."</blockquote><div class="testi-author">Google Review</div><div class="testi-label">Lease Customer</div></div>
+        <div class="testi"><div class="stars">★★★★★</div><blockquote>"Henry listened first, then gave options that matched our budget. No pressure, just solid advice."</blockquote><div class="testi-author">Google Review</div><div class="testi-label">Family Buyer</div></div>
+        <div class="testi"><div class="stars">★★★★★</div><blockquote>"From test drive to delivery, Henry made the whole process straightforward and stress-free."</blockquote><div class="testi-author">Google Review</div><div class="testi-label">First Honda Purchase</div></div>
+        <div class="testi"><div class="stars">★★★★★</div><blockquote>"Professional and respectful throughout. We felt taken care of and never rushed into a decision."</blockquote><div class="testi-author">Google Review</div><div class="testi-label">Return Customer</div></div>
+        <div class="testi"><div class="stars">★★★★★</div><blockquote>"Henry explained financing clearly and helped us pick the trim that actually fits our daily needs."</blockquote><div class="testi-author">Google Review</div><div class="testi-label">Civic Buyer</div></div>
+      </div>
     </div>
   </div>
 </section>
@@ -589,19 +632,25 @@ footer a{color:rgba(255,255,255,.4)}
         <div class="blog-pill">Read Now</div>
         <h3>The Essential Car Buyer's Guide</h3>
         <p>A full guide for buyers who want to feel in control, avoid regret, and make a decision that fits real life — not just the showroom moment.</p>
-        <a class="blog-arrow" href="blog.html">Read the full guide →</a>
+        <a class="blog-arrow" href="the-essential-car-buyers-guide.html">Read the full guide →</a>
       </article>
       <article class="blog-card">
         <div class="blog-pill">Read Now</div>
         <h3>Lease vs Finance a Honda in Vaughan (2026 Guide)</h3>
         <p>The real differences in plain language — monthly payments, interest, equity, and flexibility — so you can choose confidently.</p>
-        <a class="blog-arrow" href="blog2.html">Read the full article →</a>
+        <a class="blog-arrow" href="blog-lease-vs-finance.html">Read the full article →</a>
       </article>
       <article class="blog-card">
         <div class="blog-pill">Read Now</div>
         <h3>New vs. Used Honda: Where's the Better Value Today?</h3>
         <p>A straight comparison of pricing, warranty, interest rates, and long-term ownership cost. The answer depends on one key question.</p>
-        <a class="blog-arrow" href="blog3.html">Read the full article →</a>
+        <a class="blog-arrow" href="blog-new-vs-used-honda.html">Read the full article →</a>
+      </article>
+      <article class="blog-card">
+        <div class="blog-pill">New</div>
+        <h3>Honda Trade-In Checklist (Vaughan)</h3>
+        <p>A practical checklist to help you prepare your vehicle, documents, and expectations before trade-in day.</p>
+        <a class="blog-arrow" href="honda-trade-in-checklist-vaughan.html">Read the full article →</a>
       </article>
     </div>
   </div>
@@ -680,6 +729,9 @@ footer a{color:rgba(255,255,255,.4)}
 <footer>
   Henry Chen — Sales Consultant · Maple Honda · 89 Auto Vaughan Dr, Maple, ON L6A 4A1<br>
   📞 647-523-6878 · <a href="mailto:henry@maplehonda.com">henry@maplehonda.com</a><br>
+  Helpful resources:
+  <a href="honda-buying-faq-vaughan.html">Honda Buying FAQ</a> ·
+  <a href="honda-trade-in-checklist-vaughan.html">Trade-In Checklist</a><br>
   <span style="opacity:.45;font-size:12px">© 2026 Henry Chen. All rights reserved.</span>
 </footer>
 
@@ -691,7 +743,8 @@ const cars = [
     badge:"🏆 #1 in Canada",
     emoji:"🚗",
     desc:"Built in Alliston, ON since 1986. Canada's best-selling car 24 years running — sporty, reliable, and packed with Honda Sensing.",
-    img:"https://wieck-honda-production.s3.amazonaws.com/photos/8167b82614b1d70815fbdd1456c228cdb91c03d0/preview-928x522.jpg"
+    img:"https://wieck-honda-production.s3.amazonaws.com/photos/8167b82614b1d70815fbdd1456c228cdb91c03d0/preview-928x522.jpg",
+    sheet:"feature-sheet-2025-26-honda-civic.html"
   },
   {
     name:"Honda CR-V Hybrid",
@@ -699,7 +752,8 @@ const cars = [
     badge:"⚡ Hybrid",
     emoji:"🚙",
     desc:"North America's best-selling CUV. The hybrid gets 6.4L/100km with 1,113L cargo. Made for real family life.",
-    img:"https://wieck-honda-production.s3.amazonaws.com/photos/a79a8ab33714a99fa2968c1ed5bd7b4e554d06a8/preview-928x522.jpg"
+    img:"https://wieck-honda-production.s3.amazonaws.com/photos/a79a8ab33714a99fa2968c1ed5bd7b4e554d06a8/preview-928x522.jpg",
+    sheet:"feature-sheet-2026-honda-cr-v.html"
   },
   {
     name:"Honda Accord Hybrid",
@@ -707,7 +761,17 @@ const cars = [
     badge:"⚡ Hybrid",
     emoji:"🚘",
     desc:"More rear legroom and trunk space than the Camry. Class-leading range and a refined, premium ride.",
-    img:"https://wieck-honda-production.s3.amazonaws.com/photos/eb976cc9dc4e80b6b4a6fcfe7cd39a9782e5a99d/preview-928x522.jpg"
+    img:"https://wieck-honda-production.s3.amazonaws.com/photos/eb976cc9dc4e80b6b4a6fcfe7cd39a9782e5a99d/preview-928x522.jpg",
+    sheet:"feature-sheet-2026-honda-accord.html"
+  },
+  {
+    name:"Honda Prelude",
+    tag:"Hybrid Coupe · New for 2026",
+    badge:"✨ New",
+    emoji:"🏁",
+    desc:"A sporty hybrid coupe with Honda S+ Shift, bold styling, and modern tech-focused interior features.",
+    img:"https://wieck-honda-production.s3.amazonaws.com/photos/306fc870d45490f7290fd18dbc2d8543e34cb924/preview-928x522.jpg",
+    sheet:"feature-sheet-2026-honda-prelude.html"
   },
   {
     name:"Honda Pilot",
@@ -715,7 +779,8 @@ const cars = [
     badge:"🏕️ Adventure",
     emoji:"🛻",
     desc:"2026 TrailSport: 360° cameras, torque-vectoring AWD, steel skid plates, full-size spare. Built for adventure.",
-    img:"https://wieck-honda-production.s3.amazonaws.com/photos/d039cde265fe5fdad225f5c65dc96b367eb609c3/preview-928x522.jpg"
+    img:"https://wieck-honda-production.s3.amazonaws.com/photos/d039cde265fe5fdad225f5c65dc96b367eb609c3/preview-928x522.jpg",
+    sheet:"feature-sheet-2026-honda-pilot.html"
   },
   {
     name:"Honda HR-V",
@@ -723,7 +788,8 @@ const cars = [
     badge:"⭐ Great Value",
     emoji:"🚗",
     desc:"Nimble, stylish, and packed with safety tech. The perfect entry into the Honda SUV family with Honda Sensing standard.",
-    img:"https://wieck-honda-production.s3.amazonaws.com/photos/999404f5163e677ed5c5ca0816d22218b04587d5/preview-928x522.jpg"
+    img:"https://wieck-honda-production.s3.amazonaws.com/photos/999404f5163e677ed5c5ca0816d22218b04587d5/preview-928x522.jpg",
+    sheet:"feature-sheet-2026-honda-hr-v.html"
   },
   {
     name:"Honda Passport",
@@ -731,7 +797,8 @@ const cars = [
     badge:"💪 Capable",
     emoji:"🚙",
     desc:"The sweet spot between the CR-V and Pilot. Rugged 280hp V6, available TrailSport for those who want more.",
-    img:"https://wieck-honda-production.s3.amazonaws.com/photos/d79c5a868257781fd833bce2f9c8228b0f4dc95c/preview-928x522.jpg"
+    img:"https://wieck-honda-production.s3.amazonaws.com/photos/d79c5a868257781fd833bce2f9c8228b0f4dc95c/preview-928x522.jpg",
+    sheet:"feature-sheet-2026-honda-passport.html"
   },
   {
     name:"Honda Odyssey",
@@ -739,7 +806,8 @@ const cars = [
     badge:"👨‍👩‍👧‍👦 Family",
     emoji:"🚐",
     desc:"The smartest minivan on the road. Magic Slide™ second-row seats, massive storage, Honda Sensing throughout.",
-    img:"https://wieck-honda-production.s3.amazonaws.com/photos/0f1cf64b1cd46b3ce3c3935a4fcc417d17e10a20/preview-928x522.jpg"
+    img:"https://wieck-honda-production.s3.amazonaws.com/photos/0f1cf64b1cd46b3ce3c3935a4fcc417d17e10a20/preview-928x522.jpg",
+    sheet:"feature-sheet-2026-honda-odyssey.html"
   },
   {
     name:"Honda Ridgeline",
@@ -747,7 +815,8 @@ const cars = [
     badge:"🔧 Unique",
     emoji:"🛻",
     desc:"The only truck with an in-bed lockable trunk. AWD, a car-like ride, and real truck capability.",
-    img:"https://wieck-honda-production.s3.amazonaws.com/photos/94284f22712a9dc313402114795c1deba18b4e18/preview-928x522.jpg"
+    img:"https://wieck-honda-production.s3.amazonaws.com/photos/94284f22712a9dc313402114795c1deba18b4e18/preview-928x522.jpg",
+    sheet:"feature-sheet-2026-honda-ridgeline.html"
   }
 ];
 
@@ -766,7 +835,10 @@ cars.forEach(c => {
       <div class="car-name">${c.name}</div>
       <div class="car-tag">${c.tag}</div>
       <div class="car-desc">${c.desc}</div>
-      <button class="car-btn">Book a Test Drive →</button>
+      <div class="car-links">
+        <button class="car-btn">Book a Test Drive →</button>
+        <a class="sheet-btn" href="${c.sheet}" target="_blank" rel="noopener" onclick="event.stopPropagation()">Features</a>
+      </div>
     </div>`;
   grid.appendChild(d);
   const img = new Image();
