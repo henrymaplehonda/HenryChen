@@ -242,6 +242,8 @@ nav{
   text-transform:uppercase;letter-spacing:.1em;
   color:rgba(255,255,255,.65);margin-bottom:6px
 }
+.hours-list{display:flex;flex-direction:column;gap:2px}
+.hours-day{display:block}
 .hours-note{margin-top:10px;font-size:12px;font-weight:700;color:rgba(255,100,100,.85)}
 
 /* TRUST BAR */
@@ -574,8 +576,15 @@ footer a{color:rgba(255,255,255,.4)}
     </div>
     <div class="hours-card">
       <strong>My Schedule</strong>
-      Mon 12–8 PM &nbsp;·&nbsp; Tue 9 AM–5 PM &nbsp;·&nbsp; Wed 12–8 PM &nbsp;·&nbsp;
-      Thu 12–8 PM &nbsp;·&nbsp; Fri: Off &nbsp;·&nbsp; Sat 9 AM–6 PM &nbsp;·&nbsp; Sun: Closed
+      <div class="hours-list">
+        <span class="hours-day">Mon 12–8 PM</span>
+        <span class="hours-day">Tue 9 AM–5 PM</span>
+        <span class="hours-day">Wed 12–8 PM</span>
+        <span class="hours-day">Thu 12–8 PM</span>
+        <span class="hours-day">Fri: Off</span>
+        <span class="hours-day">Sat 9 AM–6 PM</span>
+        <span class="hours-day">Sun: Closed</span>
+      </div>
       <div class="hours-note">Planning to visit? Call or text first — I'll have everything ready.</div>
     </div>
   </div>
