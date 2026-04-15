@@ -232,69 +232,98 @@ nav{
 
 .hours-card{
   margin:30px auto 0;
-  width:min(896px,100%);
-  background:linear-gradient(160deg,rgba(16,28,51,.86),rgba(9,18,36,.86));
-  border:1px solid rgba(124,163,216,.25);
-  border-radius:22px;
-  padding:19px 16px 16px;
+  width:min(610px,100%);
+  background:linear-gradient(180deg,#07173a,#041131);
+  border:1px solid rgba(120,163,220,.2);
+  border-radius:26px;
+  padding:14px 12px 10px;
   color:#d8e2f3;
   animation:fadeUp .5s .38s ease both
 }
-.hours-head{text-align:center;margin-bottom:18px}
+.hours-head{text-align:center;margin-bottom:22px}
 .hours-head h2{
-  font-size:clamp(24px,2.88vw,35px);
-  margin:0 0 4px;
-  color:#f4f8ff;
+  font-size:clamp(14px,1.55vw,26px);
+  margin:0 0 6px;
+  color:#e8effc;
   letter-spacing:-.02em
 }
-.hours-head p{margin:0;color:rgba(214,226,245,.74);font-size:clamp(11px,1.44vw,18px)}
+.hours-head p{margin:0;color:rgba(208,222,244,.7);font-size:clamp(10px,.75vw,17px)}
 .hours-grid{
+  border:1px solid rgba(114,157,215,.24);
+  border-radius:20px;
+  padding:7px 6px 8px;
+  background:linear-gradient(180deg,rgba(15,30,60,.52),rgba(9,22,46,.52));
+}
+.hours-layout{
   display:grid;
-  grid-template-columns:56px repeat(7,minmax(69px,1fr));
-  gap:8px;
-  align-items:start;
+  grid-template-columns:33px repeat(7,minmax(46px,1fr));
+  gap:0;
 }
-.hours-day{
-  font-size:27px;font-weight:700;
-  color:#dce6f8;
-  text-align:center;
-  margin-bottom:6px
-}
-.hours-col{display:flex;flex-direction:column}
 .hours-times{
-  margin-top:45px;
-  display:flex;
-  flex-direction:column;
-  gap:8px;
-  font-size:10px;
-  color:rgba(201,214,236,.74);
+  margin-top:22px;
+  display:grid;
+  grid-template-rows:repeat(12,1fr);
+  gap:0;
+  height:280px;
+  font-size:15px;
+  color:rgba(197,210,235,.7);
   text-align:left;
 }
-.slot{
-  min-height:200px;
-  border-radius:13px;
+.hours-times span{
+  display:flex;
+  align-items:center;
+  justify-content:flex-start;
+  padding-right:10px;
+}
+.hours-col{position:relative}
+.hours-day{
+  height:22px;
   display:flex;
   align-items:center;
   justify-content:center;
+  font-size:19px;
   font-weight:700;
-  font-size:14px;
-  color:#0d1f3b;
-  padding:10px;
-  text-align:center;
-  border:1px solid rgba(255,255,255,.09)
+  color:#dce6f5;
 }
-.slot.green{background:linear-gradient(180deg,#2ecc71,#27be63)}
-.slot.blue{background:linear-gradient(180deg,#4ec3f7,#3ca9da)}
-.slot.purple{background:linear-gradient(180deg,#ae95ff,#9478e8);color:#2f1f63}
-.slot.off{
-  background:linear-gradient(180deg,rgba(124,143,179,.22),rgba(94,113,146,.2));
-  color:#c9d4e8;
+.hours-track{
+  position:relative;
+  height:280px;
+  border-left:1px solid rgba(132,168,220,.24);
+  border-top:1px solid rgba(132,168,220,.24);
+  border-bottom:1px solid rgba(132,168,220,.24);
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent calc(8.33% - 1px),
+      rgba(132,168,220,.22) calc(8.33% - 1px),
+      rgba(132,168,220,.22) 8.33%
+    );
 }
+.hours-col:last-child .hours-track{border-right:1px solid rgba(132,168,220,.24)}
+.shift{
+  position:absolute;
+  left:8%;
+  width:84%;
+  top:calc((var(--start) - 9) / 11 * 100%);
+  height:calc((var(--end) - var(--start)) / 11 * 100%);
+  border-radius:11px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:15px;
+  font-weight:700;
+  letter-spacing:.01em;
+}
+.shift.green{background:#28c05f;color:#03220f}
+.shift.blue{background:#42abe0;color:#092948}
+.shift.purple{background:#957fde;color:#34246f}
+.shift.off{background:rgba(100,119,150,.32);color:#c2cde2}
 .hours-foot{
-  margin-top:14px;
+  margin-top:9px;
   text-align:center;
-  color:rgba(214,226,245,.78);
-  font-size:14px
+  color:rgba(208,221,245,.78);
+  font-size:12px
 }
 
 /* TRUST BAR */
@@ -576,12 +605,14 @@ footer a{color:rgba(255,255,255,.4)}
   .trust-item:last-child{border-bottom:none}
   .contact-bar{padding:48px 20px}
   .modal-box{padding:32px 22px}
-  .hours-card{padding:18px 14px}
-  .hours-grid{grid-template-columns:52px repeat(7,minmax(60px,1fr));gap:6px}
-  .hours-day{font-size:14px}
-  .hours-times{font-size:10px;margin-top:44px;gap:6px}
-  .slot{min-height:170px;font-size:12px}
-  .hours-foot{font-size:13px}
+  .hours-card{padding:16px 12px}
+  .hours-grid{padding:10px}
+  .hours-layout{grid-template-columns:46px repeat(7,minmax(44px,1fr))}
+  .hours-day{font-size:14px;height:34px}
+  .hours-times{font-size:9px;height:280px;margin-top:34px}
+  .hours-track{height:280px}
+  .shift{font-size:10px;border-radius:10px}
+  .hours-foot{font-size:11px}
 }
 </style>
 </head>
@@ -636,27 +667,29 @@ footer a{color:rgba(255,255,255,.4)}
         <p>9 AM to 8 PM weekly schedule</p>
       </div>
       <div class="hours-grid">
-        <div class="hours-times">
-          <span>9 AM</span>
-          <span>10 AM</span>
-          <span>11 AM</span>
-          <span>12 PM</span>
-          <span>1 PM</span>
-          <span>2 PM</span>
-          <span>3 PM</span>
-          <span>4 PM</span>
-          <span>5 PM</span>
-          <span>6 PM</span>
-          <span>7 PM</span>
-          <span>8 PM</span>
+        <div class="hours-layout">
+          <div class="hours-times">
+            <span>9 AM</span>
+            <span>10 AM</span>
+            <span>11 AM</span>
+            <span>12 PM</span>
+            <span>1 PM</span>
+            <span>2 PM</span>
+            <span>3 PM</span>
+            <span>4 PM</span>
+            <span>5 PM</span>
+            <span>6 PM</span>
+            <span>7 PM</span>
+            <span>8 PM</span>
+          </div>
+          <div class="hours-col"><div class="hours-day">Mon</div><div class="hours-track"><div class="shift green" style="--start:12;--end:20">12 PM - 8 PM</div></div></div>
+          <div class="hours-col"><div class="hours-day">Tue</div><div class="hours-track"><div class="shift blue" style="--start:9;--end:17">9 AM - 5 PM</div></div></div>
+          <div class="hours-col"><div class="hours-day">Wed</div><div class="hours-track"><div class="shift green" style="--start:12;--end:20">12 PM - 8 PM</div></div></div>
+          <div class="hours-col"><div class="hours-day">Thu</div><div class="hours-track"><div class="shift green" style="--start:12;--end:20">12 PM - 8 PM</div></div></div>
+          <div class="hours-col"><div class="hours-day">Fri</div><div class="hours-track"><div class="shift off" style="--start:9;--end:20">OFF</div></div></div>
+          <div class="hours-col"><div class="hours-day">Sat</div><div class="hours-track"><div class="shift purple" style="--start:9;--end:18">9 AM - 6 PM</div></div></div>
+          <div class="hours-col"><div class="hours-day">Sun</div><div class="hours-track"><div class="shift off" style="--start:9;--end:20">OFF</div></div></div>
         </div>
-        <div class="hours-col"><div class="hours-day">Mon</div><div class="slot green">12 PM - 8 PM</div></div>
-        <div class="hours-col"><div class="hours-day">Tue</div><div class="slot blue">9 AM - 5 PM</div></div>
-        <div class="hours-col"><div class="hours-day">Wed</div><div class="slot green">12 PM - 8 PM</div></div>
-        <div class="hours-col"><div class="hours-day">Thu</div><div class="slot green">12 PM - 8 PM</div></div>
-        <div class="hours-col"><div class="hours-day">Fri</div><div class="slot off">OFF</div></div>
-        <div class="hours-col"><div class="hours-day">Sat</div><div class="slot purple">9 AM - 6 PM</div></div>
-        <div class="hours-col"><div class="hours-day">Sun</div><div class="slot off">OFF</div></div>
       </div>
       <div class="hours-foot">Maple Honda · Henry · 647-523-6878 · henry@maplehonda.com</div>
     </div>
