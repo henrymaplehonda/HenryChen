@@ -234,6 +234,7 @@ nav{
   display:inline-block;margin-top:26px;
   background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.1);
   border-radius:14px;padding:18px 28px;text-align:left;
+  width:max-content;max-width:100%;
   font-size:13px;color:rgba(255,255,255,.45);line-height:1.9;
   animation:fadeUp .5s .38s ease both
 }
@@ -242,6 +243,7 @@ nav{
   text-transform:uppercase;letter-spacing:.1em;
   color:rgba(255,255,255,.65);margin-bottom:6px
 }
+.hours-line{display:block;white-space:nowrap;overflow-x:auto;padding-bottom:2px}
 .hours-note{margin-top:10px;font-size:12px;font-weight:700;color:rgba(255,100,100,.85)}
 
 /* TRUST BAR */
@@ -574,8 +576,7 @@ footer a{color:rgba(255,255,255,.4)}
     </div>
     <div class="hours-card">
       <strong>My Schedule</strong>
-      Mon 12–8 PM &nbsp;·&nbsp; Tue 9 AM–5 PM &nbsp;·&nbsp; Wed 12–8 PM &nbsp;·&nbsp;
-      Thu 12–8 PM &nbsp;·&nbsp; Fri: Off &nbsp;·&nbsp; Sat 9 AM–6 PM &nbsp;·&nbsp; Sun: Closed
+      <span class="hours-line">Mon 12–8 PM &nbsp;·&nbsp; Tue 9 AM–5 PM &nbsp;·&nbsp; Wed 12–8 PM &nbsp;·&nbsp; Thu 12–8 PM &nbsp;·&nbsp; Fri: Off &nbsp;·&nbsp; Sat 9 AM–6 PM &nbsp;·&nbsp; Sun: Closed</span>
       <div class="hours-note">Planning to visit? Call or text first — I'll have everything ready.</div>
     </div>
   </div>
