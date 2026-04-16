@@ -197,7 +197,7 @@ function bubble(text, who){
 }
 
 function setOptions(options){
-  optionRow.innerHTML = '';
+  optionRow.replaceChildren();
   options.forEach(opt => {
     const btn = document.createElement('button');
     btn.className = 'option-btn';
@@ -259,12 +259,20 @@ function finishChat(){
   textInputRow.classList.add('hidden');
   bubble('Perfect. Please review your answers below, then send them to Henry so he can start looking for the right options.', 'bot');
 
-  summaryList.innerHTML = '';
+  summaryList.replaceChildren();
   questions.forEach(q => {
     if(data[q.key] && data[q.key] !== 'Not provided'){
       const div = document.createElement('div');
       div.className = 'summary-item';
-      div.innerHTML = '<strong>' + q.label + '</strong><div>' + data[q.key] + '</div>';
+
+      const strong = document.createElement('strong');
+      strong.textContent = q.label;
+
+      const value = document.createElement('div');
+      value.textContent = data[q.key];
+
+      div.appendChild(strong);
+      div.appendChild(value);
       summaryList.appendChild(div);
     }
   });
