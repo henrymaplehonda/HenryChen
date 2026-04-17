@@ -515,25 +515,26 @@ section{padding:80px 40px}
   margin-top:18px
 }
 .review-cta-row .review-btn{margin-top:0}
-.review-photo-link{
-  display:block;
-  width:clamp(126px,16vw,170px);
-  border-radius:14px;
-  overflow:hidden;
-  border:1px solid var(--border);
-  background:#fff;
-  padding:8px;
-  box-shadow:0 10px 24px rgba(0,0,0,.08);
+.review-rating-link{
+  display:inline-flex;align-items:center;gap:10px;
+  padding:12px 16px;border-radius:14px;
+  background:#202124;color:#e8eaed;
+  border:1px solid rgba(255,255,255,.08);
+  box-shadow:0 10px 24px rgba(0,0,0,.12);
   transition:transform .18s,box-shadow .18s
 }
-.review-photo-link:hover{
+.review-rating-link:hover{
   transform:translateY(-2px);
-  box-shadow:0 14px 28px rgba(0,0,0,.12)
+  box-shadow:0 14px 28px rgba(0,0,0,.18)
 }
-.review-photo-link img{
-  width:100%;
-  height:auto;
-  object-fit:contain
+.review-rating-score{
+  font-size:18px;font-weight:700;line-height:1;color:#e8eaed
+}
+.review-rating-stars{
+  font-size:20px;letter-spacing:1px;line-height:1;color:#fbbc04
+}
+.review-rating-text{
+  font-size:16px;font-weight:600;line-height:1.1;color:#8ab4f8;white-space:nowrap
 }
 .testi-window{
   margin-top:32px;
@@ -682,7 +683,10 @@ footer a{color:rgba(255,255,255,.4)}
   .form-row{grid-template-columns:1fr}
   .form-wrap{padding:28px 20px}
   .review-cta-row{align-items:flex-start}
-  .review-photo-link{width:min(170px,100%)}
+  .review-rating-link{padding:10px 14px;max-width:100%}
+  .review-rating-score{font-size:17px}
+  .review-rating-stars{font-size:18px}
+  .review-rating-text{font-size:14px}
   .nav-link-hide{display:none!important}
   .steps{grid-template-columns:repeat(2,1fr)}
   .trust-bar{flex-direction:column;align-items:center}
@@ -808,8 +812,10 @@ footer a{color:rgba(255,255,255,.4)}
     <p class="section-sub">Positive Google reviews mentioning Henry at Maple Honda. For the full public list, tap &ldquo;Read Google Reviews.&rdquo;</p>
     <div class="review-cta-row">
       <a class="review-btn" href="https://www.google.com/search?q=Maple+Honda+Google+reviews" target="_blank" rel="noopener">&#11088; Read Google Reviews</a>
-      <a class="review-photo-link" href="https://www.google.com/search?q=Maple+Honda+Google+reviews" target="_blank" rel="noopener" aria-label="View Maple Honda Google reviews">
-        <img src="google-review.png" alt="Google review rating showing 4.8 stars and 3,950 reviews"/>
+      <a class="review-rating-link" href="https://www.google.com/search?q=Maple+Honda+Google+reviews" target="_blank" rel="noopener" aria-label="View Maple Honda Google reviews">
+        <span class="review-rating-score">4.8</span>
+        <span class="review-rating-stars" aria-hidden="true">★★★★★</span>
+        <span class="review-rating-text">3,950 Google reviews</span>
       </a>
     </div>
     <div class="testi-window">
