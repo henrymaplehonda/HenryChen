@@ -264,6 +264,40 @@ main{padding:34px 0 72px}
   background:#fff;
   font-weight:700;
 }
+.resource-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:14px;
+  margin-top:20px;
+}
+.resource-item{
+  display:block;
+  background:var(--sand);
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:18px;
+}
+.resource-tag{
+  display:inline-block;
+  font-size:12px;
+  font-weight:800;
+  letter-spacing:.05em;
+  text-transform:uppercase;
+  color:var(--red);
+  margin-bottom:8px;
+}
+.resource-item h3{
+  font-size:22px;
+  line-height:1.2;
+  margin-bottom:8px;
+}
+.resource-item p{
+  color:var(--muted);
+  margin-bottom:10px;
+}
+.resource-cta{
+  font-weight:800;
+}
 .note{
   margin-top:14px;
   font-size:14px;
@@ -276,7 +310,7 @@ footer{
 }
 @media (max-width:860px){
   .hero-card,.section{padding:26px}
-  .grid,.compare{grid-template-columns:1fr}
+  .grid,.compare,.resource-grid{grid-template-columns:1fr}
 }
 </style>
 </head>
@@ -382,10 +416,43 @@ footer{
   <section class="section">
     <h2>Helpful next steps if you are comparing Toyota and Honda in Vaughan</h2>
     <p class="lede">Most shoppers do better with one strong comparison page and one strong intake path than with a dozen thin location pages. Start with the comparison guide, then send Henry your model, budget, and trade-in details.</p>
-    <div class="links">
-      <a href="honda-vs-toyota-vaughan.html">Read the Honda vs Toyota Vaughan guide</a>
-      <a href="used-honda-vaughan.html">Read the Used Honda Vaughan page</a>
-      <a href="preowned-vehicle-search.html">Use the pre-owned finder</a>
+    <div class="resource-grid">
+      <a class="resource-item" href="used-toyota-vaughan.html">
+        <div class="resource-tag">Used Toyota Vaughan Buying Help</div>
+        <h3>Used Toyota Vaughan Buying Help</h3>
+        <p>Compare Corolla, RAV4, Camry, and Highlander options with practical local guidance and trade-in planning.</p>
+        <span class="resource-cta">View the page &rarr;</span>
+      </a>
+      <a class="resource-item" href="honda-vs-toyota-vaughan.html">
+        <div class="resource-tag">Comparison Guide</div>
+        <h3>Honda vs Toyota in Vaughan</h3>
+        <p>A practical local guide for Civic vs Corolla, CR-V vs RAV4, Accord vs Camry, and Pilot vs Highlander shoppers.</p>
+        <span class="resource-cta">Read the comparison &rarr;</span>
+      </a>
+      <a class="resource-item" href="vaughan-car-comparison-guides.html">
+        <div class="resource-tag">Comparison Hub</div>
+        <h3>Vaughan Car Comparison Guides</h3>
+        <p>Start here if you are researching Honda, Toyota, VW, Mazda, Subaru, Kia, Hyundai, or Ford in Vaughan and want to narrow by category.</p>
+        <span class="resource-cta">Open the hub &rarr;</span>
+      </a>
+      <a class="resource-item" href="best-compact-suv-vaughan.html">
+        <div class="resource-tag">SUV Guide</div>
+        <h3>Best Compact SUVs in Vaughan</h3>
+        <p>Compare CR-V, RAV4, Tiguan, CX-5, Forester, Sportage, Tucson, and Escape with a practical local lens.</p>
+        <span class="resource-cta">Read the guide &rarr;</span>
+      </a>
+      <a class="resource-item" href="best-compact-cars-vaughan.html">
+        <div class="resource-tag">Car Guide</div>
+        <h3>Best Compact Cars in Vaughan</h3>
+        <p>Compare Civic, Corolla, Jetta, Mazda3, Elantra, K4, and Impreza for commuting, parking, and payment fit.</p>
+        <span class="resource-cta">Read the guide &rarr;</span>
+      </a>
+      <a class="resource-item" href="best-3-row-suv-vaughan.html">
+        <div class="resource-tag">Family SUV Guide</div>
+        <h3>Best 3-Row SUVs in Vaughan</h3>
+        <p>Compare Pilot, Highlander, Atlas, CX-90, Ascent, Telluride, Palisade, and Explorer for real family use.</p>
+        <span class="resource-cta">Read the guide &rarr;</span>
+      </a>
     </div>
     <p class="note">Contact Henry directly at <a href="tel:6475236878">647-523-6878</a> if you want help comparing a Toyota listing against a Honda alternative and a trade-in scenario. If you are currently driving another brand, you may qualify for a limited-time conquest incentive on a new Civic or CR-V, with no trade-in required. See <a href="vaughan-car-comparison-guides.html#conquest-offer">current conquest incentive details</a> and contact Henry to confirm eligibility.</p>
   </section>
@@ -396,7 +463,6 @@ footer{
 </footer>
 </body>
 </html>
-
 
 
 
