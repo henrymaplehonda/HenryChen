@@ -308,32 +308,37 @@ nav{
 
 .dealer-table-wrap{
   max-width:1100px;
-  margin:18px auto 0;
-  overflow:auto;
+  margin:14px auto 0;
   border:1px solid var(--border);
   border-radius:12px;
   background:#fff;
-  box-shadow:0 4px 18px rgba(0,0,0,.05)
+  box-shadow:0 4px 18px rgba(0,0,0,.05);
+  padding:14px
 }
-.dealer-table{
-  width:100%;
-  border-collapse:collapse;
-  min-width:420px;
-  font-size:7px
+.dealer-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px 12px
 }
-.dealer-table th,.dealer-table td{
-  padding:6px 7px;
-  text-align:left;
-  border-bottom:1px solid #eee
+.dealer-card{
+  border:1px solid #ece8e4;
+  border-radius:10px;
+  padding:10px 12px;
+  background:#fffaf8
 }
-.dealer-table th{
-  background:#faf9f8;
-  color:#433f3b;
+.dealer-name{
+  font-size:16px;
   font-weight:700;
-  white-space:nowrap
+  color:#2b2623;
+  margin-bottom:4px
 }
-.dealer-table tr:last-child td{border-bottom:none}
-.dealer-table a{color:#9a0000;text-decoration:underline}
+.dealer-meta{
+  font-size:14px;
+  color:#615851;
+  line-height:1.45
+}
+.dealer-meta a{color:#9a0000;text-decoration:underline}
+.dealer-sitemap-section{padding-top:56px;padding-bottom:56px}
 .hero-sub{
   font-size:14px;color:rgba(255,255,255,.55);
   max-width:460px;margin:0 auto 34px;line-height:1.65;
@@ -781,6 +786,7 @@ footer a{color:rgba(255,255,255,.4)}
   .hours-track{height:280px}
   .shift{font-size:10px;border-radius:10px}
   .hours-foot{font-size:11px}
+  .dealer-grid{grid-template-columns:1fr}
 }
 </style>
 </head>
@@ -1040,53 +1046,42 @@ Even after the purchase, Henry has stayed in touch... He even reached out to pro
 </section>
 
 <!-- GTA HONDA DEALER SITEMAP -->
-<section class="local-seo" aria-labelledby="dealer-sitemap-title">
+<section class="local-seo dealer-sitemap-section" aria-labelledby="dealer-sitemap-title">
   <div class="section-inner">
     <div class="eyebrow">Local directory</div>
     <div class="section-title" id="dealer-sitemap-title">GTA Honda Dealer Sitemap (Ontario)</div>
     <div class="dealer-table-wrap" role="region" aria-label="GTA Honda dealer directory">
-      <table class="dealer-table">
-        <thead>
-          <tr>
-            <th>Dealer</th>
-            <th>Address</th>
-            <th>City</th>
-            <th>Phone</th>
-            <th>Map</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr><td>Maple Honda</td><td>89 Auto Vaughan Drive</td><td>Maple / Vaughan</td><td>905-832-1202</td><td><a href="https://maps.google.com/?q=Maple+Honda+89+Auto+Vaughan+Drive+Maple+ON" target="_blank" rel="noopener">Directions</a></td></tr>
-          <tr><td>Richmond Hill Honda</td><td>77 16th Avenue</td><td>Richmond Hill</td><td>905-731-8899</td><td><a href="https://maps.google.com/?q=Richmond+Hill+Honda+77+16th+Avenue+Richmond+Hill+ON" target="_blank" rel="noopener">Directions</a></td></tr>
-          <tr><td>Sisley for Honda</td><td>88 Steeles Avenue West</td><td>Thornhill</td><td>1-866-384-5061</td><td><a href="https://maps.google.com/?q=Sisley+for+Honda+88+Steeles+Avenue+West+Thornhill+ON" target="_blank" rel="noopener">Directions</a></td></tr>
-          <tr><td>Number 7 Honda</td><td>5555 Highway 7 West</td><td>Woodbridge</td><td>905-851-2258</td><td><a href="https://maps.google.com/?q=Number+7+Honda+5555+Highway+7+West+Woodbridge+ON" target="_blank" rel="noopener">Directions</a></td></tr>
-          <tr><td>Markham Honda</td><td>8220 Kennedy Road</td><td>Markham</td><td>905-477-2451</td><td><a href="https://maps.google.com/?q=Markham+Honda+8220+Kennedy+Road+Markham+ON" target="_blank" rel="noopener">Directions</a></td></tr>
-          <tr><td>Stouffville Honda</td><td>35 Automall Boulevard</td><td>Stouffville</td><td>1-877-673-7348</td><td><a href="https://maps.google.com/?q=Stouffville+Honda+35+Automall+Boulevard+Stouffville+ON" target="_blank" rel="noopener">Directions</a></td></tr>
-          <tr><td>NewRoads Honda</td><td>75 Mulock Drive</td><td>Newmarket</td><td>905-898-4500</td><td><a href="https://maps.google.com/?q=NewRoads+Honda+75+Mulock+Drive+Newmarket+ON" target="_blank" rel="noopener">Directions</a></td></tr>
-          <tr><td>Midtown Honda</td><td>3400 Dufferin Street</td><td>Toronto</td><td>416-789-4101</td><td><a href="https://maps.google.com/?q=Midtown+Honda+3400+Dufferin+Street+Toronto+ON" target="_blank" rel="noopener">Directions</a></td></tr>
-          <tr><td>Parkway Honda</td><td>1681 Eglinton Avenue East</td><td>Toronto</td><td>416-752-6666</td><td><a href="https://maps.google.com/?q=Parkway+Honda+1681+Eglinton+Avenue+East+Toronto+ON" target="_blank" rel="noopener">Directions</a></td></tr>
-          <tr><td>Toronto Honda</td><td>2300 Danforth Avenue</td><td>Toronto</td><td>416-423-2000</td><td><a href="https://maps.google.com/?q=Toronto+Honda+2300+Danforth+Avenue+Toronto+ON" target="_blank" rel="noopener">Directions</a></td></tr>
-          <tr><td>Honda Downtown</td><td>47 Eastern Avenue</td><td>Toronto</td><td>1-866-865-3950</td><td><a href="https://maps.google.com/?q=Honda+Downtown+47+Eastern+Avenue+Toronto+ON" target="_blank" rel="noopener">Directions</a></td></tr>
-          <tr><td>Honda Queensway</td><td>630 Kipling Avenue</td><td>Toronto</td><td>416-252-0066</td><td><a href="https://maps.google.com/?q=Honda+Queensway+630+Kipling+Avenue+Toronto+ON" target="_blank" rel="noopener">Directions</a></td></tr>
-          <tr><td>Castle Honda</td><td>370 Rexdale Boulevard</td><td>Etobicoke</td><td>416-745-7060</td><td><a href="https://maps.google.com/?q=Castle+Honda+370+Rexdale+Boulevard+Etobicoke+ON" target="_blank" rel="noopener">Directions</a></td></tr>
-          <tr><td>Roadsport Honda</td><td>940 Ellesmere Road</td><td>Scarborough</td><td>416-291-9501</td><td><a href="https://maps.google.com/?q=Roadsport+Honda+940+Ellesmere+Road+Scarborough+ON" target="_blank" rel="noopener">Directions</a></td></tr>
-          <tr><td>Formula Honda</td><td>2240 Markham Road</td><td>Scarborough</td><td>416-754-4555</td><td><a href="https://maps.google.com/?q=Formula+Honda+2240+Markham+Road+Scarborough+ON" target="_blank" rel="noopener">Directions</a></td></tr>
-          <tr><td>Action Honda</td><td>4334 Kingston Road</td><td>Scarborough</td><td>416-281-1234</td><td><a href="https://maps.google.com/?q=Action+Honda+4334+Kingston+Road+Scarborough+ON" target="_blank" rel="noopener">Directions</a></td></tr>
-          <tr><td>Open Road Honda</td><td>4 Maritime Ontario Boulevard</td><td>Brampton</td><td>855-579-8772</td><td><a href="https://maps.google.com/?q=Open+Road+Honda+4+Maritime+Ontario+Boulevard+Brampton+ON" target="_blank" rel="noopener">Directions</a></td></tr>
-          <tr><td>Performance Honda Mayfield</td><td>30 Ace Drive</td><td>Brampton</td><td>905-460-3760</td><td><a href="https://maps.google.com/?q=Performance+Honda+Mayfield+30+Ace+Drive+Brampton+ON" target="_blank" rel="noopener">Directions</a></td></tr>
-          <tr><td>Classic Honda</td><td>30 Van Kirk Drive</td><td>Brampton</td><td>416-400-2442</td><td><a href="https://maps.google.com/?q=Classic+Honda+30+Van+Kirk+Drive+Brampton+ON" target="_blank" rel="noopener">Directions</a></td></tr>
-          <tr><td>Ideal Honda</td><td>5500 Dixie Road</td><td>Mississauga</td><td>905-238-3480</td><td><a href="https://maps.google.com/?q=Ideal+Honda+5500+Dixie+Road+Mississauga+ON" target="_blank" rel="noopener">Directions</a></td></tr>
-          <tr><td>Ready Honda</td><td>230 Dundas Street East</td><td>Mississauga</td><td>905-896-3500</td><td><a href="https://maps.google.com/?q=Ready+Honda+230+Dundas+Street+East+Mississauga+ON" target="_blank" rel="noopener">Directions</a></td></tr>
-          <tr><td>Meadowvale Honda</td><td>2210 Battleford Road</td><td>Mississauga</td><td>905-567-8881</td><td><a href="https://maps.google.com/?q=Meadowvale+Honda+2210+Battleford+Road+Mississauga+ON" target="_blank" rel="noopener">Directions</a></td></tr>
-          <tr><td>Mississauga Honda</td><td>2380 Motorway Boulevard</td><td>Mississauga</td><td>905-828-1650</td><td><a href="https://maps.google.com/?q=Mississauga+Honda+2380+Motorway+Boulevard+Mississauga+ON" target="_blank" rel="noopener">Directions</a></td></tr>
-          <tr><td>Pickering Honda</td><td>1800 Kingston Road</td><td>Pickering</td><td>905-831-5400</td><td><a href="https://maps.google.com/?q=Pickering+Honda+1800+Kingston+Road+Pickering+ON" target="_blank" rel="noopener">Directions</a></td></tr>
-          <tr><td>Whitby Oshawa Honda</td><td>300 Thickson Road South</td><td>Whitby</td><td>1-855-666-1772</td><td><a href="https://maps.google.com/?q=Whitby+Oshawa+Honda+300+Thickson+Road+South+Whitby+ON" target="_blank" rel="noopener">Directions</a></td></tr>
-          <tr><td>Oakville Honda</td><td>500 Iroquois Shore Road</td><td>Oakville</td><td>905-844-9831</td><td><a href="https://maps.google.com/?q=Oakville+Honda+500+Iroquois+Shore+Road+Oakville+ON" target="_blank" rel="noopener">Directions</a></td></tr>
-          <tr><td>Team Honda Powerhouse of Milton</td><td>170 Steeles Avenue East</td><td>Milton</td><td>905-864-8588</td><td><a href="https://maps.google.com/?q=Team+Honda+Powerhouse+of+Milton+170+Steeles+Avenue+East+Milton+ON" target="_blank" rel="noopener">Directions</a></td></tr>
-          <tr><td>Halton Honda</td><td>4100 Harvester Road</td><td>Burlington</td><td>905-632-5371</td><td><a href="https://maps.google.com/?q=Halton+Honda+4100+Harvester+Road+Burlington+ON" target="_blank" rel="noopener">Directions</a></td></tr>
-          <tr><td>Georgetown Honda</td><td>316 Guelph Street</td><td>Georgetown</td><td>905-873-1818</td><td><a href="https://maps.google.com/?q=Georgetown+Honda+316+Guelph+Street+Georgetown+ON" target="_blank" rel="noopener">Directions</a></td></tr>
-        </tbody>
-      </table>
+      <div class="dealer-grid">
+        <article class="dealer-card"><div class="dealer-name">Maple Honda</div><div class="dealer-meta">89 Auto Vaughan Drive<br>Maple / Vaughan<br>905-832-1202 &middot; <a href="https://maps.google.com/?q=Maple+Honda+89+Auto+Vaughan+Drive+Maple+ON" target="_blank" rel="noopener">Directions</a></div></article>
+        <article class="dealer-card"><div class="dealer-name">Richmond Hill Honda</div><div class="dealer-meta">77 16th Avenue<br>Richmond Hill<br>905-731-8899 &middot; <a href="https://maps.google.com/?q=Richmond+Hill+Honda+77+16th+Avenue+Richmond+Hill+ON" target="_blank" rel="noopener">Directions</a></div></article>
+        <article class="dealer-card"><div class="dealer-name">Sisley for Honda</div><div class="dealer-meta">88 Steeles Avenue West<br>Thornhill<br>1-866-384-5061 &middot; <a href="https://maps.google.com/?q=Sisley+for+Honda+88+Steeles+Avenue+West+Thornhill+ON" target="_blank" rel="noopener">Directions</a></div></article>
+        <article class="dealer-card"><div class="dealer-name">Number 7 Honda</div><div class="dealer-meta">5555 Highway 7 West<br>Woodbridge<br>905-851-2258 &middot; <a href="https://maps.google.com/?q=Number+7+Honda+5555+Highway+7+West+Woodbridge+ON" target="_blank" rel="noopener">Directions</a></div></article>
+        <article class="dealer-card"><div class="dealer-name">Markham Honda</div><div class="dealer-meta">8220 Kennedy Road<br>Markham<br>905-477-2451 &middot; <a href="https://maps.google.com/?q=Markham+Honda+8220+Kennedy+Road+Markham+ON" target="_blank" rel="noopener">Directions</a></div></article>
+        <article class="dealer-card"><div class="dealer-name">Stouffville Honda</div><div class="dealer-meta">35 Automall Boulevard<br>Stouffville<br>1-877-673-7348 &middot; <a href="https://maps.google.com/?q=Stouffville+Honda+35+Automall+Boulevard+Stouffville+ON" target="_blank" rel="noopener">Directions</a></div></article>
+        <article class="dealer-card"><div class="dealer-name">NewRoads Honda</div><div class="dealer-meta">75 Mulock Drive<br>Newmarket<br>905-898-4500 &middot; <a href="https://maps.google.com/?q=NewRoads+Honda+75+Mulock+Drive+Newmarket+ON" target="_blank" rel="noopener">Directions</a></div></article>
+        <article class="dealer-card"><div class="dealer-name">Midtown Honda</div><div class="dealer-meta">3400 Dufferin Street<br>Toronto<br>416-789-4101 &middot; <a href="https://maps.google.com/?q=Midtown+Honda+3400+Dufferin+Street+Toronto+ON" target="_blank" rel="noopener">Directions</a></div></article>
+        <article class="dealer-card"><div class="dealer-name">Parkway Honda</div><div class="dealer-meta">1681 Eglinton Avenue East<br>Toronto<br>416-752-6666 &middot; <a href="https://maps.google.com/?q=Parkway+Honda+1681+Eglinton+Avenue+East+Toronto+ON" target="_blank" rel="noopener">Directions</a></div></article>
+        <article class="dealer-card"><div class="dealer-name">Toronto Honda</div><div class="dealer-meta">2300 Danforth Avenue<br>Toronto<br>416-423-2000 &middot; <a href="https://maps.google.com/?q=Toronto+Honda+2300+Danforth+Avenue+Toronto+ON" target="_blank" rel="noopener">Directions</a></div></article>
+        <article class="dealer-card"><div class="dealer-name">Honda Downtown</div><div class="dealer-meta">47 Eastern Avenue<br>Toronto<br>1-866-865-3950 &middot; <a href="https://maps.google.com/?q=Honda+Downtown+47+Eastern+Avenue+Toronto+ON" target="_blank" rel="noopener">Directions</a></div></article>
+        <article class="dealer-card"><div class="dealer-name">Honda Queensway</div><div class="dealer-meta">630 Kipling Avenue<br>Toronto<br>416-252-0066 &middot; <a href="https://maps.google.com/?q=Honda+Queensway+630+Kipling+Avenue+Toronto+ON" target="_blank" rel="noopener">Directions</a></div></article>
+        <article class="dealer-card"><div class="dealer-name">Castle Honda</div><div class="dealer-meta">370 Rexdale Boulevard<br>Etobicoke<br>416-745-7060 &middot; <a href="https://maps.google.com/?q=Castle+Honda+370+Rexdale+Boulevard+Etobicoke+ON" target="_blank" rel="noopener">Directions</a></div></article>
+        <article class="dealer-card"><div class="dealer-name">Roadsport Honda</div><div class="dealer-meta">940 Ellesmere Road<br>Scarborough<br>416-291-9501 &middot; <a href="https://maps.google.com/?q=Roadsport+Honda+940+Ellesmere+Road+Scarborough+ON" target="_blank" rel="noopener">Directions</a></div></article>
+        <article class="dealer-card"><div class="dealer-name">Formula Honda</div><div class="dealer-meta">2240 Markham Road<br>Scarborough<br>416-754-4555 &middot; <a href="https://maps.google.com/?q=Formula+Honda+2240+Markham+Road+Scarborough+ON" target="_blank" rel="noopener">Directions</a></div></article>
+        <article class="dealer-card"><div class="dealer-name">Action Honda</div><div class="dealer-meta">4334 Kingston Road<br>Scarborough<br>416-281-1234 &middot; <a href="https://maps.google.com/?q=Action+Honda+4334+Kingston+Road+Scarborough+ON" target="_blank" rel="noopener">Directions</a></div></article>
+        <article class="dealer-card"><div class="dealer-name">Open Road Honda</div><div class="dealer-meta">4 Maritime Ontario Boulevard<br>Brampton<br>855-579-8772 &middot; <a href="https://maps.google.com/?q=Open+Road+Honda+4+Maritime+Ontario+Boulevard+Brampton+ON" target="_blank" rel="noopener">Directions</a></div></article>
+        <article class="dealer-card"><div class="dealer-name">Performance Honda Mayfield</div><div class="dealer-meta">30 Ace Drive<br>Brampton<br>905-460-3760 &middot; <a href="https://maps.google.com/?q=Performance+Honda+Mayfield+30+Ace+Drive+Brampton+ON" target="_blank" rel="noopener">Directions</a></div></article>
+        <article class="dealer-card"><div class="dealer-name">Classic Honda</div><div class="dealer-meta">30 Van Kirk Drive<br>Brampton<br>416-400-2442 &middot; <a href="https://maps.google.com/?q=Classic+Honda+30+Van+Kirk+Drive+Brampton+ON" target="_blank" rel="noopener">Directions</a></div></article>
+        <article class="dealer-card"><div class="dealer-name">Ideal Honda</div><div class="dealer-meta">5500 Dixie Road<br>Mississauga<br>905-238-3480 &middot; <a href="https://maps.google.com/?q=Ideal+Honda+5500+Dixie+Road+Mississauga+ON" target="_blank" rel="noopener">Directions</a></div></article>
+        <article class="dealer-card"><div class="dealer-name">Ready Honda</div><div class="dealer-meta">230 Dundas Street East<br>Mississauga<br>905-896-3500 &middot; <a href="https://maps.google.com/?q=Ready+Honda+230+Dundas+Street+East+Mississauga+ON" target="_blank" rel="noopener">Directions</a></div></article>
+        <article class="dealer-card"><div class="dealer-name">Meadowvale Honda</div><div class="dealer-meta">2210 Battleford Road<br>Mississauga<br>905-567-8881 &middot; <a href="https://maps.google.com/?q=Meadowvale+Honda+2210+Battleford+Road+Mississauga+ON" target="_blank" rel="noopener">Directions</a></div></article>
+        <article class="dealer-card"><div class="dealer-name">Mississauga Honda</div><div class="dealer-meta">2380 Motorway Boulevard<br>Mississauga<br>905-828-1650 &middot; <a href="https://maps.google.com/?q=Mississauga+Honda+2380+Motorway+Boulevard+Mississauga+ON" target="_blank" rel="noopener">Directions</a></div></article>
+        <article class="dealer-card"><div class="dealer-name">Pickering Honda</div><div class="dealer-meta">1800 Kingston Road<br>Pickering<br>905-831-5400 &middot; <a href="https://maps.google.com/?q=Pickering+Honda+1800+Kingston+Road+Pickering+ON" target="_blank" rel="noopener">Directions</a></div></article>
+        <article class="dealer-card"><div class="dealer-name">Whitby Oshawa Honda</div><div class="dealer-meta">300 Thickson Road South<br>Whitby<br>1-855-666-1772 &middot; <a href="https://maps.google.com/?q=Whitby+Oshawa+Honda+300+Thickson+Road+South+Whitby+ON" target="_blank" rel="noopener">Directions</a></div></article>
+        <article class="dealer-card"><div class="dealer-name">Oakville Honda</div><div class="dealer-meta">500 Iroquois Shore Road<br>Oakville<br>905-844-9831 &middot; <a href="https://maps.google.com/?q=Oakville+Honda+500+Iroquois+Shore+Road+Oakville+ON" target="_blank" rel="noopener">Directions</a></div></article>
+        <article class="dealer-card"><div class="dealer-name">Team Honda Powerhouse of Milton</div><div class="dealer-meta">170 Steeles Avenue East<br>Milton<br>905-864-8588 &middot; <a href="https://maps.google.com/?q=Team+Honda+Powerhouse+of+Milton+170+Steeles+Avenue+East+Milton+ON" target="_blank" rel="noopener">Directions</a></div></article>
+        <article class="dealer-card"><div class="dealer-name">Halton Honda</div><div class="dealer-meta">4100 Harvester Road<br>Burlington<br>905-632-5371 &middot; <a href="https://maps.google.com/?q=Halton+Honda+4100+Harvester+Road+Burlington+ON" target="_blank" rel="noopener">Directions</a></div></article>
+        <article class="dealer-card"><div class="dealer-name">Georgetown Honda</div><div class="dealer-meta">316 Guelph Street<br>Georgetown<br>905-873-1818 &middot; <a href="https://maps.google.com/?q=Georgetown+Honda+316+Guelph+Street+Georgetown+ON" target="_blank" rel="noopener">Directions</a></div></article>
+      </div>
     </div>
   </div>
 </section>
