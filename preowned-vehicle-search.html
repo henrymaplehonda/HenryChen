@@ -187,7 +187,7 @@ textarea{min-height:120px;resize:vertical}
 
     <div class="actions">
       <button class="action-btn" type="reset" id="clearBtn">Clear</button>
-      <button class="action-btn primary" type="submit" id="saveBtn">Save lead</button>
+      <button class="action-btn primary" type="submit" id="saveBtn">Let Henry Know</button>
     </div>
     <p id="statusMsg" class="status"></p>
   </form>
@@ -222,7 +222,7 @@ form.addEventListener('submit', async (event) => {
   statusMsg.classList.remove('error');
 
   saveBtn.disabled = true;
-  saveBtn.textContent = 'Saving...';
+  saveBtn.textContent = 'Letting Henry know...';
 
   try {
     const formData = new FormData(form);
@@ -238,15 +238,16 @@ form.addEventListener('submit', async (event) => {
       throw new Error('Submission failed');
     }
 
-    statusMsg.textContent = 'Lead saved. Henry will review and follow up shortly.';
+    statusMsg.textContent = "Thanks! Henry got your request and will contact you soon with your best options.";
     statusMsg.style.display = 'block';
+    alert("Thanks! Henry got your request and will contact you soon with your best options.");
   } catch (error) {
     statusMsg.textContent = 'Could not save right now. Please try again or call 647-523-6878.';
     statusMsg.classList.add('error');
     statusMsg.style.display = 'block';
   } finally {
     saveBtn.disabled = false;
-    saveBtn.textContent = 'Save lead';
+    saveBtn.textContent = 'Let Henry Know';
   }
 });
 
