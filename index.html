@@ -344,6 +344,39 @@ nav{
 }
 .dealer-meta a{color:#9a0000;text-decoration:underline}
 .dealer-sitemap-section{padding-top:56px;padding-bottom:56px}
+.seo-copy-toggle{
+  margin-top:18px;
+  max-width:920px;
+  border:1px solid var(--border);
+  border-radius:16px;
+  background:#fff;
+  overflow:hidden
+}
+.seo-copy-toggle summary{
+  list-style:none;
+  cursor:pointer;
+  padding:16px 20px;
+  font-size:15px;
+  font-weight:700;
+  color:var(--text);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px
+}
+.seo-copy-toggle summary::-webkit-details-marker{display:none}
+.seo-copy-toggle summary::after{
+  content:'+';
+  font-size:22px;
+  line-height:1;
+  color:var(--red);
+  flex-shrink:0
+}
+.seo-copy-toggle[open] summary::after{content:'-'}
+.seo-copy-body{
+  padding:0 20px 20px;
+  border-top:1px solid var(--border)
+}
 .hero-sub{
   font-size:14px;color:rgba(255,255,255,.55);
   max-width:460px;margin:0 auto 34px;line-height:1.65;
@@ -925,6 +958,7 @@ footer a{color:rgba(255,255,255,.4)}
       <div class="preowned-actions">
         <a class="preowned-btn" href="preowned-vehicle-search.html#inventory-live">View Current Inventory</a>
         <a class="preowned-btn sec" href="preowned-vehicle-search.html">Tell Henry What You Need</a>
+        <a class="preowned-btn sec" href="preowned-ai-chat.html">Start with AI Search Help</a>
       </div>
       <p class="preowned-disclaimer">
         Disclaimer: vehicle availability, specifications, and advertised prices may change without notice. Daily inventory information is sourced from Maple Honda, however sold, incoming, or newly listed units may not appear in real time. OMVIC notice: advertised prices are all-in pricing unless otherwise stated, plus HST and licensing only. Finance and lease offers are on approved credit (OAC). Please check with Henry for full details before purchase.
@@ -1067,27 +1101,31 @@ Even after the purchase, Henry has stayed in touch... He even reached out to pro
   <div class="section-inner">
     <div class="section-title">Honda Dealer in Vaughan, Ontario</div>
     <p class="section-sub" style="max-width:900px">
-      If you're searching for a Honda dealer in Vaughan, Maple, or the Greater Toronto Area, Henry Chen at Maple Honda offers expert guidance on new and pre-owned Honda vehicles including Civic, CR-V, Accord, Pilot, Prelude, HR-V, and Odyssey.
-    </p>
-    <p class="section-sub" style="max-width:900px;margin-top:14px">
       Customers from Vaughan, Richmond Hill, Markham, North York, and Toronto visit Maple Honda for Honda test drives, lease options, finance options, and clear advice without pressure.
     </p>
-    <p class="section-sub" style="max-width:900px;margin-top:14px">
-      Browse city-specific buying pages for <a href="honda-dealer-richmond-hill.html">Richmond Hill</a>, <a href="honda-dealer-thornhill.html">Thornhill</a>, <a href="honda-dealer-markham.html">Markham</a>, <a href="honda-dealer-aurora.html">Aurora</a>, <a href="honda-dealer-newmarket.html">Newmarket</a>, <a href="honda-dealer-king-city.html">King City</a>, <a href="honda-dealer-woodbridge.html">Woodbridge</a>, <a href="honda-dealer-north-york.html">North York</a>, and <a href="honda-dealer-etobicoke.html">Etobicoke</a>.
-    </p>
-    <p class="section-sub" style="max-width:900px;margin-top:14px">
-      If you searched Richmond Hill Honda, Thornhill Honda, Number 7 Honda, Highway 7 Honda, or Markham Honda, this page is built to help you compare nearby options and book with confidence.
-    </p>
-    <p class="section-sub" style="max-width:900px;margin-top:14px">
-      Browse focused local resources for <a href="used-honda-vaughan.html">used Honda Vaughan shoppers</a> and <a href="used-toyota-vaughan.html">used Toyota Vaughan buyers</a> to match high-intent local search queries.
-    </p>
-    
-    <p class="section-sub" style="max-width:900px;margin-top:14px">
-      If you are cross-shopping brands, start with the <a href="honda-vs-toyota-vaughan.html">Honda vs Toyota Vaughan guide</a> so you can compare the real decision points before you visit.
-    </p>
-    <p class="section-sub" style="max-width:900px;margin-top:14px">
-      If your research starts with VW, Mazda, Subaru, Kia, Hyundai, Ford, Toyota, or Honda, use the <a href="vaughan-car-comparison-guides.html">Vaughan car comparison hub</a> and then drill into the <a href="best-compact-suv-vaughan.html">compact SUV</a>, <a href="best-compact-cars-vaughan.html">compact car</a>, or <a href="best-3-row-suv-vaughan.html">3-row SUV</a> guides.
-    </p>
+    <details class="seo-copy-toggle">
+      <summary>Local buying resources and nearby Honda comparison pages</summary>
+      <div class="seo-copy-body">
+        <p class="section-sub" style="max-width:900px;margin-top:14px">
+          If you're searching for a Honda dealer in Vaughan, Maple, or the Greater Toronto Area, Henry Chen at Maple Honda offers expert guidance on new and pre-owned Honda vehicles including Civic, CR-V, Accord, Pilot, Prelude, HR-V, and Odyssey.
+        </p>
+        <p class="section-sub" style="max-width:900px;margin-top:14px">
+          Browse city-specific buying pages for <a href="honda-dealer-richmond-hill.html">Richmond Hill</a>, <a href="honda-dealer-thornhill.html">Thornhill</a>, <a href="honda-dealer-markham.html">Markham</a>, <a href="honda-dealer-aurora.html">Aurora</a>, <a href="honda-dealer-newmarket.html">Newmarket</a>, <a href="honda-dealer-king-city.html">King City</a>, <a href="honda-dealer-woodbridge.html">Woodbridge</a>, <a href="honda-dealer-north-york.html">North York</a>, and <a href="honda-dealer-etobicoke.html">Etobicoke</a>.
+        </p>
+        <p class="section-sub" style="max-width:900px;margin-top:14px">
+          If you searched Richmond Hill Honda, Thornhill Honda, Number 7 Honda, Highway 7 Honda, or Markham Honda, this page is built to help you compare nearby options and book with confidence.
+        </p>
+        <p class="section-sub" style="max-width:900px;margin-top:14px">
+          Browse focused local resources for <a href="used-honda-vaughan.html">used Honda Vaughan shoppers</a> and <a href="used-toyota-vaughan.html">used Toyota Vaughan buyers</a> to match high-intent local search queries.
+        </p>
+        <p class="section-sub" style="max-width:900px;margin-top:14px">
+          If you are cross-shopping brands, start with the <a href="honda-vs-toyota-vaughan.html">Honda vs Toyota Vaughan guide</a> so you can compare the real decision points before you visit.
+        </p>
+        <p class="section-sub" style="max-width:900px;margin-top:14px">
+          If your research starts with VW, Mazda, Subaru, Kia, Hyundai, Ford, Toyota, or Honda, use the <a href="vaughan-car-comparison-guides.html">Vaughan car comparison hub</a> and then drill into the <a href="best-compact-suv-vaughan.html">compact SUV</a>, <a href="best-compact-cars-vaughan.html">compact car</a>, or <a href="best-3-row-suv-vaughan.html">3-row SUV</a> guides.
+        </p>
+      </div>
+    </details>
   </div>
 </section>
 
