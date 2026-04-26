@@ -1112,24 +1112,6 @@ function render() {
     </div>
     ${kmAllowance === 40000 ? `<div style="font-size:11px;color:var(--yellow);margin:-6px 0 10px;padding:6px 16px;background:rgba(245,166,35,.06);border-radius:6px;border:1px solid rgba(245,166,35,.15)">* 40k/yr = 24k standard + 16k prepaid. Extra ${(kmAllowance-24000).toLocaleString()} km × 5yr × $0.08 = <strong>$${((kmAllowance-24000)*5*0.08).toLocaleString()}</strong> added to amortization. Residual reduced accordingly.</div>` : ''}
 
-    <!-- ADD-ONS -->
-    <div class="opt-bar">
-      <span class="opt-title">Add-ons</span>
-      <div class="opt-item">
-        <input class="opt-cb" type="checkbox" id="opt-color" ${optColor?'checked':''} onchange="optColor=this.checked;render()">
-        <label class="opt-lbl" for="opt-color">Colour <b>+$4.78/2wk</b></label>
-      </div>
-      <div class="opt-item">
-        <input class="opt-cb" type="checkbox" id="opt-wl" ${optWheelLock?'checked':''} onchange="optWheelLock=this.checked;render()">
-        <label class="opt-lbl" for="opt-wl">Wheel Locks <b>+$1.50/2wk</b></label>
-      </div>
-      <div class="opt-item">
-        <input class="opt-cb" type="checkbox" id="opt-prot" ${optProtection?'checked':''} onchange="optProtection=this.checked;render()">
-        <label class="opt-lbl" for="opt-prot">Protection Pkg <b>$${protCost(m).toLocaleString()}</b><span style="font-size:11px;color:var(--dim)"> · added to finance principal</span></label>
-      </div>
-      ${optBWval > 0 || optProtection ? `<span style="margin-left:auto;font-size:12px;color:var(--dim)">Total add-ons impact shown on each card</span>` : ''}
-    </div>
-
     <!-- WARRANTY PANEL -->
     ${warrantyOpen ? renderWarrantyPanel(m) : ''}
 
@@ -1780,8 +1762,6 @@ function printQuote() {
   const f84bwgw = fbw(cap+gapAmt+wCost, 84, r.fr84), f84mogw = fmo(cap+gapAmt+wCost, 84, r.fr84);
 
   const addons = [
-    optColor ? `Colour +$${OPT_COLOR}/2wk` : '',
-    optWheelLock ? `Wheel Locks +$${OPT_WHEELLOCK}/2wk` : '',
     optLeaseGuard ? `Lease Guard Pro +$${OPT_LEASEGUARD_PRO}/2wk (all lease terms)` : '',
   ].filter(Boolean).join(' · ');
 
@@ -1958,7 +1938,7 @@ function printQuote() {
 <!-- OPTIONS -->
 ${addons || warrantySelected ? `
 <div class="opts-row">
-  <span class="lbl">Add-ons:</span>
+  <span class="lbl">Options:</span>
   ${addons ? `<span>${addons}</span>` : ''}
   ${warrantySelected ? `<span style="color:#1a7a45;font-weight:600">🛡 Warranty: ${warrantySelected.label} · $${warrantySelected.cost.toLocaleString()}</span>` : ''}
 </div>` : ''}
