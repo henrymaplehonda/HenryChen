@@ -452,8 +452,10 @@ const M = [
 // ── PASSPORT ─────────────────────────────────────────────────────────
 // HR044/HL042: 5.79% Finance flat · 5.69% Lease flat · $1,000 Finance + $1,000 Lease
 {id:'pp-ts', cat:'Passport', name:'Passport', trim:'TrailSport',
- msrp:56981, price:60126, otd:67942, engine:'3.5L V6 285hp / 10AT', drive:'i-VTM4 AWD',
- lr:{36:5.69,60:5.69}, rv:{36:.56,60:.40}, fr:{60:5.79,84:5.79}},
+ msrp:56990, price:60135.5, otd:67952.18, engine:'3.5L V6 285hp / 10AT', drive:'i-VTM4 AWD',
+ lr:{36:5.69,60:5.69}, rv:{36:.56,60:.40}, fr:{60:5.79,84:5.79},
+ fees:{tire:22.5},
+ resKm:{12000:25075.6,20000:23935.8,24000:22796}},
 
 {id:'pp-tb', cat:'Passport', name:'Passport', trim:'TrailSport Blackout',
  msrp:58181, price:61326, otd:69298, engine:'3.5L V6 285hp / 10AT', drive:'i-VTM4 AWD',
@@ -642,15 +644,17 @@ function kmResAdj(price, km) {
 // Fee breakdown helper
 function getFees(m) {
   const o = feeOv[m.id] || {};
+  const base = m.fees || {};
   const isSedan = ['Civic Sedan','Civic Hatchback','Accord','Prelude'].includes(m.cat);
   const isSi    = m.id === 'cs-si';
-  const fpdi    = o.fpdi ?? ((isSedan || isSi) ? 1830 : 2000);
-  const isHybridOrEV = m.engine.includes('Hybrid') || m.engine.includes('Electric');
-  const tire    = o.tire ?? ((!isSedan && !isSi && !isHybridOrEV) ? 22 : 18);
-  const ac = o.ac ?? 100;
-  const omvic = o.omvic ?? 22;
-  const env = o.env ?? 1;
-  const dealer = o.dealer ?? 1000;
+  const fpdi    = o.fpdi ?? base.fpdi ?? ((isSedan || isSi) ? 1830 : 2000);
+  const engine = m.engine || '';
+  const isHybridOrEV = engine.includes('Hybrid') || engine.includes('Electric');
+  const tire    = o.tire ?? base.tire ?? ((!isSedan && !isSi && !isHybridOrEV) ? 22 : 18);
+  const ac = o.ac ?? base.ac ?? 100;
+  const omvic = o.omvic ?? base.omvic ?? 22;
+  const env = o.env ?? base.env ?? 1;
+  const dealer = o.dealer ?? base.dealer ?? 1000;
   const total = fpdi + ac + omvic + env + tire + dealer;
   return { fpdi, ac, omvic, env, tire, dealer, total };
 }
@@ -1196,6 +1200,7 @@ function finCard(label, months, rate, monthly, biw, monthlyG, biwG, monthlyGP, b
   const wCost = warrantySelected ? warrantySelected.cost : 0;
   const taxMult = 1 + taxRate / 100;
   const cap2 = cur ? Math.max(0, R(cur).price - incentiveTotal(cur) - downPayment - (feeUpfront ? getFees(cur).total : 0) - (tradeInVal-tradeInOwing)/taxMult - leaseEquity/taxMult) : 0;
+  const hasFinPromo = Math.abs(Number(rate) - 6.99) > 0.001;
   return `
     <div class="pcard">
       <div class="pc-hdr">
@@ -1205,6 +1210,7 @@ function finCard(label, months, rate, monthly, biw, monthlyG, biwG, monthlyGP, b
         </div>
         <div class="pc-rate-area">
           <div class="pc-rate">${rate}% APR</div>
+          ${hasFinPromo ? `<span class="pc-promo-tag">⚡ HFS PROMO</span>` : ''}
         </div>
       </div>
       <div class="pc-body">

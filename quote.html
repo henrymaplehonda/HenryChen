@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Maple Honda</title>
+<title>Blitz Deal v1.0</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
 body{background:#0a0a0a;font-family:'Segoe UI',system-ui,sans-serif;}
@@ -25,7 +25,7 @@ button:hover{background:#c8041d;}
 <div id="gate">
   <div class="box">
     <div class="logo">H</div>
-    <div class="title">Honda Quick Quote</div>
+    <div class="title">Blitz Deal v1.0</div>
     <div class="sub">Maple Honda · Internal Tool</div>
     <input id="pw" type="password" placeholder="Enter password" maxlength="20"
       onkeydown="if(event.key==='Enter')unlock()">
@@ -51,7 +51,7 @@ function show(){
   document.getElementById('gate').style.display='none';
   const t=document.getElementById('tool');
   t.style.display='block';
-  t.innerHTML='<iframe src="qt.html" title="Honda Quick Quote"></iframe>';
+  t.innerHTML='<iframe src="qt.html" title="Blitz Deal v1.0"></iframe>';
 }
 if(sessionStorage.getItem(SK)==='1') show();
 </script>
