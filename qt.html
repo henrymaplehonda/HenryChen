@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="robots" content="noindex,nofollow,noarchive">
-<script>if(typeof sessionStorage!=='undefined'&&sessionStorage.getItem('mh_qt_auth')!=='1'){window.location.replace('quote.html');}</script>
+<script>if(typeof sessionStorage!=="undefined"&&sessionStorage.getItem("mh_qt_auth")!=="1"){window.location.replace("quote.html");}</script>
 <title>Honda Quick Quote — Maple Honda</title>
 <style>
 :root {
@@ -263,6 +263,10 @@ body{font-family:'Segoe UI',system-ui,sans-serif;font-size:16.5px;line-height:1.
   <div class="hdr-right">
     <div class="data-stamp">📅 Prices pulled: Apr 25, 2026</div>
     <div class="data-stamp" style="color:var(--yellow)">⚠ Estimate only — verify at honda.ca</div>
+    <div style="display:flex;gap:10px;justify-content:flex-end">
+      <a href="compare.html" style="font-size:10px;color:var(--muted);text-decoration:none;letter-spacing:.3px;transition:color .15s" onmouseover="this.style.color='var(--dim)'" onmouseout="this.style.color='var(--muted)'">⚖ Compare</a>
+      <a href="admin.html" style="font-size:10px;color:var(--muted);text-decoration:none;letter-spacing:.3px;transition:color .15s" onmouseover="this.style.color='var(--dim)'" onmouseout="this.style.color='var(--muted)'">⚙ Admin</a>
+    </div>
   </div>
 </div>
 
@@ -629,8 +633,33 @@ function getFees(m) {
 }
 
 let breakdownOpen = false;
-let kmAllowance = 20000; // default 20k/yr
+let kmAllowance = 20000;
 let tradeInVal = 0, tradeInOwing = 0, leaseEquity = 0, optProtection = false, feesUpfront = false;
+
+// Term selectors — which term to show on each of the 4 payment cards
+let leaseTerm1 = 24;   // left lease card — starts at 24mo
+let leaseTerm2 = 60;   // right lease card
+let finTerm1   = 60;   // left finance card (default 5yr)
+let finTerm2   = 84;   // right finance card (default 7yr)
+
+// All available terms
+const LEASE_TERMS = [24, 30, 36, 42, 48, 54, 60];
+const FIN_TERMS   = [24, 36, 48, 60, 72, 84, 96];
+
+// Get lease rate for any term using the model's lr36/lr60 as bands
+function lrForTerm(r, mo) {
+  if (mo <= 36) return r.lr36;
+  return r.lr60;
+}
+// Get finance rate for any term
+function frForTerm(r, mo) {
+  if (mo <= 60) return r.fr60;
+  return r.fr84;
+}
+// Get residual for any lease term
+function resForTerm(m, r, mo) {
+  return mo <= 36 ? getRes(m, 36) : (r.rv60 ? getRes(m, 60) : getRes(m, 36));
+}
 
 // Protection package costs by model tier (from honda.ca build tool, May 2025)
 function protCost(m) {
@@ -797,6 +826,10 @@ function pick(id) {
   finWarrantyOpen = {};
   leaseWarrantyOpen = {};
   moreOptionsOpen = false;
+  leaseTerm1 = 24;
+  leaseTerm2 = 60;
+  finTerm1   = 60;
+  finTerm2   = 84;
   leaseEquity = 0;
   feesUpfront = false;
   render();
@@ -814,7 +847,19 @@ function render() {
   const finP = cap;
   const dynamicOTD = Math.max(0, cap) * 1.13;  // principal + 13% HST
 
-  // Lease — uses HFS-confirmed residual if entered, else estimate
+  // Dynamic lease calculations for selected terms
+  const getLeaseCard = (term) => {
+    const rt = lrForTerm(r, term);
+    const resObj = resForTerm(m, r, term);
+    if (!rt || !resObj) return null;
+    const mo = lmo(cap, resObj.val, term, rt);
+    return { mo, bw: mo2bw(mo), resObj, rt, confirmed: resObj.confirmed };
+  };
+
+  const lcard1 = getLeaseCard(leaseTerm1);
+  const lcard2 = getLeaseCard(leaseTerm2);
+
+  // Keep legacy vars for breakdown panel compatibility
   const res36obj = getRes(m, 36);
   const res60obj = r.rv60 ? getRes(m, 60) : null;
   const res36 = res36obj.val;
@@ -823,28 +868,35 @@ function render() {
   const res60confirmed = res60obj ? res60obj.confirmed : false;
   const l36mo = lmo(cap, res36, 36, r.lr36);
   const l60mo = (r.lr60 && res60 !== null) ? lmo(cap, res60, 60, r.lr60) : null;
-  const l36bw = mo2bw(l36mo);
-  const l60bw = l60mo !== null ? mo2bw(l60mo) : null;
+  const l36bw = mo2bw(l36mo), l60bw = l60mo !== null ? mo2bw(l60mo) : null;
+
+  // Dynamic finance calculations for selected terms
+  const getFinCard = (term) => {
+    const rt = frForTerm(r, term);
+    if (!rt) return null;
+    return {
+      mo: fmo(finP, term, rt), bw: fbw(finP, term, rt),
+      mog: fmo(finP + gapAmt, term, rt), bwg: fbw(finP + gapAmt, term, rt),
+      mogp: fmo(finP + gapAmt + prot, term, rt), bwgp: fbw(finP + gapAmt + prot, term, rt),
+      rt
+    };
+  };
+  const fc1 = getFinCard(finTerm1);
+  const fc2 = getFinCard(finTerm2);
 
   // Options add-on (bi-weekly → monthly)
   const optBWval = optBW();
   const optMOval = bw2mo(optBWval);
 
   // Finance
-  const prot  = optProtection ? protCost(m) : 0;
-  const f60mo  = fmo(finP, 60, r.fr60);
-  const f60bw  = fbw(finP, 60, r.fr60);
-  const f84mo  = fmo(finP, 84, r.fr84);
-  const f84bw  = fbw(finP, 84, r.fr84);
-  const f60mog = fmo(finP + gapAmt, 60, r.fr60);
-  const f60bwg = fbw(finP + gapAmt, 60, r.fr60);
-  const f84mog = fmo(finP + gapAmt, 84, r.fr84);
-  const f84bwg = fbw(finP + gapAmt, 84, r.fr84);
-  // With both GAP + Protection Pkg
-  const f60mogp = fmo(finP + gapAmt + prot, 60, r.fr60);
-  const f60bwgp = fbw(finP + gapAmt + prot, 60, r.fr60);
-  const f84mogp = fmo(finP + gapAmt + prot, 84, r.fr84);
-  const f84bwgp = fbw(finP + gapAmt + prot, 84, r.fr84);
+  const prot = optProtection ? protCost(m) : 0;
+  // fc1 and fc2 already calculated above via getFinCard()
+
+  // Legacy breakdown vars
+  const f60mo = fmo(finP, 60, r.fr60);
+  const f60bw = fbw(finP, 60, r.fr60);
+  const f84mo = fmo(finP, 84, r.fr84);
+  const f84bw = fbw(finP, 84, r.fr84);
 
   const hasPromo = !!m.promo;
   document.getElementById('hdr-model').textContent = `${m.name} ${m.trim} · ${ca$(r.price)}`;
@@ -1084,19 +1136,19 @@ function render() {
     </div>
 
     <!-- LEASE CARDS -->
-    <div class="sec-hdr">Lease Options <span class="sec-note">&nbsp;· ${kmAllowance.toLocaleString()} km/yr · Enter actual HFS residual $ on each card for accurate payment</span></div>
+    <div class="sec-hdr">Lease Options
+      <span class="sec-note">&nbsp;· ${kmAllowance.toLocaleString()} km/yr · Enter actual HFS residual $ on each card</span>
+    </div>
     <div class="pgrid">
-      ${leaseCard('3 Year',36,l36mo,l36bw,res36,res36obj.pct,r.lr36,m.promo,true,optBWval,optMOval,res36confirmed,resOv[m.id]?.[36]??'',true)}
-      ${l60mo!==null
-        ? leaseCard('5 Year',60,l60mo,l60bw,res60,res60obj.pct,r.lr60,m.promo,false,optBWval,optMOval,res60confirmed,resOv[m.id]?.[60]??'',true)
-        : `<div class="empty-card">No 5yr lease available for this model</div>`}
+      ${lcard1 ? leaseCard(leaseTerm1, lcard1, 1, optBWval, optMOval) : `<div class="empty-card">STD rate — no promo for this term</div>`}
+      ${lcard2 ? leaseCard(leaseTerm2, lcard2, 2, optBWval, optMOval) : `<div class="empty-card">STD rate — no promo for this term</div>`}
     </div>
 
     <!-- FINANCE CARDS -->
     <div class="sec-hdr">Finance Options</div>
     <div class="pgrid">
-      ${finCard('5 Year',60,r.fr60,f60mo,f60bw,f60mog,f60bwg,f60mogp,f60bwgp,prot,m)}
-      ${finCard('7 Year',84,r.fr84,f84mo,f84bw,f84mog,f84bwg,f84mogp,f84bwgp,prot,m)}
+      ${fc1 ? finCard(finTerm1, fc1, 1, m) : `<div class="empty-card">STD rate</div>`}
+      ${fc2 ? finCard(finTerm2, fc2, 2, m) : `<div class="empty-card">STD rate</div>`}
     </div>
 
     <!-- MORE OPTIONS: ALL TERMS -->
@@ -1168,6 +1220,9 @@ function render() {
         · Maple Honda is registered with OMVIC. All transactions subject to OMVIC Act &amp; Code of Ethics.
       </div>
     </div>
+    <div style="text-align:center;padding:12px 0 4px;font-size:11px;color:var(--muted)">
+      🛠 Tech Support: <a href="tel:6475236878" style="color:var(--dim);text-decoration:none;">647-523-6878</a>
+    </div>
   `;
 
   // Re-sync down payment active button
@@ -1180,26 +1235,37 @@ function render() {
 // ═══════════════════════════════════════════════════════════════════════
 //  CARD BUILDERS
 // ═══════════════════════════════════════════════════════════════════════
-function leaseCard(label, months, monthly, biw, resVal, resPct, rate, promo, is36, optBWval, optMOval, resConfirmed, resOvCurrent, showLeaseGuard) {
-  const hasPromo = promo && promo.term === months;
-  const lgBW  = (showLeaseGuard && optLeaseGuard) ? OPT_LEASEGUARD_PRO : 0;
+function leaseCard(term, data, slot, optBWval, optMOval) {
+  const { mo, bw, resObj, rt } = data;
+  const lgBW  = optLeaseGuard ? OPT_LEASEGUARD_PRO : 0;
   const lgMO  = bw2mo(lgBW);
-  const totalMO = monthly + (optMOval || 0) + lgMO;
-  const totalBW = biw    + (optBWval || 0) + lgBW;
-  const resBadge = resConfirmed
-    ? `<span style="font-size:10px;font-weight:700;color:var(--green);background:var(--green-bg);border:1px solid var(--green-bdr);padding:1px 6px;border-radius:3px;">✓ HFS ACTUAL</span>`
-    : `<span style="font-size:10px;font-weight:700;color:var(--yellow);background:rgba(245,166,35,.08);border:1px solid rgba(245,166,35,.2);padding:1px 6px;border-radius:3px;">⚠ ESTIMATE</span>`;
+  const totalBW = bw    + (optBWval || 0) + lgBW;
+  const totalMO = mo    + (optMOval || 0) + lgMO;
+  const resOvVal = cur ? (resOv[cur.id]?.[term <= 36 ? 36 : 60] ?? '') : '';
+
+  const termVar = slot === 1 ? 'leaseTerm1' : 'leaseTerm2';
+  const otherTerm = slot === 1 ? leaseTerm2 : leaseTerm1;
+
+  const termLabel = term === 36 ? '3 Year' : term === 60 ? '5 Year' : `${term} Month`;
+  const resBadge = resObj.confirmed
+    ? `<span style="font-size:10px;font-weight:700;color:var(--green);background:var(--green-bg);border:1px solid var(--green-bdr);padding:1px 6px;border-radius:3px;">✓ ${resObj.src}</span>`
+    : `<span style="font-size:10px;font-weight:700;color:var(--yellow);background:rgba(245,166,35,.08);border:1px solid rgba(245,166,35,.2);padding:1px 6px;border-radius:3px;">⚠ Estimate</span>`;
+
   return `
     <div class="pcard">
       <div class="pc-hdr">
         <div>
           <div class="pc-type lease">LEASE</div>
-          <div class="pc-term">${label} · ${months} months · ${kmAllowance.toLocaleString()} km/yr</div>
+          <div class="pc-term" style="display:flex;align-items:center;gap:6px;margin-top:2px;">
+            <select onchange="${termVar}=parseInt(this.value);render()"
+              style="background:var(--s3);border:1px solid rgba(74,158,255,.3);color:var(--blue);padding:3px 6px;border-radius:5px;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;outline:none;">
+              ${LEASE_TERMS.map(t => `<option value="${t}" ${t===term?'selected':''}>${t} months</option>`).join('')}
+            </select>
+            <span style="font-size:11px;color:var(--dim);">${kmAllowance.toLocaleString()} km/yr</span>
+          </div>
         </div>
         <div class="pc-rate-area">
-          <div class="pc-rate">${rate}% APR</div>
-          ${hasPromo  ? `<span class="pc-promo-tag">⚡ HFS PROMO</span>` : ''}
-          ${!hasPromo && is36 ? `<span class="pc-no-promo">Est. buy rate</span>` : ''}
+          <div class="pc-rate">${rt}% APR</div>
         </div>
       </div>
       <div class="pc-body">
@@ -1211,7 +1277,7 @@ function leaseCard(label, months, monthly, biw, resVal, resPct, rate, promo, is3
           <span class="pay-lbl">Monthly</span>
           <span class="pay-num secondary">${ca$c(totalMO)}<span class="pay-unit">/mo</span></span>
         </div>
-        ${showLeaseGuard ? `
+        <!-- LEASE GUARD PRO -->
         <div style="background:rgba(168,124,245,.06);border:1px solid rgba(168,124,245,.15);border-radius:6px;padding:9px 12px;margin-top:10px;display:flex;align-items:center;justify-content:space-between;gap:8px">
           <div>
             <div style="font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--purple);margin-bottom:3px">Lease Guard Pro</div>
@@ -1220,41 +1286,16 @@ function leaseCard(label, months, monthly, biw, resVal, resPct, rate, promo, is3
           <label style="display:flex;align-items:center;gap:7px;cursor:pointer">
             <input type="checkbox" ${optLeaseGuard?'checked':''} onchange="optLeaseGuard=this.checked;render()"
               style="width:16px;height:16px;accent-color:var(--purple);cursor:pointer">
-            <span style="font-size:12px;color:var(--purple);font-weight:600">${optLeaseGuard ? '✓ Added' : 'Add'}</span>
+            <span style="font-size:12px;color:var(--purple);font-weight:600">${optLeaseGuard ? 'Added ✓' : 'Add'}</span>
           </label>
-        </div>` : ''}
-        <div class="pc-div"></div>
-        <div class="res-box">
-          <div>
-            <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px">
-              <span class="res-lbl">Residual</span>
-              ${resBadge}
-            </div>
-            <div style="display:flex;align-items:center;gap:8px">
-              <span class="res-val">${ca$(resVal)}</span>
-              <span class="res-pct">(${(resPct*100).toFixed(1)}%)</span>
-            </div>
-          </div>
-          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
-            <div style="font-size:10px;color:rgba(74,158,255,.5)">Override with HFS $:</div>
-            <input
-              type="number"
-              placeholder="e.g. 15275"
-              value="${resOvCurrent}"
-              style="width:110px;background:#0d1a2a;border:1px solid rgba(74,158,255,.3);color:var(--blue);padding:5px 8px;border-radius:5px;font-size:13px;font-family:inherit;text-align:right"
-              oninput="setResOv(${months}, this.value)"
-              title="Enter actual HFS residual from honda.ca or your DMS"
-            >
-          </div>
         </div>
-        ${!resConfirmed ? `<div style="font-size:10px;color:rgba(245,166,35,.6);text-align:right;margin-top:5px">Payment changes when you enter actual HFS residual →</div>` : ''}
         <!-- WARRANTY SUB-MENU (LEASE) -->
         <div style="margin-top:10px">
-          <button onclick="leaseWarrantyOpen[${months}]=!leaseWarrantyOpen[${months}];render()"
+          <button onclick="leaseWarrantyOpen[${term}]=!leaseWarrantyOpen[${term}];render()"
             style="width:100%;background:${warrantySelected?'rgba(0,212,122,.08)':'none'};border:1px solid ${warrantySelected?'var(--green)':'var(--border2)'};color:${warrantySelected?'var(--green)':'var(--dim)'};padding:7px;border-radius:6px;font-size:12px;font-family:inherit;cursor:pointer;">
-            🛡 Warranty ${warrantySelected?'✓ '+warrantySelected.label : leaseWarrantyOpen[months]?'▲ Hide':'▼ Add'}
+            🛡 Warranty ${warrantySelected?'✓ '+warrantySelected.label : leaseWarrantyOpen[term]?'▲ Hide':'▼ Add'}
           </button>
-          ${leaseWarrantyOpen[months] && cur ? `
+          ${leaseWarrantyOpen[term] && cur ? `
           <div style="margin-top:8px;background:var(--s3);border:1px solid var(--border);border-radius:7px;padding:10px;max-height:180px;overflow-y:auto;">
             ${WARRANTY_PLANS.map((p) => {
               const tier2 = cur ? warrantyTier(cur) : 'civic';
@@ -1268,38 +1309,60 @@ function leaseCard(label, months, monthly, biw, resVal, resPct, rate, promo, is3
                 + '</div>';
             }).join('')}
           </div>` : ''}
-          ${warrantySelected ? `
-          <div style="margin-top:6px;padding:7px 10px;background:rgba(0,212,122,.06);border:1px solid var(--green-bdr);border-radius:5px;font-size:12px;color:var(--green)">
-            ✓ ${warrantySelected.label} · $${warrantySelected.cost.toLocaleString()} (shown in finance cards)
-          </div>` : ''}
         </div>
+        <div class="pc-div"></div>
+        <div class="res-box">
+          <div>
+            <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px">
+              <span class="res-lbl">Residual</span>${resBadge}
+            </div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <span class="res-val">${ca$(resObj.val)}</span>
+              <span class="res-pct">(${(resObj.pct*100).toFixed(1)}%)</span>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
+            <div style="font-size:10px;color:rgba(74,158,255,.5)">Override HFS $:</div>
+            <input type="number" placeholder="e.g. 15275" value="${resOvVal}"
+              style="width:110px;background:#0d1a2a;border:1px solid rgba(74,158,255,.3);color:var(--blue);padding:5px 8px;border-radius:5px;font-size:13px;font-family:inherit;text-align:right"
+              oninput="setResOv(${term<=36?36:60}, this.value)">
+          </div>
+        </div>
+        ${!resObj.confirmed ? `<div style="font-size:10px;color:rgba(245,166,35,.6);text-align:right;margin-top:5px">Enter HFS residual above for accurate payment →</div>` : ''}
       </div>
     </div>`;
 }
-
-function finCard(label, months, rate, monthly, biw, monthlyG, biwG, monthlyGP, biwGP, protAmt, m2) {
-  const wOpen = finWarrantyOpen[months] || false;
+function finCard(term, data, slot, m2) {
+  const { mo, bw, mog, bwg, mogp, bwgp, rt } = data;
+  const wOpen = finWarrantyOpen[term] || false;
   const wCost = warrantySelected ? warrantySelected.cost : 0;
-  const cap2 = cur ? R(cur).price - downPayment : 0;
+  const cap2  = cur ? R(cur).price - downPayment : 0;
+  const termVar = slot === 1 ? 'finTerm1' : 'finTerm2';
+
   return `
     <div class="pcard">
       <div class="pc-hdr">
         <div>
           <div class="pc-type fin">FINANCE</div>
-          <div class="pc-term">${label} · ${months} months</div>
+          <div class="pc-term" style="margin-top:2px;">
+            <select onchange="${termVar}=parseInt(this.value);render()"
+              style="background:var(--s3);border:1px solid rgba(0,212,122,.3);color:var(--green);padding:3px 6px;border-radius:5px;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;outline:none;">
+              ${FIN_TERMS.map(t => '<option value="' + t + '"' + (t===term?' selected':'') + '>' + t + ' months</option>').join('')}
+            </select>
+          </div>
         </div>
         <div class="pc-rate-area">
-          <div class="pc-rate">${rate}% APR</div>
+          <div class="pc-rate">${rt}% APR</div>
         </div>
       </div>
       <div class="pc-body">
         <div class="pay-row">
           <span class="pay-lbl">Bi-Weekly</span>
-          <span class="pay-num">${ca$c(biw)}<span class="pay-unit">/2wk</span></span>
+          <span class="pay-num">${ca$c(bw)}<span class="pay-unit">/2wk</span></span>
         </div>
         <div class="pay-row">
           <span class="pay-lbl">Monthly</span>
-          <span class="pay-num secondary">${ca$c(monthly)}<span class="pay-unit">/mo</span></span>
+          <span class="pay-num secondary">${ca$c(mo)}<span class="pay-unit">/mo</span></span>
         </div>
         <div class="pc-div"></div>
         <div class="gap-box">
@@ -1308,95 +1371,46 @@ function finCard(label, months, rate, monthly, biw, monthlyG, biwG, monthlyGP, b
           </div>
           <div class="gap-row">
             <span class="gap-lbl">Bi-Weekly</span>
-            <span class="gap-num">${ca$c(biwG)}<span class="pay-unit">/2wk</span></span>
+            <span class="gap-num">${ca$c(bwg)}<span class="pay-unit">/2wk</span></span>
           </div>
           <div class="gap-row">
             <span class="gap-lbl">Monthly</span>
-            <span class="gap-num sm">${ca$c(monthlyG)}<span class="pay-unit">/mo</span></span>
+            <span class="gap-num sm">${ca$c(mog)}<span class="pay-unit">/mo</span></span>
           </div>
-          ${optProtection && protAmt ? `
-          <div style="margin-top:8px;padding-top:8px;border-top:1px solid rgba(0,212,122,.15)">
-            <div style="font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--green);margin-bottom:5px">+ Protection Pkg ($${protAmt.toLocaleString()})</div>
-            <div class="gap-row">
-              <span class="gap-lbl">GAP + Protection Bi-Wkly</span>
-              <span class="gap-num sm">${ca$c(biwGP)}<span class="pay-unit">/2wk</span></span>
-            </div>
-            <div class="gap-row">
-              <span class="gap-lbl">GAP + Protection Monthly</span>
-              <span class="gap-num sm">${ca$c(monthlyGP)}<span class="pay-unit">/mo</span></span>
-            </div>
-          </div>` : ''}
         </div>
         <!-- WARRANTY SUB-MENU -->
         <div style="margin-top:10px">
-          <button onclick="finWarrantyOpen[${months}]=!finWarrantyOpen[${months}];render()"
+          <button onclick="finWarrantyOpen[${term}]=!finWarrantyOpen[${term}];render()"
             style="width:100%;background:${warrantySelected?'rgba(0,212,122,.08)':'none'};border:1px solid ${warrantySelected?'var(--green)':'var(--border2)'};color:${warrantySelected?'var(--green)':'var(--dim)'};padding:7px;border-radius:6px;font-size:12px;font-family:inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;">
             🛡 Warranty ${warrantySelected?'✓ '+warrantySelected.label : wOpen?'▲ Hide':'▼ Add'}
           </button>
           ${wOpen ? `
           <div style="margin-top:8px;background:var(--s3);border:1px solid var(--border);border-radius:7px;padding:10px;max-height:200px;overflow-y:auto;">
-            <div style="font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--dim);margin-bottom:8px;">Honda Plus — Select Plan</div>
             ${WARRANTY_PLANS.map((p) => {
               const tier = m2 ? warrantyTier(m2) : 'civic';
               const cost = getWarrantyPrice(p, tier);
               if (!cost) return '';
-              const isSel = warrantySelected && warrantySelected.label === p.label;
-              const bwWithW = fbw(cap2+gapAmt+cost, months, rate);
-              return '<div style="display:flex;align-items:center;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);gap:6px">' +
-                '<div style="font-size:11px;' + (isSel?'color:var(--green);font-weight:700':'color:var(--dim)') + '">' + p.label + '</div>' +
-                '<div style="font-size:11px;font-weight:600">$' + cost.toLocaleString() + '</div>' +
-                '<div style="font-size:11px;color:var(--green)">' + ca$c(bwWithW) + '/2wk</div>' +
-                '<button onclick="selectWarranty(\'' + p.label + '\',' + cost + ')" style="font-size:10px;padding:2px 8px;border-radius:3px;cursor:pointer;font-family:inherit;background:' + (isSel?'rgba(0,212,122,.2)':'none') + ';border:1px solid ' + (isSel?'var(--green)':'var(--border2)') + ';color:' + (isSel?'var(--green)':'var(--dim)') + '">' +
-                (isSel?'✓':'Select') + '</button></div>';
+              const isSel = warrantySelected?.label === p.label;
+              const bwWithW = fbw(cap2+gapAmt+cost, term, rt);
+              return '<div style="display:flex;align-items:center;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);gap:6px">'
+                + '<div style="font-size:11px;' + (isSel?'color:var(--green);font-weight:700':'color:var(--dim)') + '">' + p.label + '</div>'
+                + '<div style="font-size:11px;font-weight:600">$' + cost.toLocaleString() + '</div>'
+                + '<div style="font-size:11px;color:var(--green)">' + ca$c(bwWithW) + '/2wk</div>'
+                + '<button onclick="selectWarranty(\'' + p.label + '\',' + cost + ')" style="font-size:10px;padding:2px 8px;border-radius:3px;cursor:pointer;font-family:inherit;background:' + (isSel?'rgba(0,212,122,.2)':'none') + ';border:1px solid ' + (isSel?'var(--green)':'var(--border2)') + ';color:' + (isSel?'var(--green)':'var(--dim)') + '">' + (isSel?'✓':'Select') + '</button>'
+                + '</div>';
             }).join('')}
           </div>` : ''}
           ${warrantySelected ? `
           <div style="margin-top:6px;padding:8px 10px;background:rgba(0,212,122,.06);border:1px solid var(--green-bdr);border-radius:5px;">
             <div style="display:flex;justify-content:space-between;align-items:baseline">
-              <span style="font-size:12px;color:var(--green)">GAP + Warranty:</span>
-              <span style="font-size:20px;font-weight:700;color:var(--green)">${ca$c(fbw(cap2+gapAmt+wCost,months,rate))}/2wk</span>
+              <span style="font-size:12px;color:var(--green)">With GAP + Warranty:</span>
+              <span style="font-size:20px;font-weight:700;color:var(--green)">${ca$c(bwgp)}/2wk</span>
             </div>
-            <div style="font-size:11px;color:rgba(0,212,122,.5);text-align:right">${ca$c(fmo(cap2+gapAmt+wCost,months,rate))}/mo</div>
+            <div style="font-size:11px;color:rgba(0,212,122,.5);text-align:right">${ca$c(mogp)}/mo</div>
           </div>` : ''}
         </div>
       </div>
     </div>`;
-}
-
-// ═══════════════════════════════════════════════════════════════════════
-//  ACTIONS
-// ═══════════════════════════════════════════════════════════════════════
-function selectWarranty(label, cost) {
-  warrantySelected = label ? { label, cost } : null;
-  render();
-}
-
-let finWarrantyOpen = {}; // { 60: bool, 84: bool }
-let leaseWarrantyOpen = {}; // { 36: bool, 60: bool }
-let moreOptionsOpen = false;
-
-function setKM(km) {
-  kmAllowance = km;
-  render();
-}
-
-function setDP(val) {
-  downPayment = Math.max(0, val);
-  render();
-}
-
-function save(key, val) {
-  if (!cur) return;
-  if (!ov[cur.id]) ov[cur.id] = {};
-  ov[cur.id][key] = parseFloat(val);
-  const wasOpen = panelOpen;
-  render();
-  if (wasOpen) document.getElementById('rpanel')?.classList.add('open');
-}
-
-function togglePanel() {
-  panelOpen = !panelOpen;
-  document.getElementById('rpanel')?.classList.toggle('open', panelOpen);
 }
 
 function toggleBreakdown() {
@@ -1542,27 +1556,20 @@ function printQuote() {
   const cap  = r.price - downPayment;
   const ob   = optBW(), om = bw2mo(ob);
   const wCost = warrantySelected ? warrantySelected.cost : 0;
-
-  const res36obj = getRes(m, 36);
-  const res60obj = r.rv60 ? getRes(m, 60) : null;
-  const res36 = res36obj.val, res60 = res60obj ? res60obj.val : null;
-  const l36mo = lmo(cap, res36, 36, r.lr36);
-  const l60mo = (r.lr60 && res60) ? lmo(cap, res60, 60, r.lr60) : null;
-  const l36bw = mo2bw(l36mo), l60bw = l60mo ? mo2bw(l60mo) : null;
   const lgBW  = optLeaseGuard ? OPT_LEASEGUARD_PRO : 0;
   const lgMO  = bw2mo(lgBW);
 
-  const f60bw = fbw(cap, 60, r.fr60), f60mo = fmo(cap, 60, r.fr60);
-  const f84bw = fbw(cap, 84, r.fr84), f84mo = fmo(cap, 84, r.fr84);
-  const f60bwg = fbw(cap+gapAmt, 60, r.fr60), f60mog = fmo(cap+gapAmt, 60, r.fr60);
-  const f84bwg = fbw(cap+gapAmt, 84, r.fr84), f84mog = fmo(cap+gapAmt, 84, r.fr84);
-  const f60bwgw = fbw(cap+gapAmt+wCost, 60, r.fr60), f60mogw = fmo(cap+gapAmt+wCost, 60, r.fr60);
-  const f84bwgw = fbw(cap+gapAmt+wCost, 84, r.fr84), f84mogw = fmo(cap+gapAmt+wCost, 84, r.fr84);
+  // Use selected terms for print
+  const lc1 = (()=>{const rt=lrForTerm(r,leaseTerm1);if(!rt)return null;const res=resForTerm(m,r,leaseTerm1);const mo=lmo(cap,res.val,leaseTerm1,rt);return {mo,bw:mo2bw(mo),res,rt};})();
+  const lc2 = (()=>{const rt=lrForTerm(r,leaseTerm2);if(!rt)return null;const res=resForTerm(m,r,leaseTerm2);const mo=lmo(cap,res.val,leaseTerm2,rt);return {mo,bw:mo2bw(mo),res,rt};})();
+  const fc1r = frForTerm(r,finTerm1), fc2r = frForTerm(r,finTerm2);
+  const fc1p = fc1r ? {bw:fbw(cap,finTerm1,fc1r),mo:fmo(cap,finTerm1,fc1r),bwg:fbw(cap+gapAmt+wCost,finTerm1,fc1r),mog:fmo(cap+gapAmt+wCost,finTerm1,fc1r),rt:fc1r} : null;
+  const fc2p = fc2r ? {bw:fbw(cap,finTerm2,fc2r),mo:fmo(cap,finTerm2,fc2r),bwg:fbw(cap+gapAmt+wCost,finTerm2,fc2r),mog:fmo(cap+gapAmt+wCost,finTerm2,fc2r),rt:fc2r} : null;
 
   const addons = [
     optColor ? `Colour +$${OPT_COLOR}/2wk` : '',
     optWheelLock ? `Wheel Locks +$${OPT_WHEELLOCK}/2wk` : '',
-    optLeaseGuard ? `Lease Guard Pro +$${OPT_LEASEGUARD_PRO}/2wk (5yr lease)` : '',
+    optLeaseGuard ? `Lease Guard Pro +$${OPT_LEASEGUARD_PRO}/2wk` : '',
   ].filter(Boolean).join(' · ');
 
   const incHtml = m.inc ? m.inc.map(i => `<span class="inc-tag">${i}</span>`).join('') : '';
@@ -1585,35 +1592,33 @@ function printQuote() {
       </div>`;
   }
 
-  const l3rows = [
-    ['Bi-Weekly', ca$c(l36bw+ob), false],
-    ['Monthly',   ca$c(l36mo+om), true],
-    ['Rate',      `${r.lr36}% APR${m.promo&&m.promo.term===36?' ⚡ Promo':''}`, true],
-    ['Residual',  `${ca$(res36)} (${(res36obj.pct*100).toFixed(1)}%)`, true],
-    ['KM/yr',     `${kmAllowance.toLocaleString()} km`, true],
-  ];
-  const l5rows = r.lr60 && l60mo ? [
-    ['Bi-Weekly', ca$c(l60bw+ob+lgBW), false],
-    ['Monthly',   ca$c(l60mo+om+lgMO), true],
-    ['Rate',      `${r.lr60}% APR${m.promo&&m.promo.term===60?' ⚡ Promo':''}`, true],
-    ['Residual',  `${ca$(res60)} (${(res60obj.pct*100).toFixed(1)}%)`, true],
-    ['KM/yr',     `${kmAllowance.toLocaleString()} km`, true],
-    ...(optLeaseGuard ? [['Lease Guard Pro', `+${ca$c(OPT_LEASEGUARD_PRO)}/2wk incl.`, true]] : []),
-  ] : null;
+  // Build print rows using selected terms
+  function makeLeaseRows(lc, term) {
+    if (!lc) return [['N/A','STD rate — no promo',false]];
+    return [
+      ['Bi-Weekly', ca$c(lc.bw + ob + lgBW), false],
+      ['Monthly',   ca$c(lc.mo + om + lgMO), true],
+      ['Rate',      `${lc.rt}% APR`, true],
+      ['Residual',  `${ca$(lc.res.val)} (${(lc.res.pct*100).toFixed(1)}%)`, true],
+      ['KM/yr',     `${kmAllowance.toLocaleString()} km`, true],
+      ...(optLeaseGuard ? [['Lease Guard Pro',`+${ca$c(OPT_LEASEGUARD_PRO)}/2wk`,true]] : []),
+    ];
+  }
 
-  function finRows(bw, mo, bwg, mog, bwgw, mogw, rate, term) {
+  function makeFinRows(fcp, term) {
+    if (!fcp) return [['N/A','STD rate',false]];
     const rows = [
-      ['Bi-Weekly', ca$c(bw), false],
-      ['Monthly',   ca$c(mo), true],
-      ['Rate',      `${rate}% APR`, true],
-      ['', '', true],
-      ['+ GAP  Bi-Wkly', ca$c(bwg), false],
-      ['+ GAP  Monthly', ca$c(mog), true],
+      ['Bi-Weekly', ca$c(fcp.bw), false],
+      ['Monthly',   ca$c(fcp.mo), true],
+      ['Rate',      `${fcp.rt}% APR`, true],
+      ['','',true],
+      ['+ GAP Bi-Wkly', ca$c(fbw(cap+gapAmt,term,fcp.rt)), false],
+      ['+ GAP Monthly',  ca$c(fmo(cap+gapAmt,term,fcp.rt)), true],
     ];
     if (warrantySelected) {
-      rows.push(['', '', true]);
-      rows.push([`+ GAP+Warranty Bi-Wkly`, ca$c(bwgw), false]);
-      rows.push([`+ GAP+Warranty Monthly`, ca$c(mogw), true]);
+      rows.push(['','',true]);
+      rows.push([`+GAP+Warranty Bi-Wkly`, ca$c(fcp.bwg), false]);
+      rows.push([`+GAP+Warranty Monthly`, ca$c(fcp.mog), true]);
     }
     return rows;
   }
@@ -1724,14 +1729,12 @@ function printQuote() {
 
 <!-- PAYMENT CARDS -->
 <div class="pgrid">
-  ${pc(`3yr · ${r.lr36}% APR${m.promo&&m.promo.term===36?' ⚡':''}`, 'lease', l3rows,
-    `Residual: ${res36obj.confirmed?'✓':'⚠ est.'}`)}
-  ${l5rows ? pc(`5yr · ${r.lr60}% APR${m.promo&&m.promo.term===60?' ⚡':''}`, 'lease', l5rows,
-    `Residual: ${res60obj.confirmed?'✓':'⚠ est.'}`) : `<div class="pcard lease" style="opacity:.35;display:flex;align-items:center;justify-content:center;font-size:12px;color:#999">No 5yr lease</div>`}
-  ${pc(`5yr Finance · ${r.fr60}% APR`, 'finance',
-    finRows(f60bw,f60mo,f60bwg,f60mog,f60bwgw,f60mogw,r.fr60,60))}
-  ${pc(`7yr Finance · ${r.fr84}% APR`, 'finance',
-    finRows(f84bw,f84mo,f84bwg,f84mog,f84bwgw,f84mogw,r.fr84,84))}
+  ${pc(`${leaseTerm1}mo Lease · ${lc1?lc1.rt+'%':'STD'} APR`, 'lease', makeLeaseRows(lc1, leaseTerm1),
+    lc1 ? `Res: ${ca$(lc1.res.val)} (${(lc1.res.pct*100).toFixed(1)}%) · ${lc1.res.confirmed?'✓ Confirmed':'Est.'} · ${kmAllowance.toLocaleString()} km/yr` : 'STD rate')}
+  ${pc(`${leaseTerm2}mo Lease · ${lc2?lc2.rt+'%':'STD'} APR`, 'lease', makeLeaseRows(lc2, leaseTerm2),
+    lc2 ? `Res: ${ca$(lc2.res.val)} (${(lc2.res.pct*100).toFixed(1)}%) · ${lc2.res.confirmed?'✓ Confirmed':'Est.'} · ${kmAllowance.toLocaleString()} km/yr` : 'STD rate')}
+  ${pc(`${finTerm1}mo Finance · ${fc1p?fc1p.rt+'%':'STD'} APR`, 'finance', makeFinRows(fc1p, finTerm1))}
+  ${pc(`${finTerm2}mo Finance · ${fc2p?fc2p.rt+'%':'STD'} APR`, 'finance', makeFinRows(fc2p, finTerm2))}
 </div>
 
 <!-- OPTIONS -->

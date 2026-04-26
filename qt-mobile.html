@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Honda Quick Ref</title>
+<script>
+if(typeof sessionStorage!=='undefined'&&sessionStorage.getItem('mh_qt_auth')!=='1'){
+  window.location.replace('quote.html');
+}
+</script>
+<style>
+:root{
+  --red:#E40521; --bg:#0a0a0a; --s1:#111; --s2:#181818; --s3:#222;
+  --border:#272727; --text:#f0f0f0; --dim:#888; --muted:#3a3a3a;
+  --blue:#4a9eff; --green:#00d47a; --yellow:#f5a623;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);}
+body{font-family:-apple-system,'Segoe UI',system-ui,sans-serif;font-size:15px;}
+
+/* ── HEADER ── */
+.hdr{
+  background:var(--s1);
+  border-bottom:1px solid var(--border);
+  padding:12px 16px;
+  display:flex; align-items:center; justify-content:space-between;
+  position:sticky; top:0; z-index:50;
+}
+.hdr-brand{display:flex;align-items:center;gap:10px;}
+.logo{width:30px;height:30px;background:var(--red);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:900;color:#fff;}
+.hdr-title{font-size:15px;font-weight:700;}
+.hdr-sub{font-size:11px;color:var(--dim);}
+.hdr-right{text-align:right;}
+.data-date{font-size:10px;color:var(--muted);}
+
+/* ── LAYOUT ── */
+.layout{display:flex;height:calc(100vh - 57px);overflow:hidden;}
+
+/* ── SIDEBAR ── */
+.sb{
+  width:155px; flex-shrink:0;
+  background:var(--s1);
+  border-right:1px solid var(--border);
+  overflow-y:auto; overflow-x:hidden;
+  -webkit-overflow-scrolling:touch;
+}
+.sb::-webkit-scrollbar{display:none;}
+.sb-cat{
+  font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  color:var(--muted); padding:10px 12px 4px;
+}
+.sb-item{
+  padding:9px 12px;
+  cursor:pointer;
+  border-left:3px solid transparent;
+  transition:background .1s;
+}
+.sb-item:active{background:var(--s2);}
+.sb-item.active{background:rgba(228,5,33,.1);border-left-color:var(--red);}
+.sb-name{font-size:13px;font-weight:500;line-height:1.2;color:var(--text);}
+.sb-trim{font-size:11px;color:var(--dim);margin-top:2px;}
+.sb-price{font-size:11px;font-weight:600;color:var(--text);margin-top:2px;}
+
+/* ── MAIN ── */
+.main{
+  flex:1; overflow-y:auto; overflow-x:hidden;
+  -webkit-overflow-scrolling:touch;
+  padding:14px;
+}
+.main::-webkit-scrollbar{display:none;}
+
+/* ── WELCOME ── */
+.welcome{
+  padding:40px 20px;
+  text-align:center;
+  color:var(--dim);
+}
+.welcome-icon{font-size:48px;margin-bottom:12px;}
+.welcome-title{font-size:18px;font-weight:700;color:var(--text);margin-bottom:6px;}
+.welcome-sub{font-size:13px;line-height:1.6;}
+
+/* ── VEHICLE HEADER ── */
+.veh-hdr{margin-bottom:14px;}
+.veh-name{font-size:20px;font-weight:800;letter-spacing:-.4px;line-height:1.2;}
+.veh-trim{color:var(--dim);font-weight:400;}
+.veh-meta{margin-top:6px;display:flex;flex-wrap:wrap;gap:6px;}
+.veh-chip{
+  font-size:11px;background:var(--s2);border:1px solid var(--border);
+  padding:3px 8px;border-radius:4px;color:var(--dim);
+}
+.veh-chip.price{color:var(--text);font-weight:700;font-size:13px;background:rgba(228,5,33,.1);border-color:rgba(228,5,33,.25);}
+.veh-chip.otd{color:var(--dim);}
+
+/* ── SECTION LABEL ── */
+.sec{
+  font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  color:var(--dim);margin:14px 0 8px;
+  display:flex;align-items:center;gap:8px;
+}
+.sec::after{content:'';flex:1;height:1px;background:var(--border);}
+
+/* ── PAYMENT TABLE ── */
+.pay-table{
+  background:var(--s1);
+  border:1px solid var(--border);
+  border-radius:10px;
+  overflow:hidden;
+  margin-bottom:4px;
+}
+.pay-table-hdr{
+  display:grid; grid-template-columns:50px 1fr 1fr 1fr;
+  background:var(--s2);
+  border-bottom:1px solid var(--border);
+  padding:7px 10px;
+}
+.pay-table-hdr span{
+  font-size:10px;font-weight:700;letter-spacing:.5px;
+  text-transform:uppercase;color:var(--dim);
+  text-align:right;
+}
+.pay-table-hdr span:first-child{text-align:left;}
+.pay-row{
+  display:grid; grid-template-columns:50px 1fr 1fr 1fr;
+  padding:9px 10px;
+  border-bottom:1px solid var(--border);
+  align-items:center;
+}
+.pay-row:last-child{border:none;}
+.pay-row:active{background:var(--s2);}
+.pay-mo{font-size:13px;font-weight:700;color:var(--text);}
+.pay-rate{font-size:10px;color:var(--muted);margin-top:1px;}
+.pay-amt{
+  font-size:15px;font-weight:700;text-align:right;
+}
+.pay-amt.bw{color:var(--text);}
+.pay-amt.mo{color:var(--dim);font-size:13px;font-weight:500;}
+.pay-amt.na{color:var(--muted);font-size:12px;font-weight:400;}
+
+/* ── RESIDUAL BADGE ── */
+.res-line{
+  font-size:11px;color:var(--blue);margin-top:3px;text-align:right;
+}
+
+/* ── DISCLAIMER ── */
+.disc{
+  margin-top:16px;padding:10px 12px;
+  background:rgba(245,166,35,.05);
+  border:1px solid rgba(245,166,35,.12);
+  border-radius:8px;
+  font-size:11px;color:var(--dim);line-height:1.6;
+}
+
+/* ── DESKTOP NOTICE (shows on desktop) ── */
+.desktop-notice{
+  display:none;
+  position:fixed;bottom:16px;right:16px;
+  background:var(--s2);border:1px solid var(--border);
+  padding:10px 14px;border-radius:8px;
+  font-size:12px;color:var(--dim);
+}
+@media(min-width:768px){.desktop-notice{display:block;}}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="hdr-brand">
+    <div class="logo">H</div>
+    <div>
+      <div class="hdr-title">Quick Ref</div>
+      <div class="hdr-sub">Maple Honda</div>
+    </div>
+  </div>
+  <div class="hdr-right">
+    <div class="data-date">📅 Apr 25, 2026</div>
+    <div class="data-date" style="color:var(--yellow)">⚠ Estimate · No down</div>
+  </div>
+</div>
+
+<div class="layout">
+  <div class="sb" id="sb"></div>
+  <div class="main" id="main">
+    <div class="welcome">
+      <div class="welcome-icon">🚗</div>
+      <div class="welcome-title">Honda Quick Reference</div>
+      <div class="welcome-sub">Tap any model for instant<br>payment overview — all terms</div>
+    </div>
+  </div>
+</div>
+
+<div class="desktop-notice">
+  For full features open on desktop →<br>
+  <a href="qt.html" style="color:var(--blue)">Switch to Full Tool</a>
+</div>
+
+<script>
+// ── DATA ──────────────────────────────────────────────────────────
+const M = [
+{id:'cs-lx', cat:'Civic Sedan', name:'Civic Sedan', trim:'LX',
+ msrp:28340, price:31306, otd:35376, engine:'2.0L 150hp / CVT', drive:'FWD',
+ lr:{36:3.49,60:4.49}, rv:{36:.58,60:.40}, fr:{60:4.49,84:4.99}},
+
+{id:'cs-sp', cat:'Civic Sedan', name:'Civic Sedan', trim:'Sport',
+ msrp:32200, price:35175, otd:39748, engine:'2.0L 150hp / CVT', drive:'FWD',
+ lr:{36:3.49,60:4.49}, rv:{36:.55,60:.37}, fr:{60:4.49,84:4.99},
+ resKm:{20000:13562,24000:12880,32000:9680,40000:6480}},
+
+{id:'cs-sh', cat:'Civic Sedan', name:'Civic Sedan', trim:'Sport Hybrid',
+ msrp:34100, price:37071, otd:41879, engine:'2.0L Hybrid / e-CVT', drive:'FWD',
+ lr:{36:3.49,60:4.49}, rv:{36:.61,60:.43}, fr:{60:4.49,84:4.99}},
+
+{id:'cs-sth', cat:'Civic Sedan', name:'Civic Sedan', trim:'Sport Touring Hybrid',
+ msrp:37600, price:40561, otd:45834, engine:'2.0L Hybrid / e-CVT', drive:'FWD',
+ lr:{36:3.49,60:4.49}, rv:{36:.61,60:.43}, fr:{60:4.49,84:4.99}},
+
+{id:'cs-si', cat:'Civic Sedan', name:'Civic Sedan', trim:'Si',
+ msrp:36600, price:39566, otd:44710, engine:'1.5T / 6-MT', drive:'FWD',
+ lr:{36:null,60:null}, rv:{36:.58,60:.39}, fr:{60:6.99,84:6.99}},
+
+{id:'ch-sp', cat:'Civic Hatchback', name:'Civic Hatch', trim:'Sport',
+ msrp:32195, price:35166, otd:39738, engine:'2.0L 150hp / CVT', drive:'FWD',
+ lr:{36:3.99,60:4.99}, rv:{36:.58,60:.40}, fr:{60:4.99,84:5.49}},
+
+{id:'ch-sh', cat:'Civic Hatchback', name:'Civic Hatch', trim:'Sport Hybrid',
+ msrp:35991, price:38962, otd:44027, engine:'2.0L Hybrid / e-CVT', drive:'FWD',
+ lr:{36:4.49,60:5.49}, rv:{36:.61,60:.43}, fr:{60:5.49,84:5.99}},
+
+{id:'ch-sth', cat:'Civic Hatchback', name:'Civic Hatch', trim:'Sport Touring Hybrid',
+ msrp:39491, price:42462, otd:47982, engine:'2.0L Hybrid / e-CVT', drive:'FWD',
+ lr:{36:4.49,60:5.49}, rv:{36:.61,60:.43}, fr:{60:5.49,84:5.99}},
+
+{id:'pre', cat:'Prelude', name:'Prelude', trim:'Hybrid',
+ msrp:49990, price:52961, otd:59846, engine:'2.0L Hybrid / e-CVT', drive:'FWD',
+ lr:{36:null,60:null}, rv:{36:.62,60:.44}, fr:{60:null,84:null}},
+
+{id:'ac-se', cat:'Accord', name:'Accord', trim:'SE',
+ msrp:38500, price:41475, otd:46867, engine:'1.5T 192hp / CVT', drive:'FWD',
+ lr:{36:3.99,60:4.99}, rv:{36:.56,60:.39}, fr:{60:4.99,84:5.99}},
+
+{id:'ac-sl', cat:'Accord', name:'Accord', trim:'Sport-L Hybrid',
+ msrp:43700, price:46671, otd:52738, engine:'2.0L Hybrid / e-CVT', drive:'FWD',
+ lr:{36:3.99,60:4.99}, rv:{36:.54,60:.40}, fr:{60:3.99,84:4.49}},
+
+{id:'ac-tr', cat:'Accord', name:'Accord', trim:'Touring Hybrid',
+ msrp:46200, price:49171, otd:55563, engine:'2.0L Hybrid / e-CVT', drive:'FWD',
+ lr:{36:3.49,60:4.49}, rv:{36:.53,60:.39}, fr:{60:3.99,84:4.49}},
+
+{id:'hv-lf', cat:'HR-V', name:'HR-V', trim:'LX FWD',
+ msrp:30465, price:33436, otd:37783, engine:'2.0L 158hp / CVT', drive:'FWD',
+ lr:{36:4.49,60:5.49}, rv:{36:.59,60:.42}, fr:{60:5.99,84:5.99}},
+
+{id:'hv-la', cat:'HR-V', name:'HR-V', trim:'LX AWD',
+ msrp:32591, price:35736, otd:40382, engine:'2.0L 158hp / CVT', drive:'AWD',
+ lr:{36:4.49,60:5.49}, rv:{36:.58,60:.41}, fr:{60:5.99,84:5.99}},
+
+{id:'hv-sp', cat:'HR-V', name:'HR-V', trim:'Sport AWD',
+ msrp:35891, price:39036, otd:44111, engine:'2.0L 158hp / CVT', drive:'AWD',
+ lr:{36:4.49,60:5.49}, rv:{36:.57,60:.39}, fr:{60:5.99,84:5.99}},
+
+{id:'hv-el', cat:'HR-V', name:'HR-V', trim:'EX-L AWD',
+ msrp:38691, price:41836, otd:47275, engine:'2.0L 158hp / CVT', drive:'AWD',
+ lr:{36:4.49,60:5.49}, rv:{36:.56,60:.38}, fr:{60:5.99,84:5.99}},
+
+{id:'cv-lf', cat:'CR-V', name:'CR-V', trim:'LX 2WD',
+ msrp:36966, price:40111, otd:45325, engine:'1.5T 190hp / CVT', drive:'FWD',
+ lr:{36:3.99,60:4.99}, rv:{36:.58,60:.41}, fr:{60:5.19,84:5.19}},
+
+{id:'cv-la', cat:'CR-V', name:'CR-V', trim:'LX AWD',
+ msrp:39766, price:42911, otd:48489, engine:'1.5T 190hp / CVT', drive:'AWD',
+ lr:{36:3.99,60:4.99}, rv:{36:.58,60:.41}, fr:{60:5.19,84:5.19}},
+
+{id:'cv-sp', cat:'CR-V', name:'CR-V', trim:'Sport AWD',
+ msrp:43366, price:46511, otd:52557, engine:'1.5T 190hp / CVT', drive:'AWD',
+ lr:{36:3.99,60:4.99}, rv:{36:.58,60:.41}, fr:{60:5.19,84:5.19}},
+
+{id:'cv-sh', cat:'CR-V', name:'CR-V', trim:'Sport Hybrid AWD',
+ msrp:45887, price:49032, otd:55406, engine:'2.0L Hybrid / e-CVT', drive:'AWD',
+ lr:{36:3.99,60:4.99}, rv:{36:.60,60:.43}, fr:{60:5.19,84:5.19}},
+
+{id:'cv-ts', cat:'CR-V', name:'CR-V', trim:'TrailSport Hybrid AWD',
+ msrp:47287, price:50432, otd:56988, engine:'2.0L Hybrid / e-CVT', drive:'AWD',
+ lr:{36:3.99,60:4.99}, rv:{36:.60,60:.43}, fr:{60:5.19,84:5.19}},
+
+{id:'cv-ex', cat:'CR-V', name:'CR-V', trim:'EX-L Hybrid AWD',
+ msrp:48687, price:51832, otd:58570, engine:'2.0L Hybrid / e-CVT', drive:'AWD',
+ lr:{36:3.99,60:4.99}, rv:{36:.60,60:.43}, fr:{60:5.19,84:5.19}},
+
+{id:'cv-th', cat:'CR-V', name:'CR-V', trim:'Touring Hybrid AWD',
+ msrp:51187, price:54332, otd:61395, engine:'2.0L Hybrid / e-CVT', drive:'AWD',
+ lr:{36:3.99,60:4.99}, rv:{36:.60,60:.43}, fr:{60:5.19,84:5.19}},
+
+{id:'pp-ts', cat:'Passport', name:'Passport', trim:'TrailSport',
+ msrp:56981, price:60126, otd:67942, engine:'3.5L V6 285hp / 10AT', drive:'AWD',
+ lr:{36:5.69,60:5.69}, rv:{36:.56,60:.40}, fr:{60:5.79,84:5.79}},
+
+{id:'pp-tb', cat:'Passport', name:'Passport', trim:'TrailSport Blackout',
+ msrp:58181, price:61326, otd:69298, engine:'3.5L V6 285hp / 10AT', drive:'AWD',
+ lr:{36:5.69,60:5.69}, rv:{36:.56,60:.40}, fr:{60:5.79,84:5.79}},
+
+{id:'pp-tr', cat:'Passport', name:'Passport', trim:'Touring',
+ msrp:60531, price:63676, otd:71954, engine:'3.5L V6 285hp / 10AT', drive:'AWD',
+ lr:{36:5.69,60:5.69}, rv:{36:.56,60:.40}, fr:{60:5.79,84:5.79}},
+
+{id:'pp-trb', cat:'Passport', name:'Passport', trim:'Touring Blackout',
+ msrp:61731, price:64876, otd:73310, engine:'3.5L V6 285hp / 10AT', drive:'AWD',
+ lr:{36:5.69,60:5.69}, rv:{36:.56,60:.40}, fr:{60:5.79,84:5.79}},
+
+{id:'pl-sp', cat:'Pilot', name:'Pilot', trim:'Sport',
+ msrp:55550, price:58695, otd:66325, engine:'3.5L V6 285hp / 10AT', drive:'AWD',
+ lr:{36:5.69,60:5.69}, rv:{36:.58,60:.42}, fr:{60:5.79,84:5.79}},
+
+{id:'pl-el', cat:'Pilot', name:'Pilot', trim:'EX-L',
+ msrp:58150, price:61295, otd:69263, engine:'3.5L V6 285hp / 10AT', drive:'AWD',
+ lr:{36:5.69,60:5.69}, rv:{36:.58,60:.42}, fr:{60:5.79,84:5.79}},
+
+{id:'pl-ts', cat:'Pilot', name:'Pilot', trim:'TrailSport',
+ msrp:61650, price:64795, otd:73218, engine:'3.5L V6 285hp / 10AT', drive:'AWD',
+ lr:{36:5.69,60:5.69}, rv:{36:.58,60:.42}, fr:{60:5.79,84:5.79}},
+
+{id:'pl-tr', cat:'Pilot', name:'Pilot', trim:'Touring',
+ msrp:64900, price:68045, otd:76891, engine:'3.5L V6 285hp / 10AT', drive:'AWD',
+ lr:{36:5.69,60:5.69}, rv:{36:.58,60:.42}, fr:{60:5.79,84:5.79}},
+
+{id:'pl-be', cat:'Pilot', name:'Pilot', trim:'Black Edition',
+ msrp:66400, price:69545, otd:78586, engine:'3.5L V6 285hp / 10AT', drive:'AWD',
+ lr:{36:5.69,60:5.69}, rv:{36:.58,60:.42}, fr:{60:5.79,84:5.79}},
+
+{id:'od-sp', cat:'Odyssey', name:'Odyssey', trim:'Sport',
+ msrp:51411, price:54556, otd:61648, engine:'3.5L V6 280hp / 10AT', drive:'FWD',
+ lr:{36:5.69,60:5.69}, rv:{36:.56,60:.39}, fr:{60:5.79,84:5.79}},
+
+{id:'od-sl', cat:'Odyssey', name:'Odyssey', trim:'Sport-L',
+ msrp:54411, price:57556, otd:65038, engine:'3.5L V6 280hp / 10AT', drive:'FWD',
+ lr:{36:5.69,60:5.69}, rv:{36:.56,60:.39}, fr:{60:5.79,84:5.79}},
+
+{id:'od-tr', cat:'Odyssey', name:'Odyssey', trim:'Touring',
+ msrp:59811, price:62956, otd:71140, engine:'3.5L V6 280hp / 10AT', drive:'FWD',
+ lr:{36:5.69,60:5.69}, rv:{36:.56,60:.39}, fr:{60:5.79,84:5.79}},
+
+{id:'od-be', cat:'Odyssey', name:'Odyssey', trim:'Black Edition',
+ msrp:61611, price:64756, otd:73174, engine:'3.5L V6 280hp / 10AT', drive:'FWD',
+ lr:{36:5.69,60:5.69}, rv:{36:.56,60:.39}, fr:{60:5.79,84:5.79}},
+
+{id:'rl-sp', cat:'Ridgeline', name:'Ridgeline', trim:'Sport',
+ msrp:52900, price:56135, otd:63433, engine:'3.5L V6 280hp / 9AT', drive:'AWD',
+ lr:{36:5.69,60:5.69}, rv:{36:.59,60:.45}, fr:{60:5.79,84:5.79}},
+
+{id:'rl-ts', cat:'Ridgeline', name:'Ridgeline', trim:'TrailSport',
+ msrp:56490, price:59635, otd:67388, engine:'3.5L V6 280hp / 9AT', drive:'AWD',
+ lr:{36:5.69,60:5.69}, rv:{36:.59,60:.45}, fr:{60:5.79,84:5.79}},
+
+{id:'rl-be', cat:'Ridgeline', name:'Ridgeline', trim:'Black Edition',
+ msrp:58990, price:62135, otd:70213, engine:'3.5L V6 280hp / 9AT', drive:'AWD',
+ lr:{36:5.69,60:5.69}, rv:{36:.59,60:.45}, fr:{60:5.79,84:5.79}},
+
+{id:'pr-ex', cat:'Prologue', name:'Prologue', trim:'EX',
+ msrp:54990, price:58131, otd:66338, engine:'Electric / FWD', drive:'FWD',
+ lr:{36:null,60:null}, rv:{36:.49,60:.31}, fr:{60:1.99,84:1.99}},
+
+{id:'pr-el', cat:'Prologue', name:'Prologue', trim:'EX-L',
+ msrp:59990, price:63131, otd:71988, engine:'Electric / AWD', drive:'AWD',
+ lr:{36:null,60:null}, rv:{36:.47,60:.30}, fr:{60:1.99,84:1.99}},
+
+{id:'pr-tr', cat:'Prologue', name:'Prologue', trim:'Touring',
+ msrp:64990, price:68131, otd:77638, engine:'Electric / AWD', drive:'AWD',
+ lr:{36:null,60:null}, rv:{36:.45,60:.29}, fr:{60:1.99,84:1.99}},
+];
+
+// ── CALCULATORS ───────────────────────────────────────────────────
+function lmo(cap,res,mo,rate){
+  const mf=rate/2400;
+  return (cap-res)/mo+(cap+res)*mf;
+}
+function fmo(p,mo,rate){
+  if(!rate)return p/mo;
+  const r=rate/100/12;
+  return p*r*Math.pow(1+r,mo)/(Math.pow(1+r,mo)-1);
+}
+function fbw(p,mo,rate){
+  if(!rate)return p/(mo*26/12);
+  const r=rate/100/26,n=Math.round(mo*26/12);
+  return p*r*Math.pow(1+r,n)/(Math.pow(1+r,n)-1);
+}
+const mo2bw=m=>m*12/26;
+const ca$=n=>'$'+Math.round(n).toLocaleString('en-CA');
+const ca$c=n=>'$'+n.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g,',');
+
+// Lease terms with rate source: 24/30 use 36mo rate, 42/48/54 use 60mo rate
+function lrForTerm(m,mo){
+  if(mo<=36)return m.lr[36];
+  return m.lr[60];
+}
+// Finance terms: ≤60 use fr60, >60 use fr84
+function frForTerm(m,mo){
+  if(mo<=60)return m.fr[60];
+  return m.fr[84];
+}
+// Residual: use 36 pct for ≤36mo, 60 pct for >36mo
+function resForTerm(m,mo){
+  const pct = mo<=36 ? m.rv[36] : m.rv[60];
+  return Math.round(m.msrp * pct);
+}
+
+// ── SIDEBAR ───────────────────────────────────────────────────────
+(function buildSb(){
+  const cats=[...new Set(M.map(m=>m.cat))];
+  document.getElementById('sb').innerHTML=cats.map(cat=>`
+    <div class="sb-cat">${cat}</div>
+    ${M.filter(m=>m.cat===cat).map(m=>`
+      <div class="sb-item" id="si-${m.id}" onclick="pick('${m.id}')">
+        <div class="sb-name">${m.name}</div>
+        <div class="sb-trim">${m.trim}</div>
+        <div class="sb-price">${ca$(m.price)}</div>
+      </div>
+    `).join('')}
+  `).join('');
+})();
+
+// ── RENDER ────────────────────────────────────────────────────────
+function pick(id){
+  const m=M.find(x=>x.id===id);
+  if(!m)return;
+  document.querySelectorAll('.sb-item').forEach(el=>el.classList.remove('active'));
+  document.getElementById('si-'+id)?.classList.add('active');
+
+  const cap=m.price; // no down payment in quick ref
+
+  // Lease rows: 24/30/36/42/48/54/60
+  const leaseTerms=[24,30,36,42,48,54,60];
+  const leaseRows=leaseTerms.map(mo=>{
+    const rt=lrForTerm(m,mo);
+    if(!rt)return {mo,na:true};
+    const res=resForTerm(m,mo);
+    const bw=mo2bw(lmo(cap,res,mo,rt));
+    const mo_p=lmo(cap,res,mo,rt);
+    return {mo,rt,bw,mo_p,res};
+  });
+
+  // Finance rows: 24/36/48/60/72/84/96
+  const finTerms=[24,36,48,60,72,84,96];
+  const finRows=finTerms.map(mo=>{
+    const rt=frForTerm(m,mo);
+    if(!rt)return {mo,na:true};
+    const bw=fbw(cap,mo,rt);
+    const mo_p=fmo(cap,mo,rt);
+    return {mo,rt,bw,mo_p};
+  });
+
+  document.getElementById('main').innerHTML=`
+    <div class="veh-hdr">
+      <div class="veh-name">2026 ${m.name} <span class="veh-trim">${m.trim}</span></div>
+      <div class="veh-meta">
+        <span class="veh-chip price">${ca$(m.price)} before tax</span>
+        <span class="veh-chip otd">OTD ${ca$(m.otd)}</span>
+        <span class="veh-chip">MSRP ${ca$(m.msrp)}</span>
+        <span class="veh-chip">${m.engine}</span>
+        <span class="veh-chip">${m.drive}</span>
+      </div>
+    </div>
+
+    <div class="sec" style="color:var(--blue)">Lease · ${ca$(cap)} cap · est. residuals</div>
+    <div class="pay-table">
+      <div class="pay-table-hdr">
+        <span>Term</span>
+        <span>Rate</span>
+        <span>Bi-Wkly</span>
+        <span>Monthly</span>
+      </div>
+      ${leaseRows.map(r=>r.na?`
+        <div class="pay-row">
+          <span class="pay-mo">${r.mo}mo</span>
+          <span></span>
+          <span class="pay-amt na" style="grid-column:3/5;text-align:right">STD rate</span>
+        </div>
+      `:`
+        <div class="pay-row">
+          <div>
+            <div class="pay-mo">${r.mo}mo</div>
+          </div>
+          <div style="font-size:11px;color:var(--muted);text-align:right">${r.rt}%</div>
+          <div class="pay-amt bw" style="text-align:right">${ca$c(r.bw)}</div>
+          <div class="pay-amt mo" style="text-align:right">${ca$c(r.mo_p)}</div>
+        </div>
+      `).join('')}
+    </div>
+    <div style="font-size:10px;color:var(--muted);margin-bottom:14px;text-align:right">Residuals estimated — verify with HFS</div>
+
+    <div class="sec" style="color:var(--green)">Finance · ${ca$(cap)} principal</div>
+    <div class="pay-table">
+      <div class="pay-table-hdr">
+        <span>Term</span>
+        <span>Rate</span>
+        <span>Bi-Wkly</span>
+        <span>Monthly</span>
+      </div>
+      ${finRows.map(r=>r.na?`
+        <div class="pay-row">
+          <span class="pay-mo">${r.mo}mo</span>
+          <span></span>
+          <span class="pay-amt na" style="grid-column:3/5;text-align:right">STD rate</span>
+        </div>
+      `:`
+        <div class="pay-row">
+          <div class="pay-mo">${r.mo}mo</div>
+          <div style="font-size:11px;color:var(--muted);text-align:right">${r.rt}%</div>
+          <div class="pay-amt bw" style="text-align:right">${ca$c(r.bw)}</div>
+          <div class="pay-amt mo" style="text-align:right">${ca$c(r.mo_p)}</div>
+        </div>
+      `).join('')}
+    </div>
+
+    <div class="disc">
+      ⚠ Payments estimated · $0 down · before HST · residuals are estimates.
+      For full quote tool: <a href="qt.html" style="color:var(--blue)">Open Desktop Tool ↗</a>
+    </div>
+    <div style="text-align:center;padding:10px 0 4px;font-size:11px;color:var(--muted)">
+      🛠 Tech Support: <a href="tel:6475236878" style="color:var(--dim);text-decoration:none">647-523-6878</a>
+    </div>
+  `;
+}
+</script>
+</body>
+</html>

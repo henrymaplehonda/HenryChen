@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Compare — Honda Quick Quote</title>
+<script>if(typeof sessionStorage!=='undefined'&&sessionStorage.getItem('mh_qt_auth')!=='1'){window.location.replace('quote.html');}</script>
+<style>
+:root{
+  --red:#E40521;--bg:#0a0a0a;--s1:#111;--s2:#181818;--s3:#222;
+  --border:#272727;--border2:#333;--text:#f0f0f0;--dim:#777;--muted:#3a3a3a;
+  --blue:#4a9eff;--green:#00d47a;--yellow:#f5a623;--purple:#a87cf5;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Segoe UI',system-ui,sans-serif;font-size:15px;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;}
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
+
+/* ── HEADER ── */
+.hdr{background:var(--s1);border-bottom:1px solid var(--border);height:52px;padding:0 20px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.hdr-brand{display:flex;align-items:center;gap:10px;}
+.logo{width:30px;height:30px;background:var(--red);border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:900;color:#fff;}
+.hdr-title{font-size:15px;font-weight:700;}
+.hdr-sub{font-size:11px;color:var(--dim);}
+.hdr-nav{display:flex;gap:8px;}
+.btn{background:none;border:1px solid var(--border2);color:var(--dim);padding:6px 13px;border-radius:6px;font-size:12px;font-family:inherit;cursor:pointer;transition:all .13s;text-decoration:none;display:inline-flex;align-items:center;gap:5px;}
+.btn:hover{border-color:var(--text);color:var(--text);}
+.btn-print{border-color:var(--border2);}
+.btn-print:hover{border-color:var(--green);color:var(--green);}
+.btn-clear{border-color:rgba(228,5,33,.3);color:#ff7070;}
+.btn-clear:hover{border-color:var(--red);}
+
+/* ── SLOT PICKER ── */
+.picker-bar{background:var(--s1);border-bottom:1px solid var(--border);padding:12px 20px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;}
+.picker-label{font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--dim);flex-shrink:0;}
+.slots{display:flex;gap:10px;flex-wrap:wrap;flex:1;}
+.slot{background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:8px 12px;min-width:200px;cursor:pointer;transition:all .15s;position:relative;}
+.slot:hover{border-color:var(--border2);}
+.slot.active{border-color:var(--red);background:rgba(228,5,33,.06);}
+.slot.filled{border-color:var(--border2);}
+.slot-num{font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);margin-bottom:3px;}
+.slot-name{font-size:13px;font-weight:600;color:var(--text);}
+.slot-price{font-size:11px;color:var(--dim);margin-top:2px;}
+.slot-clear{position:absolute;top:6px;right:8px;font-size:14px;color:var(--muted);cursor:pointer;line-height:1;}
+.slot-clear:hover{color:#ff7070;}
+.slot.empty .slot-name{color:var(--muted);}
+
+/* ── MODEL PICKER MODAL ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:100;display:flex;align-items:center;justify-content:center;}
+.modal{background:var(--s1);border:1px solid var(--border2);border-radius:12px;width:520px;max-height:80vh;overflow:hidden;display:flex;flex-direction:column;}
+.modal-hdr{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.modal-title{font-size:15px;font-weight:700;}
+.modal-close{background:none;border:none;color:var(--dim);font-size:20px;cursor:pointer;line-height:1;padding:0 4px;}
+.modal-search{padding:10px 14px;border-bottom:1px solid var(--border);}
+.modal-search input{width:100%;background:var(--s2);border:1px solid var(--border);color:var(--text);padding:8px 12px;border-radius:6px;font-size:14px;font-family:inherit;outline:none;}
+.modal-search input:focus{border-color:var(--red);}
+.modal-list{overflow-y:auto;flex:1;}
+.modal-cat{font-size:9px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted);padding:10px 16px 4px;}
+.modal-item{padding:10px 16px;cursor:pointer;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+.modal-item:hover{background:var(--s2);}
+.modal-item-name{font-size:13px;font-weight:500;}
+.modal-item-trim{font-size:11px;color:var(--dim);margin-top:1px;}
+.modal-item-price{font-size:13px;font-weight:600;color:var(--text);}
+
+/* ── COMPARE TABLE ── */
+.compare-wrap{flex:1;overflow-x:auto;padding:20px;}
+.compare-table{border-collapse:collapse;width:100%;min-width:640px;}
+
+/* Row types */
+.ct-section td{background:var(--s2);padding:8px 14px;font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--dim);border-top:2px solid var(--border2);}
+.ct-row td{padding:10px 14px;border-bottom:1px solid var(--border);vertical-align:top;}
+.ct-row:hover td{background:rgba(255,255,255,.02);}
+.ct-label{font-size:13px;color:var(--dim);width:160px;}
+.ct-val{font-size:15px;font-weight:600;text-align:center;}
+.ct-val.big{font-size:22px;font-weight:800;letter-spacing:-.5px;}
+.ct-val.dim{color:var(--dim);font-size:13px;font-weight:400;}
+.ct-val.green{color:var(--green);}
+.ct-val.blue{color:var(--blue);}
+.ct-val.red{color:#ff7070;}
+.ct-val.yellow{color:var(--yellow);}
+.ct-val.best{background:rgba(0,212,122,.08);border-radius:5px;}
+
+/* Header row */
+.ct-hdr td{padding:12px 14px;background:var(--s1);border-bottom:2px solid var(--border);text-align:center;font-weight:700;font-size:13px;position:sticky;top:0;z-index:5;}
+.ct-hdr td:first-child{text-align:left;color:var(--dim);font-size:11px;letter-spacing:.5px;text-transform:uppercase;}
+
+/* Term selectors */
+.term-sel{background:var(--s3);border:1px solid rgba(74,158,255,.3);color:var(--blue);padding:4px 7px;border-radius:5px;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer;outline:none;width:100%;margin-bottom:6px;}
+.term-sel.fin{border-color:rgba(0,212,122,.3);color:var(--green);}
+
+/* Empty state */
+.ct-empty{text-align:center;padding:60px;color:var(--muted);}
+.ct-empty-icon{font-size:40px;margin-bottom:12px;}
+
+/* PRINT */
+@media print{
+  .hdr,.picker-bar,.hdr-nav,.modal-overlay{display:none!important;}
+  .compare-wrap{padding:10px;}
+  body{background:#fff;color:#111;}
+  .ct-section td{background:#f5f5f5;color:#555;border-top:2px solid #ddd;}
+  .ct-row td{border-bottom:1px solid #ddd;}
+  .ct-hdr td{background:#f0f0f0;border-bottom:2px solid #ddd;}
+  .ct-val.big{font-size:18px;}
+  @page{margin:12mm;size:landscape;}
+}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="hdr-brand">
+    <div class="logo">H</div>
+    <div>
+      <div class="hdr-title">Quick Compare</div>
+      <div class="hdr-sub">Maple Honda · Compare up to 3 models</div>
+    </div>
+  </div>
+  <div class="hdr-nav">
+    <button class="btn btn-clear" onclick="clearAll()">✕ Clear All</button>
+    <button class="btn btn-print" onclick="window.print()">🖨 Print Comparison</button>
+    <a class="btn" href="qt.html">← Full Tool</a>
+  </div>
+</div>
+
+<!-- SLOT PICKER -->
+<div class="picker-bar">
+  <span class="picker-label">Compare:</span>
+  <div class="slots" id="slots"></div>
+  <div style="font-size:11px;color:var(--muted);margin-left:auto">Apr 25, 2026 · ⚠ Estimates only</div>
+</div>
+
+<!-- MODEL PICKER MODAL -->
+<div class="modal-overlay" id="modal" style="display:none" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-hdr">
+      <div class="modal-title">Select Model</div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-search"><input id="search" placeholder="Search model or trim..." oninput="filterModels(this.value)"></div>
+    <div class="modal-list" id="modal-list"></div>
+  </div>
+</div>
+
+<!-- COMPARE TABLE -->
+<div class="compare-wrap">
+  <div id="compare-out">
+    <div class="ct-empty">
+      <div class="ct-empty-icon">⚖️</div>
+      <div style="font-size:16px;font-weight:600;color:var(--text);margin-bottom:8px">Select models to compare</div>
+      <div>Click a slot above to pick up to 3 Honda models</div>
+    </div>
+  </div>
+</div>
+
+<div style="text-align:center;padding:10px;font-size:11px;color:var(--muted);">
+  🛠 Tech Support: <a href="tel:6475236878" style="color:var(--dim);text-decoration:none;">647-523-6878</a>
+</div>
+
+<script>
+// ── MODEL DATA ────────────────────────────────────────────────────
+const M = [
+{id:'cs-lx', cat:'Civic Sedan', name:'Civic Sedan', trim:'LX',
+ msrp:28340, price:31306, otd:35376, engine:'2.0L 150hp', drive:'FWD',
+ lr:{36:3.49,60:4.49}, rv:{36:.58,60:.40}, fr:{60:4.49,84:4.99}},
+{id:'cs-sp', cat:'Civic Sedan', name:'Civic Sedan', trim:'Sport',
+ msrp:32200, price:35175, otd:39748, engine:'2.0L 150hp', drive:'FWD',
+ lr:{36:3.49,60:4.49}, rv:{36:.55,60:.37}, fr:{60:4.49,84:4.99}},
+{id:'cs-sh', cat:'Civic Sedan', name:'Civic Sedan', trim:'Sport Hybrid',
+ msrp:34100, price:37071, otd:41879, engine:'2.0L Hybrid', drive:'FWD',
+ lr:{36:3.49,60:4.49}, rv:{36:.61,60:.43}, fr:{60:4.49,84:4.99}},
+{id:'cs-sth', cat:'Civic Sedan', name:'Civic Sedan', trim:'Sport Touring Hybrid',
+ msrp:37600, price:40561, otd:45834, engine:'2.0L Hybrid', drive:'FWD',
+ lr:{36:3.49,60:4.49}, rv:{36:.61,60:.43}, fr:{60:4.49,84:4.99}},
+{id:'cs-si', cat:'Civic Sedan', name:'Civic Sedan', trim:'Si',
+ msrp:36600, price:39566, otd:44710, engine:'1.5T 200hp', drive:'FWD',
+ lr:{36:null,60:null}, rv:{36:.58,60:.39}, fr:{60:6.99,84:6.99}},
+{id:'ch-sp', cat:'Civic Hatchback', name:'Civic Hatch', trim:'Sport',
+ msrp:32195, price:35166, otd:39738, engine:'2.0L 150hp', drive:'FWD',
+ lr:{36:3.99,60:4.99}, rv:{36:.58,60:.40}, fr:{60:4.99,84:5.49}},
+{id:'ch-sh', cat:'Civic Hatchback', name:'Civic Hatch', trim:'Sport Hybrid',
+ msrp:35991, price:38962, otd:44027, engine:'2.0L Hybrid', drive:'FWD',
+ lr:{36:4.49,60:5.49}, rv:{36:.61,60:.43}, fr:{60:5.49,84:5.99}},
+{id:'ch-sth', cat:'Civic Hatchback', name:'Civic Hatch', trim:'Sport Touring Hybrid',
+ msrp:39491, price:42462, otd:47982, engine:'2.0L Hybrid', drive:'FWD',
+ lr:{36:4.49,60:5.49}, rv:{36:.61,60:.43}, fr:{60:5.49,84:5.99}},
+{id:'pre', cat:'Prelude', name:'Prelude', trim:'Hybrid',
+ msrp:49990, price:52961, otd:59846, engine:'2.0L Hybrid', drive:'FWD',
+ lr:{36:null,60:null}, rv:{36:.62,60:.44}, fr:{60:null,84:null}},
+{id:'ac-se', cat:'Accord', name:'Accord', trim:'SE',
+ msrp:38500, price:41475, otd:46867, engine:'1.5T 192hp', drive:'FWD',
+ lr:{36:3.99,60:4.99}, rv:{36:.56,60:.39}, fr:{60:4.99,84:5.99}},
+{id:'ac-sl', cat:'Accord', name:'Accord', trim:'Sport-L Hybrid',
+ msrp:43700, price:46671, otd:52738, engine:'2.0L Hybrid', drive:'FWD',
+ lr:{36:3.99,60:4.99}, rv:{36:.54,60:.40}, fr:{60:3.99,84:4.49}},
+{id:'ac-tr', cat:'Accord', name:'Accord', trim:'Touring Hybrid',
+ msrp:46200, price:49171, otd:55563, engine:'2.0L Hybrid', drive:'FWD',
+ lr:{36:3.49,60:4.49}, rv:{36:.53,60:.39}, fr:{60:3.99,84:4.49}},
+{id:'hv-lf', cat:'HR-V', name:'HR-V', trim:'LX FWD',
+ msrp:30465, price:33436, otd:37783, engine:'2.0L 158hp', drive:'FWD',
+ lr:{36:4.49,60:5.49}, rv:{36:.59,60:.42}, fr:{60:5.99,84:5.99}},
+{id:'hv-la', cat:'HR-V', name:'HR-V', trim:'LX AWD',
+ msrp:32591, price:35736, otd:40382, engine:'2.0L 158hp', drive:'AWD',
+ lr:{36:4.49,60:5.49}, rv:{36:.58,60:.41}, fr:{60:5.99,84:5.99}},
+{id:'hv-sp', cat:'HR-V', name:'HR-V', trim:'Sport AWD',
+ msrp:35891, price:39036, otd:44111, engine:'2.0L 158hp', drive:'AWD',
+ lr:{36:4.49,60:5.49}, rv:{36:.57,60:.39}, fr:{60:5.99,84:5.99}},
+{id:'hv-el', cat:'HR-V', name:'HR-V', trim:'EX-L AWD',
+ msrp:38691, price:41836, otd:47275, engine:'2.0L 158hp', drive:'AWD',
+ lr:{36:4.49,60:5.49}, rv:{36:.56,60:.38}, fr:{60:5.99,84:5.99}},
+{id:'cv-lf', cat:'CR-V', name:'CR-V', trim:'LX 2WD',
+ msrp:36966, price:40111, otd:45325, engine:'1.5T 190hp', drive:'FWD',
+ lr:{36:3.99,60:4.99}, rv:{36:.58,60:.41}, fr:{60:5.19,84:5.19}},
+{id:'cv-la', cat:'CR-V', name:'CR-V', trim:'LX AWD',
+ msrp:39766, price:42911, otd:48489, engine:'1.5T 190hp', drive:'AWD',
+ lr:{36:3.99,60:4.99}, rv:{36:.58,60:.41}, fr:{60:5.19,84:5.19}},
+{id:'cv-sp', cat:'CR-V', name:'CR-V', trim:'Sport AWD',
+ msrp:43366, price:46511, otd:52557, engine:'1.5T 190hp', drive:'AWD',
+ lr:{36:3.99,60:4.99}, rv:{36:.58,60:.41}, fr:{60:5.19,84:5.19}},
+{id:'cv-sh', cat:'CR-V', name:'CR-V', trim:'Sport Hybrid AWD',
+ msrp:45887, price:49032, otd:55406, engine:'2.0L Hybrid', drive:'AWD',
+ lr:{36:3.99,60:4.99}, rv:{36:.60,60:.43}, fr:{60:5.19,84:5.19}},
+{id:'cv-ts', cat:'CR-V', name:'CR-V', trim:'TrailSport Hybrid AWD',
+ msrp:47287, price:50432, otd:56988, engine:'2.0L Hybrid', drive:'AWD',
+ lr:{36:3.99,60:4.99}, rv:{36:.60,60:.43}, fr:{60:5.19,84:5.19}},
+{id:'cv-ex', cat:'CR-V', name:'CR-V', trim:'EX-L Hybrid AWD',
+ msrp:48687, price:51832, otd:58570, engine:'2.0L Hybrid', drive:'AWD',
+ lr:{36:3.99,60:4.99}, rv:{36:.60,60:.43}, fr:{60:5.19,84:5.19}},
+{id:'cv-th', cat:'CR-V', name:'CR-V', trim:'Touring Hybrid AWD',
+ msrp:51187, price:54332, otd:61395, engine:'2.0L Hybrid', drive:'AWD',
+ lr:{36:3.99,60:4.99}, rv:{36:.60,60:.43}, fr:{60:5.19,84:5.19}},
+{id:'pp-ts', cat:'Passport', name:'Passport', trim:'TrailSport',
+ msrp:56981, price:60126, otd:67942, engine:'3.5L V6 285hp', drive:'AWD',
+ lr:{36:5.69,60:5.69}, rv:{36:.56,60:.40}, fr:{60:5.79,84:5.79}},
+{id:'pp-tb', cat:'Passport', name:'Passport', trim:'TrailSport Blackout',
+ msrp:58181, price:61326, otd:69298, engine:'3.5L V6 285hp', drive:'AWD',
+ lr:{36:5.69,60:5.69}, rv:{36:.56,60:.40}, fr:{60:5.79,84:5.79}},
+{id:'pp-tr', cat:'Passport', name:'Passport', trim:'Touring',
+ msrp:60531, price:63676, otd:71954, engine:'3.5L V6 285hp', drive:'AWD',
+ lr:{36:5.69,60:5.69}, rv:{36:.56,60:.40}, fr:{60:5.79,84:5.79}},
+{id:'pp-trb', cat:'Passport', name:'Passport', trim:'Touring Blackout',
+ msrp:61731, price:64876, otd:73310, engine:'3.5L V6 285hp', drive:'AWD',
+ lr:{36:5.69,60:5.69}, rv:{36:.56,60:.40}, fr:{60:5.79,84:5.79}},
+{id:'pl-sp', cat:'Pilot', name:'Pilot', trim:'Sport',
+ msrp:55550, price:58695, otd:66325, engine:'3.5L V6 285hp', drive:'AWD',
+ lr:{36:5.69,60:5.69}, rv:{36:.58,60:.42}, fr:{60:5.79,84:5.79}},
+{id:'pl-el', cat:'Pilot', name:'Pilot', trim:'EX-L',
+ msrp:58150, price:61295, otd:69263, engine:'3.5L V6 285hp', drive:'AWD',
+ lr:{36:5.69,60:5.69}, rv:{36:.58,60:.42}, fr:{60:5.79,84:5.79}},
+{id:'pl-ts', cat:'Pilot', name:'Pilot', trim:'TrailSport',
+ msrp:61650, price:64795, otd:73218, engine:'3.5L V6 285hp', drive:'AWD',
+ lr:{36:5.69,60:5.69}, rv:{36:.58,60:.42}, fr:{60:5.79,84:5.79}},
+{id:'pl-tr', cat:'Pilot', name:'Pilot', trim:'Touring',
+ msrp:64900, price:68045, otd:76891, engine:'3.5L V6 285hp', drive:'AWD',
+ lr:{36:5.69,60:5.69}, rv:{36:.58,60:.42}, fr:{60:5.79,84:5.79}},
+{id:'pl-be', cat:'Pilot', name:'Pilot', trim:'Black Edition',
+ msrp:66400, price:69545, otd:78586, engine:'3.5L V6 285hp', drive:'AWD',
+ lr:{36:5.69,60:5.69}, rv:{36:.58,60:.42}, fr:{60:5.79,84:5.79}},
+{id:'od-sp', cat:'Odyssey', name:'Odyssey', trim:'Sport',
+ msrp:51411, price:54556, otd:61648, engine:'3.5L V6 280hp', drive:'FWD',
+ lr:{36:5.69,60:5.69}, rv:{36:.56,60:.39}, fr:{60:5.79,84:5.79}},
+{id:'od-sl', cat:'Odyssey', name:'Odyssey', trim:'Sport-L',
+ msrp:54411, price:57556, otd:65038, engine:'3.5L V6 280hp', drive:'FWD',
+ lr:{36:5.69,60:5.69}, rv:{36:.56,60:.39}, fr:{60:5.79,84:5.79}},
+{id:'od-tr', cat:'Odyssey', name:'Odyssey', trim:'Touring',
+ msrp:59811, price:62956, otd:71140, engine:'3.5L V6 280hp', drive:'FWD',
+ lr:{36:5.69,60:5.69}, rv:{36:.56,60:.39}, fr:{60:5.79,84:5.79}},
+{id:'od-be', cat:'Odyssey', name:'Odyssey', trim:'Black Edition',
+ msrp:61611, price:64756, otd:73174, engine:'3.5L V6 280hp', drive:'FWD',
+ lr:{36:5.69,60:5.69}, rv:{36:.56,60:.39}, fr:{60:5.79,84:5.79}},
+{id:'rl-sp', cat:'Ridgeline', name:'Ridgeline', trim:'Sport',
+ msrp:52900, price:56135, otd:63433, engine:'3.5L V6 280hp', drive:'AWD',
+ lr:{36:5.69,60:5.69}, rv:{36:.59,60:.45}, fr:{60:5.79,84:5.79}},
+{id:'rl-ts', cat:'Ridgeline', name:'Ridgeline', trim:'TrailSport',
+ msrp:56490, price:59635, otd:67388, engine:'3.5L V6 280hp', drive:'AWD',
+ lr:{36:5.69,60:5.69}, rv:{36:.59,60:.45}, fr:{60:5.79,84:5.79}},
+{id:'rl-be', cat:'Ridgeline', name:'Ridgeline', trim:'Black Edition',
+ msrp:58990, price:62135, otd:70213, engine:'3.5L V6 280hp', drive:'AWD',
+ lr:{36:5.69,60:5.69}, rv:{36:.59,60:.45}, fr:{60:5.79,84:5.79}},
+{id:'pr-ex', cat:'Prologue', name:'Prologue', trim:'EX',
+ msrp:54990, price:58131, otd:66338, engine:'Electric FWD', drive:'FWD',
+ lr:{36:null,60:null}, rv:{36:.49,60:.31}, fr:{60:1.99,84:1.99}},
+{id:'pr-el', cat:'Prologue', name:'Prologue', trim:'EX-L',
+ msrp:59990, price:63131, otd:71988, engine:'Electric AWD', drive:'AWD',
+ lr:{36:null,60:null}, rv:{36:.47,60:.30}, fr:{60:1.99,84:1.99}},
+{id:'pr-tr', cat:'Prologue', name:'Prologue', trim:'Touring',
+ msrp:64990, price:68131, otd:77638, engine:'Electric AWD', drive:'AWD',
+ lr:{36:null,60:null}, rv:{36:.45,60:.29}, fr:{60:1.99,84:1.99}},
+];
+
+// ── CALC ───────────────────────────────────────────────────────────
+function lmo(c,r,mo,rt){const mf=rt/2400;return(c-r)/mo+(c+r)*mf;}
+function fmo(p,mo,rt){if(!rt)return null;const r=rt/100/12;return p*r*Math.pow(1+r,mo)/(Math.pow(1+r,mo)-1);}
+function fbw(p,mo,rt){if(!rt)return null;const r=rt/100/26,n=Math.round(mo*26/12);return p*r*Math.pow(1+r,n)/(Math.pow(1+r,n)-1);}
+const mo2bw=m=>m*12/26;
+const ca$=n=>'$'+Math.round(n).toLocaleString('en-CA');
+const ca$c=n=>'$'+n.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g,',');
+
+// ── STATE ─────────────────────────────────────────────────────────
+let slots = [null, null, null]; // up to 3 models
+let activeSlot = 0;
+let leaseTerm = 24, finTerm = 60, downPayment = 0;
+const LEASE_TERMS = [24,30,36,42,48,54,60];
+const FIN_TERMS   = [24,36,48,60,72,84,96];
+
+// ── SLOTS UI ──────────────────────────────────────────────────────
+function renderSlots() {
+  document.getElementById('slots').innerHTML = [0,1,2].map(i => {
+    const m = slots[i];
+    if (!m) return `
+      <div class="slot empty ${activeSlot===i?'active':''}" onclick="openModal(${i})">
+        <div class="slot-num">Vehicle ${i+1}</div>
+        <div class="slot-name">+ Add model</div>
+      </div>`;
+    return `
+      <div class="slot filled ${activeSlot===i?'active':''}" onclick="openModal(${i})">
+        <span class="slot-clear" onclick="event.stopPropagation();removeSlot(${i})">✕</span>
+        <div class="slot-num">Vehicle ${i+1}</div>
+        <div class="slot-name">2026 ${m.name}</div>
+        <div class="slot-price">${m.trim} · ${ca$(m.price)}</div>
+      </div>`;
+  }).join('');
+}
+
+// ── MODAL ─────────────────────────────────────────────────────────
+function openModal(slotIdx) {
+  activeSlot = slotIdx;
+  renderSlots();
+  document.getElementById('modal').style.display = 'flex';
+  document.getElementById('search').value = '';
+  filterModels('');
+  setTimeout(() => document.getElementById('search').focus(), 100);
+}
+
+function closeModal() {
+  document.getElementById('modal').style.display = 'none';
+}
+
+function filterModels(q) {
+  const cats = [...new Set(M.map(m=>m.cat))];
+  const lq = q.toLowerCase();
+  document.getElementById('modal-list').innerHTML = cats.map(cat => {
+    const items = M.filter(m => m.cat===cat && (
+      !lq || m.name.toLowerCase().includes(lq) || m.trim.toLowerCase().includes(lq)
+    ));
+    if (!items.length) return '';
+    return `<div class="modal-cat">${cat}</div>` +
+      items.map(m => `
+        <div class="modal-item" onclick="selectModel('${m.id}')">
+          <div>
+            <div class="modal-item-name">2026 ${m.name} ${m.trim}</div>
+            <div class="modal-item-trim">${m.engine} · ${m.drive}</div>
+          </div>
+          <div class="modal-item-price">${ca$(m.price)}</div>
+        </div>`).join('');
+  }).join('');
+}
+
+function selectModel(id) {
+  slots[activeSlot] = M.find(m=>m.id===id);
+  closeModal();
+  renderSlots();
+  renderCompare();
+}
+
+function removeSlot(i) {
+  slots[i] = null;
+  renderSlots();
+  renderCompare();
+}
+
+function clearAll() {
+  slots = [null,null,null];
+  renderSlots();
+  renderCompare();
+}
+
+// ── COMPARE TABLE ─────────────────────────────────────────────────
+function renderCompare() {
+  const active = slots.filter(Boolean);
+  if (!active.length) {
+    document.getElementById('compare-out').innerHTML = `
+      <div class="ct-empty">
+        <div class="ct-empty-icon">⚖️</div>
+        <div style="font-size:16px;font-weight:600;color:var(--text);margin-bottom:8px">Select models to compare</div>
+        <div>Click a slot above to pick up to 3 Honda models</div>
+      </div>`;
+    return;
+  }
+
+  const cap = m => m.price - downPayment;
+
+  // Lease calcs
+  const lrt  = m => leaseTerm <= 36 ? m.lr[36] : m.lr[60];
+  const lrvp  = m => leaseTerm <= 36 ? m.rv[36] : m.rv[60];
+  const lres  = m => Math.round(m.msrp * lrvp(m));
+  const lbw   = m => { const rt=lrt(m); if(!rt)return null; return mo2bw(lmo(cap(m),lres(m),leaseTerm,rt)); };
+  const lmop  = m => { const rt=lrt(m); if(!rt)return null; return lmo(cap(m),lres(m),leaseTerm,rt); };
+
+  // Finance calcs
+  const frt   = m => finTerm <= 60 ? m.fr[60] : m.fr[84];
+  const fbwv  = m => { const rt=frt(m); if(!rt)return null; return fbw(cap(m),finTerm,rt); };
+  const fmov  = m => { const rt=frt(m); if(!rt)return null; return fmo(cap(m),finTerm,rt); };
+
+  // Highlight best (lowest) value
+  const best = (arr, fn) => {
+    const vals = arr.map(fn).map(v=>v!=null?parseFloat(v.replace(/[^0-9.]/g,'')):Infinity);
+    const min = Math.min(...vals);
+    return arr.map((_,i) => vals[i]===min && min !== Infinity);
+  };
+
+  const nCols = active.length;
+  const colW  = `${Math.floor(85/nCols)}%`;
+
+  // Down payment options
+  const dpOpts = [0,500,1000,2000,5000].map(v =>
+    `<option value="${v}" ${downPayment===v?'selected':''}>${v===0?'$0 Down':'$'+v.toLocaleString()}</option>`
+  ).join('');
+
+  const bestLbw = best(active, m => { const v=lbw(m); return v ? ca$c(v) : 'Z'; });
+  const bestFbw = best(active, m => { const v=fbwv(m); return v ? ca$c(v) : 'Z'; });
+
+  function valCell(val, isBest, color='') {
+    const cls = ['ct-val', 'big', color, isBest?'best':''].filter(Boolean).join(' ');
+    return `<td class="${cls}">${val || '<span style="color:var(--muted);font-size:13px">STD</span>'}</td>`;
+  }
+
+  document.getElementById('compare-out').innerHTML = `
+    <table class="compare-table">
+      <!-- HEADER -->
+      <tr class="ct-hdr">
+        <td>
+          <div style="margin-bottom:6px">Down:
+            <select onchange="downPayment=parseInt(this.value);renderCompare()"
+              style="background:var(--s2);border:1px solid var(--border);color:var(--text);padding:3px 6px;border-radius:4px;font-size:12px;font-family:inherit;outline:none;margin-left:4px">
+              ${dpOpts}
+            </select>
+          </div>
+        </td>
+        ${active.map((m,i) => `
+          <td>
+            <div style="font-size:15px;font-weight:800;letter-spacing:-.3px">2026 ${m.name}</div>
+            <div style="font-size:12px;color:var(--dim);margin-top:2px">${m.trim}</div>
+          </td>`).join('')}
+      </tr>
+
+      <!-- PRICING -->
+      <tr class="ct-section"><td colspan="${nCols+1}">Pricing</td></tr>
+      <tr class="ct-row">
+        <td class="ct-label">MSRP</td>
+        ${active.map(m=>`<td class="ct-val dim">${ca$(m.msrp)}</td>`).join('')}
+      </tr>
+      <tr class="ct-row">
+        <td class="ct-label">Selling Price (Before Tax)</td>
+        ${active.map((m,i)=>{
+          const isLow = best(active, x=>ca$(x.price))[i];
+          return `<td class="ct-val ${isLow?'best green':''}" style="font-size:17px;font-weight:700">${ca$(m.price)}</td>`;
+        }).join('')}
+      </tr>
+      <tr class="ct-row">
+        <td class="ct-label">OTD (incl 13% HST)</td>
+        ${active.map(m=>`<td class="ct-val dim">${ca$(m.otd)}</td>`).join('')}
+      </tr>
+      <tr class="ct-row">
+        <td class="ct-label">Engine · Drive</td>
+        ${active.map(m=>`<td class="ct-val dim" style="font-size:12px">${m.engine}<br>${m.drive}</td>`).join('')}
+      </tr>
+
+      <!-- LEASE -->
+      <tr class="ct-section">
+        <td colspan="${nCols+1}" style="display:flex;align-items:center;gap:10px;">
+          Lease
+          <select class="term-sel" onchange="leaseTerm=parseInt(this.value);renderCompare()"
+            style="width:auto;display:inline-block">
+            ${LEASE_TERMS.map(t=>`<option value="${t}" ${t===leaseTerm?'selected':''}>${t} months</option>`).join('')}
+          </select>
+        </td>
+      </tr>
+      <tr class="ct-row">
+        <td class="ct-label">Rate</td>
+        ${active.map(m=>{const rt=lrt(m);return`<td class="ct-val blue" style="font-size:14px">${rt?rt+'% APR':'STD'}</td>`;}).join('')}
+      </tr>
+      <tr class="ct-row">
+        <td class="ct-label">Bi-Weekly</td>
+        ${active.map((m,i)=>valCell(lbw(m)?ca$c(lbw(m)):null, bestLbw[i], 'blue')).join('')}
+      </tr>
+      <tr class="ct-row">
+        <td class="ct-label">Monthly</td>
+        ${active.map(m=>`<td class="ct-val dim">${lmop(m)?ca$c(lmop(m)):'STD'}</td>`).join('')}
+      </tr>
+      <tr class="ct-row">
+        <td class="ct-label">Est. Residual</td>
+        ${active.map(m=>`<td class="ct-val dim" style="font-size:12px">${ca$(lres(m))} (${(lrvp(m)*100).toFixed(0)}%) ⚠est</td>`).join('')}
+      </tr>
+
+      <!-- FINANCE -->
+      <tr class="ct-section">
+        <td colspan="${nCols+1}" style="display:flex;align-items:center;gap:10px;">
+          Finance
+          <select class="term-sel fin" onchange="finTerm=parseInt(this.value);renderCompare()"
+            style="width:auto;display:inline-block">
+            ${FIN_TERMS.map(t=>`<option value="${t}" ${t===finTerm?'selected':''}>${t} months</option>`).join('')}
+          </select>
+        </td>
+      </tr>
+      <tr class="ct-row">
+        <td class="ct-label">Rate</td>
+        ${active.map(m=>{const rt=frt(m);return`<td class="ct-val green" style="font-size:14px">${rt?rt+'% APR':'STD'}</td>`;}).join('')}
+      </tr>
+      <tr class="ct-row">
+        <td class="ct-label">Bi-Weekly</td>
+        ${active.map((m,i)=>valCell(fbwv(m)?ca$c(fbwv(m)):null, bestFbw[i], 'green')).join('')}
+      </tr>
+      <tr class="ct-row">
+        <td class="ct-label">Monthly</td>
+        ${active.map(m=>`<td class="ct-val dim">${fmov(m)?ca$c(fmov(m)):'STD'}</td>`).join('')}
+      </tr>
+      <tr class="ct-row">
+        <td class="ct-label">Total Payments (est)</td>
+        ${active.map(m=>{
+          const mo=fmov(m);
+          return`<td class="ct-val dim" style="font-size:12px">${mo?ca$(mo*finTerm):'—'}</td>`;
+        }).join('')}
+      </tr>
+    </table>
+    <div style="font-size:11px;color:var(--muted);padding:10px 0;text-align:right">
+      ✅ Highlighted = lowest value · ⚠ Residuals estimated · $0 down unless changed · before HST
+    </div>`;
+}
+
+// ── INIT ──────────────────────────────────────────────────────────
+renderSlots();
+renderCompare();
+filterModels('');
+</script>
+</body>
+</html>
