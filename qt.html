@@ -685,6 +685,8 @@ let breakdownOpen = false;
 let kmAllowance = 24000; // default 24k/yr
 let tradeInVal = 0, tradeInOwing = 0, leaseEquity = 0, optProtection = false;
 let moreOptionsOpen = false;
+let moreRateOv = {}; // Per-model more-options rate overrides { modelId: { 'lease-24': 2.99, 'fin-60': 4.49 } }
+let moreResOv = {};  // Per-model more-options residual $ overrides { modelId: { 24: 21000, ... } }
 
 // Protection package costs by model tier (from honda.ca build tool, May 2025)
 function protCost(m) {
@@ -845,6 +847,45 @@ function pick(id) {
   render();
 }
 
+function getMoreRate(type, term, fallback) {
+  if (!cur) return fallback;
+  const key = `${type}-${term}`;
+  const v = moreRateOv[cur.id]?.[key];
+  return v == null || Number.isNaN(v) ? fallback : v;
+}
+
+function setMoreRate(type, term, val) {
+  if (!cur) return;
+  if (!moreRateOv[cur.id]) moreRateOv[cur.id] = {};
+  const key = `${type}-${term}`;
+  const n = parseFloat(val);
+  moreRateOv[cur.id][key] = (val === '' || Number.isNaN(n)) ? null : Math.max(0, n);
+  render();
+}
+
+function leaseResidualPctForTerm(r, term) {
+  const rv36 = r.rv36 || 0.55;
+  const rv60 = r.rv60 || Math.max(0.25, rv36 - 0.18);
+  const slope = (rv60 - rv36) / 24;
+  const pct = rv36 + ((term - 36) * slope);
+  return Math.max(0.2, Math.min(0.75, pct));
+}
+
+function getMoreResidual(term, capForLease, r) {
+  if (!cur) return 0;
+  const override = moreResOv[cur.id]?.[term];
+  if (override != null) return override;
+  return Math.max(0, capForLease * leaseResidualPctForTerm(r, term));
+}
+
+function setMoreResidual(term, val) {
+  if (!cur) return;
+  if (!moreResOv[cur.id]) moreResOv[cur.id] = {};
+  const n = parseFloat(val);
+  moreResOv[cur.id][term] = (val === '' || Number.isNaN(n)) ? null : Math.max(0, n);
+  render();
+}
+
 function render() {
   if (!cur) return;
   const m = cur, r = R(m);
@@ -855,7 +896,8 @@ function render() {
   const tradeInPreTax = tradeInEquity / taxMult;
   const leaseEquityPreTax = leaseEquity / taxMult;
   const fees = getFees(m);
-  const feesAdj = feeUpfront ? fees.total : 0;
+  const feesTaxIn = fees.total * taxMult;
+  const feesAdj = feeUpfront ? (feesTaxIn / taxMult) : 0;
   const cap  = Math.max(0, r.price - incAmt - downPayment - leaseEquityPreTax - tradeInPreTax - feesAdj);
   const finP = cap;
   const dynamicOTD = cap * taxMult;
@@ -967,8 +1009,8 @@ function render() {
       ${feeUpfront ? `
       <div class="pt-sep"></div>
       <div class="pt-item">
-        <div class="pt-lbl">− Fees Upfront</div>
-        <div class="pt-val" style="color:var(--green)">− ${ca$(fees.total)}</div>
+        <div class="pt-lbl">− Fees Upfront (tax-in)</div>
+        <div class="pt-val" style="color:var(--green)">− ${ca$(feesTaxIn)}</div>
       </div>` : ''}
       ${leaseEquity > 0 ? `
       <div class="pt-sep"></div>
@@ -1007,7 +1049,7 @@ function render() {
       <div class="dp-custom-wrap">
         <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--dim);margin-right:8px;cursor:pointer;white-space:nowrap">
           <input type="checkbox" ${feeUpfront?'checked':''} onchange="feeUpfront=this.checked;render()" style="accent-color:var(--red);cursor:pointer">
-          Fees Upfront
+          Fees Upfront (tax-in)
         </label>
         <span class="tip-wrap dp-custom-label">Custom Downpayment
           <span class="tip-icon">i</span>
@@ -1412,6 +1454,8 @@ function resetQuote() {
     delete resOv[cur.id];
     delete incOv[cur.id];
     delete feeOv[cur.id];
+    delete moreRateOv[cur.id];
+    delete moreResOv[cur.id];
   }
   render();
 }
@@ -1549,7 +1593,7 @@ function renderBreakdown(m, r, res36obj, res60obj, l36mo, l36bw, l60mo, l60bw, f
               <div class="bk-row total"><span class="bk-lbl">Total Vehicle Price</span><span class="bk-val">${ca$(r.msrp + fees.total)}</span></div>
               ${incAmt > 0 ? `<div class="bk-row deduct"><span class="bk-lbl indent">− Incentives</span><span class="bk-val">(${ca$(incAmt)})</span></div>` : ''}
               ${dp > 0 ? `<div class="bk-row deduct"><span class="bk-lbl indent">− Down Payment</span><span class="bk-val">(${ca$(dp)})</span></div>` : ''}
-              ${feeUpfront ? `<div class="bk-row deduct"><span class="bk-lbl indent">− Fees Upfront</span><span class="bk-val">(${ca$(fees.total)})</span></div>` : ''}
+              ${feeUpfront ? `<div class="bk-row deduct"><span class="bk-lbl indent">− Fees Upfront (tax-in ${ca$(fees.total * taxMult)})</span><span class="bk-val">(${ca$(fees.total)})</span></div>` : ''}
               ${leaseEquity > 0 ? `<div class="bk-row deduct"><span class="bk-lbl indent">− Lease Equity (pre-tax)</span><span class="bk-val">(${ca$(leaseEquityPreTax)})</span></div>` : ''}
               ${tradeInVal > 0 ? `<div class="bk-row deduct"><span class="bk-lbl indent">${tradeInPreTax>=0?'− Trade-In (pre-tax)':'+ Trade-In Neg. Equity'}</span><span class="bk-val">(${ca$(Math.abs(tradeInPreTax))})</span></div>` : ''}
               <div class="bk-row highlight"><span class="bk-lbl">Adj. Cap / Principal</span><span class="bk-val">${ca$(cap)}</span></div>
@@ -1635,22 +1679,73 @@ function getTermPrograms(m) {
 }
 
 function renderMoreOptions(m) {
-  const p = getTermPrograms(m);
-  const finTerms = ['24','36','48','60','72','84','96'];
-  const leaseTerms = ['24','30','36','42','48','54','60'];
-  const row = (terms, vals) => terms.map((t,i)=>`<div class="bk-row"><span class="bk-lbl">${t} mo</span><span class="bk-val">${vals[i] ?? '—'}</span></div>`).join('');
+  const r = R(m);
+  const taxMult = 1 + taxRate / 100;
+  const fees = getFees(m);
+  const incAmt = incentiveTotal(m);
+  const feesAdj = feeUpfront ? (fees.total * taxMult) / taxMult : 0;
+  const tradeInPreTax = (tradeInVal - tradeInOwing) / taxMult;
+  const leaseEquityPreTax = leaseEquity / taxMult;
+  const cap = Math.max(0, r.price - incAmt - downPayment - feesAdj - tradeInPreTax - leaseEquityPreTax);
+  const optBWval = optBW();
+  const optMOval = bw2mo(optBWval);
+  const lgBW = optLeaseGuard ? OPT_LEASEGUARD_PRO : 0;
+  const lgMO = bw2mo(lgBW);
+  const finTerms = [24,36,48,60,72,84,96];
+  const leaseTerms = [24,30,36,42,48,54,60];
+
+  const leaseRows = leaseTerms.map(term => {
+    const baseRate = term === 36 ? r.lr36 : (term === 60 ? r.lr60 : (term < 36 ? r.lr36 : (r.lr60 ?? r.lr36)));
+    const rate = getMoreRate('lease', term, baseRate || 0);
+    const residual = getMoreResidual(term, cap, r);
+    const monthly = lmo(cap, residual, term, rate || 0) + optMOval + lgMO;
+    const biweekly = mo2bw(monthly);
+    return `
+      <div class="bk-row" style="display:grid;grid-template-columns:.8fr .9fr 1fr 1fr 1.1fr;gap:10px;align-items:center">
+        <span class="bk-lbl">${term} mo</span>
+        <input type="number" step=".01" min="0" value="${rate}" onchange="setMoreRate('lease',${term},this.value)"
+          style="background:var(--s3);border:1px solid var(--border);color:var(--text);padding:6px 8px;border-radius:5px;font-size:12px;font-family:inherit;">
+        <span class="bk-val">${ca$c(biweekly)}/2wk</span>
+        <span class="bk-val">${ca$c(monthly)}/mo</span>
+        <input type="number" min="0" value="${Math.round(residual)}" onchange="setMoreResidual(${term},this.value)"
+          style="background:#0d1a2a;border:1px solid rgba(74,158,255,.35);color:var(--blue);padding:6px 8px;border-radius:5px;font-size:12px;font-family:inherit;text-align:right;">
+      </div>`;
+  }).join('');
+
+  const finRows = finTerms.map(term => {
+    const baseRate = term === 60 ? r.fr60 : (term === 84 ? r.fr84 : (term < 60 ? r.fr60 : r.fr84));
+    const rate = getMoreRate('fin', term, baseRate || 0);
+    const monthly = fmo(cap, term, rate || 0) + optMOval;
+    const biweekly = fbw(cap, term, rate || 0) + optBWval;
+    return `
+      <div class="bk-row" style="display:grid;grid-template-columns:.9fr 1fr 1fr 1fr;gap:10px;align-items:center">
+        <span class="bk-lbl">${term} mo</span>
+        <input type="number" step=".01" min="0" value="${rate}" onchange="setMoreRate('fin',${term},this.value)"
+          style="background:var(--s3);border:1px solid var(--border);color:var(--text);padding:6px 8px;border-radius:5px;font-size:12px;font-family:inherit;">
+        <span class="bk-val">${ca$c(biweekly)}/2wk</span>
+        <span class="bk-val">${ca$c(monthly)}/mo</span>
+      </div>`;
+  }).join('');
+
   return `
     <div class="bk-panel" style="margin-bottom:12px">
       <div class="bk-body">
-        <div class="bk-sec-title-big">📘 More Options — Full Terms</div>
+        <div class="bk-sec-title-big">📘 More Options — Full Terms (Live)</div>
+        <div style="font-size:11px;color:var(--dim);margin:-2px 0 12px">Updates instantly when you change price, incentives, down payment, fees, trade-in, tax, and add-ons above.</div>
         <div class="bk-2col">
           <div class="bk-section">
-            <div class="bk-section-title">Finance Rates (24 / 36 / 48 / 60 / 72 / 84 / 96)</div>
-            ${row(finTerms, p.fin)}
+            <div class="bk-section-title">Finance — Term · Rate · Bi-Weekly · Monthly</div>
+            <div class="bk-row" style="display:grid;grid-template-columns:.9fr 1fr 1fr 1fr;gap:10px;padding-bottom:8px;border-bottom:1px solid var(--border);margin-bottom:6px">
+              <span class="bk-lbl">Term</span><span class="bk-lbl">Rate %</span><span class="bk-lbl">Bi-Weekly</span><span class="bk-lbl">Monthly</span>
+            </div>
+            ${finRows}
           </div>
           <div class="bk-section">
-            <div class="bk-section-title">Lease Rates (24 / 30 / 36 / 42 / 48 / 54 / 60)</div>
-            ${row(leaseTerms, p.lease)}
+            <div class="bk-section-title">Lease — Term · Rate · Bi-Weekly · Monthly · Residual $</div>
+            <div class="bk-row" style="display:grid;grid-template-columns:.8fr .9fr 1fr 1fr 1.1fr;gap:10px;padding-bottom:8px;border-bottom:1px solid var(--border);margin-bottom:6px">
+              <span class="bk-lbl">Term</span><span class="bk-lbl">Rate %</span><span class="bk-lbl">Bi-Weekly</span><span class="bk-lbl">Monthly</span><span class="bk-lbl">Residual $</span>
+            </div>
+            ${leaseRows}
           </div>
         </div>
       </div>
