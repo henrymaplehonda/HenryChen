@@ -1680,6 +1680,9 @@ ${addons || warrantySelected ? `
 }
 
 function copyQ() {
+  if (!cur) return;
+  const m = cur;
+  const r = R(m);
   const cap  = r.price - downPayment;
   const res36 = r.price * r.rv36;
   const res60 = r.rv60 ? r.price * r.rv60 : null;
