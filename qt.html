@@ -38,8 +38,6 @@ body{font-family:'Segoe UI',system-ui,sans-serif;font-size:16.5px;line-height:1.
 .hdr-center{text-align:center;}
 .hdr-model-label{font-size:15px;font-weight:600;}
 .hdr-right{text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:3px;}
-.hdr-admin-btn{margin-top:3px;background:rgba(74,158,255,.08);border:1px solid var(--blue-bdr);color:var(--blue);padding:4px 10px;border-radius:5px;font-size:11px;font-weight:700;font-family:inherit;cursor:pointer;}
-.hdr-admin-btn:hover{background:rgba(74,158,255,.16);}
 .hdr-promo{display:none;align-items:center;gap:4px;background:rgba(228,5,33,.13);border:1px solid rgba(228,5,33,.3);color:#ff7070;font-size:11px;font-weight:700;letter-spacing:.4px;padding:2px 8px;border-radius:4px;}
 .hdr-promo.show{display:flex;}
 .data-stamp{font-size:10px;color:var(--muted);letter-spacing:.3px;}
@@ -250,21 +248,6 @@ body{font-family:'Segoe UI',system-ui,sans-serif;font-size:16.5px;line-height:1.
 .more-wrap{margin-top:4px;margin-bottom:10px;}
 .more-btn{background:rgba(74,158,255,.08);border:1px solid var(--blue-bdr);color:var(--blue);padding:8px 14px;border-radius:6px;font-size:13px;font-family:inherit;cursor:pointer;font-weight:700;}
 .more-btn:hover{background:rgba(74,158,255,.16);}
-
-.admin-modal{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;z-index:200;}
-.admin-modal.open{display:flex;}
-.admin-card{width:min(920px,94vw);max-height:88vh;overflow:auto;background:var(--s1);border:1px solid var(--border2);border-radius:12px;padding:16px;}
-.admin-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;}
-.admin-title{font-size:16px;font-weight:800;}
-.admin-close{background:none;border:1px solid var(--border2);color:var(--dim);padding:5px 10px;border-radius:5px;cursor:pointer;}
-.admin-grid{display:grid;grid-template-columns:1.3fr repeat(8,1fr);gap:8px;font-size:12px;align-items:center;}
-.admin-grid .hd{font-size:10px;letter-spacing:.6px;text-transform:uppercase;color:var(--dim);font-weight:700;padding:6px 0;}
-.admin-grid input,.admin-grid select{background:var(--s3);border:1px solid var(--border);color:var(--text);padding:6px 7px;border-radius:5px;font-size:12px;font-family:inherit;width:100%;}
-.admin-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;}
-.admin-note{margin-top:10px;font-size:11px;color:var(--dim);line-height:1.5;}
-.btn-admin{background:none;border:1px solid var(--border2);color:var(--text);padding:7px 12px;border-radius:6px;cursor:pointer;font-size:12px;font-family:inherit;}
-.btn-admin.primary{border-color:rgba(0,212,122,.35);color:var(--green);}
-.btn-admin.warn{border-color:rgba(245,166,35,.35);color:var(--yellow);}
 </style>
 </head>
 <body>
@@ -285,7 +268,6 @@ body{font-family:'Segoe UI',system-ui,sans-serif;font-size:16.5px;line-height:1.
   <div class="hdr-right">
     <div class="data-stamp">📅 Prices pulled: Apr 25, 2026</div>
     <div class="data-stamp" style="color:var(--yellow)">⚠ Estimate only — verify at honda.ca</div>
-    <button class="hdr-admin-btn" onclick="openAdmin()">🔐 Admin</button>
   </div>
 </div>
 
@@ -308,7 +290,6 @@ body{font-family:'Segoe UI',system-ui,sans-serif;font-size:16.5px;line-height:1.
 </div>
 
 <div class="toast" id="toast"></div>
-<div class="admin-modal" id="admin-modal"></div>
 
 <script>
 // ═══════════════════════════════════════════════════════════════════════
@@ -318,7 +299,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;font-size:16.5px;line-height:1.
 // ═══════════════════════════════════════════════════════════════════════
 const DATA_DATE = 'April 25, 2026';
 
-let M = [
+const M = [
 // ═══════════════════════════════════════════════════════════════════════
 //  ALL RATES from April 2026 Honda Programs (NAS081-26) Apr 1–30, 2026
 //  Finance cols 24/36/48/60/72/84 — app uses 60 & 84
@@ -555,52 +536,6 @@ let M = [
  msrp:64990, price:68131, otd:77638, engine:'Electric / Dual Motor', drive:'AWD',
  lr:{36:null,60:null}, rv:{36:.45,60:.29}, fr:{60:1.99,84:1.99}},
 ];
-const ADMIN_PW = '0512';
-const STORAGE_KEYS = {
-  published: 'blitz_published_v1',
-  previous: 'blitz_previous_v1',
-  metadata: 'blitz_meta_v1'
-};
-const BASE_DATA = JSON.parse(JSON.stringify(M));
-let adminAuthed = false;
-
-function clone(obj){ return JSON.parse(JSON.stringify(obj)); }
-function getPublishedData(){ return clone(M); }
-function setWorkingData(newData){
-  if (!Array.isArray(newData) || !newData.length) return;
-  M = clone(newData);
-  cur = cur ? M.find(x => x.id === cur.id) || null : null;
-  buildSb();
-  if (cur) {
-    document.querySelectorAll('.sb-item').forEach(el => el.classList.remove('active'));
-    document.getElementById('si-' + cur.id)?.classList.add('active');
-    render();
-  } else {
-    document.getElementById('main').innerHTML = `<div class="welcome"><div class="welcome-icon">🚗</div><div>Select a model from the sidebar</div></div>`;
-  }
-}
-function loadPublishedData(){
-  try {
-    const raw = localStorage.getItem(STORAGE_KEYS.published);
-    if (!raw) return;
-    const parsed = JSON.parse(raw);
-    if (Array.isArray(parsed) && parsed.length) setWorkingData(parsed);
-  } catch {}
-}
-function diffSummary(a, b){
-  const fields = ['msrp','price'];
-  const rateFields = [['lr',36],['lr',60],['fr',60],['fr',84],['rv',36],['rv',60]];
-  const out = [];
-  a.forEach(m => {
-    const old = b.find(x => x.id === m.id);
-    if (!old) return;
-    const changes = [];
-    fields.forEach(f => { if ((m[f] ?? null) !== (old[f] ?? null)) changes.push(f); });
-    rateFields.forEach(([k,t]) => { if ((m[k]?.[t] ?? null) !== (old[k]?.[t] ?? null)) changes.push(`${k}${t}`); });
-    if (changes.length) out.push({id:m.id, name:`${m.name} ${m.trim}`, changes});
-  });
-  return out;
-}
 
 // ═══════════════════════════════════════════════════════════════════════
 //  CALCULATOR
@@ -884,7 +819,7 @@ function renderWarrantyPanel(m) {
 // ═══════════════════════════════════════════════════════════════════════
 //  SIDEBAR
 // ═══════════════════════════════════════════════════════════════════════
-function buildSb() {
+(function buildSb() {
   const cats = [...new Set(M.map(m => m.cat))];
   document.getElementById('sb').innerHTML = cats.map(cat => `
     <div class="sb-cat">${cat}</div>
@@ -899,7 +834,7 @@ function buildSb() {
       </div>
     `).join('')}
   `).join('');
-}
+})();
 
 // ═══════════════════════════════════════════════════════════════════════
 //  PICK & RENDER
@@ -2319,107 +2254,8 @@ function showToast(msg) {
   setTimeout(() => t.classList.remove('show'), 2200);
 }
 
-function openAdmin() {
-  if (!adminAuthed) {
-    const input = prompt('Enter admin password');
-    if (input !== ADMIN_PW) { showToast('Admin access denied'); return; }
-    adminAuthed = true;
-  }
-  renderAdminModal();
-  document.getElementById('admin-modal').classList.add('open');
-}
-function closeAdmin() {
-  document.getElementById('admin-modal').classList.remove('open');
-}
-function applyAdminField(id, field, val) {
-  const m = M.find(x => x.id === id);
-  if (!m) return;
-  const n = parseFloat(val);
-  const v = (val === '' || Number.isNaN(n)) ? null : n;
-  if (field.includes('.')) {
-    const [k, term] = field.split('.');
-    if (!m[k]) m[k] = {};
-    m[k][term] = v;
-  } else {
-    m[field] = v;
-  }
-  if (cur?.id === id) cur = m;
-}
-function renderAdminModal() {
-  const modal = document.getElementById('admin-modal');
-  const publishedRaw = localStorage.getItem(STORAGE_KEYS.published);
-  const published = publishedRaw ? JSON.parse(publishedRaw) : BASE_DATA;
-  const changes = diffSummary(M, published);
-  const meta = JSON.parse(localStorage.getItem(STORAGE_KEYS.metadata) || '{}');
-  const lastPublished = meta.lastPublishedAt || 'Never';
-  modal.innerHTML = `
-    <div class="admin-card">
-      <div class="admin-head">
-        <div>
-          <div class="admin-title">Blitz Deal Admin Console</div>
-          <div class="admin-note">Edit Honda programs (MSRP, selling price, rates, residuals), check deltas, then publish. Last publish: ${lastPublished}</div>
-        </div>
-        <button class="admin-close" onclick="closeAdmin()">✕ Close</button>
-      </div>
-      <div class="admin-grid">
-        <div class="hd">Model</div><div class="hd">MSRP</div><div class="hd">Price</div><div class="hd">L36%</div><div class="hd">L60%</div><div class="hd">F60%</div><div class="hd">F84%</div><div class="hd">R36%</div><div class="hd">R60%</div>
-        ${M.map(m=>`
-          <div><select onchange="pick('${m.id}')"><option>${m.name} ${m.trim}</option></select></div>
-          <div><input type="number" value="${m.msrp ?? ''}" onchange="applyAdminField('${m.id}','msrp',this.value)"></div>
-          <div><input type="number" value="${m.price ?? ''}" onchange="applyAdminField('${m.id}','price',this.value)"></div>
-          <div><input type="number" step="0.01" value="${m.lr?.[36] ?? ''}" onchange="applyAdminField('${m.id}','lr.36',this.value)"></div>
-          <div><input type="number" step="0.01" value="${m.lr?.[60] ?? ''}" onchange="applyAdminField('${m.id}','lr.60',this.value)"></div>
-          <div><input type="number" step="0.01" value="${m.fr?.[60] ?? ''}" onchange="applyAdminField('${m.id}','fr.60',this.value)"></div>
-          <div><input type="number" step="0.01" value="${m.fr?.[84] ?? ''}" onchange="applyAdminField('${m.id}','fr.84',this.value)"></div>
-          <div><input type="number" step="0.001" value="${m.rv?.[36] ?? ''}" onchange="applyAdminField('${m.id}','rv.36',this.value)"></div>
-          <div><input type="number" step="0.001" value="${m.rv?.[60] ?? ''}" onchange="applyAdminField('${m.id}','rv.60',this.value)"></div>
-        `).join('')}
-      </div>
-      <div class="admin-actions">
-        <button class="btn-admin" onclick="adminCheckChanges()">Check Changes (${changes.length})</button>
-        <button class="btn-admin primary" onclick="adminPublish()">Approve & Publish</button>
-        <button class="btn-admin warn" onclick="adminRollback()">Rollback to Previous Month</button>
-      </div>
-    </div>`;
-}
-function adminCheckChanges() {
-  const publishedRaw = localStorage.getItem(STORAGE_KEYS.published);
-  const published = publishedRaw ? JSON.parse(publishedRaw) : BASE_DATA;
-  const changes = diffSummary(M, published);
-  if (!changes.length) { alert('No pending changes vs published set.'); return; }
-  const preview = changes.slice(0, 20).map(c => `${c.name}: ${c.changes.join(', ')}`).join('\n');
-  alert(`Pending changes: ${changes.length} models\n\n${preview}${changes.length>20?'\n...':''}`);
-}
-function adminPublish() {
-  const currentPublished = localStorage.getItem(STORAGE_KEYS.published);
-  localStorage.setItem(STORAGE_KEYS.previous, currentPublished || JSON.stringify(BASE_DATA));
-  localStorage.setItem(STORAGE_KEYS.published, JSON.stringify(getPublishedData()));
-  localStorage.setItem(STORAGE_KEYS.metadata, JSON.stringify({ lastPublishedAt: new Date().toLocaleString() }));
-  buildSb();
-  if (cur) render();
-  showToast('Changes approved & published');
-  renderAdminModal();
-}
-function adminRollback() {
-  const prevRaw = localStorage.getItem(STORAGE_KEYS.previous);
-  if (!prevRaw) { showToast('No previous month snapshot found'); return; }
-  try {
-    const prev = JSON.parse(prevRaw);
-    localStorage.setItem(STORAGE_KEYS.published, JSON.stringify(prev));
-    setWorkingData(prev);
-    showToast('Rolled back to previous month');
-    renderAdminModal();
-  } catch {
-    showToast('Rollback failed');
-  }
-}
-
-loadPublishedData();
-buildSb();
-
 document.addEventListener('keydown', e => {
   if ((e.ctrlKey||e.metaKey) && e.key === 'e') { e.preventDefault(); if (cur) togglePanel(); }
-  if (e.key === 'Escape') closeAdmin();
 });
 </script>
 </body>
