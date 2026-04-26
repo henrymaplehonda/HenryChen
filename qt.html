@@ -71,6 +71,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;font-size:16.5px;line-height:1.
 
 /* ── QUOTE TOP ── */
 .q-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px;gap:12px;}
+.q-title-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
 .q-title{font-size:22px;font-weight:800;letter-spacing:-.5px;line-height:1.15;}
 .q-title .trim{color:var(--dim);font-weight:400;}
 .q-sub{margin-top:6px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
@@ -86,6 +87,8 @@ body{font-family:'Segoe UI',system-ui,sans-serif;font-size:16.5px;line-height:1.
 .btn{background:none;border:1px solid var(--border2);color:var(--dim);padding:7px 14px;border-radius:6px;font-size:13px;font-family:inherit;cursor:pointer;transition:all .13s;white-space:nowrap;}
 .btn:hover{border-color:var(--text);color:var(--text);}
 .btn-copy:hover{border-color:var(--green);color:var(--green);}
+.btn-planner{border-color:var(--blue-bdr);color:var(--blue);background:var(--blue-bg);}
+.btn-planner:hover{border-color:var(--blue);color:#9dc7ff;}
 
 /* ── DOWN PAYMENT BAR ── */
 .dp-bar{background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:14px 18px;margin-bottom:16px;display:flex;align-items:center;gap:20px;flex-wrap:wrap;}
@@ -947,7 +950,10 @@ function render() {
     <!-- TOP -->
     <div class="q-top">
       <div>
-        <div class="q-title">${m.name} <span class="trim">${m.trim}</span></div>
+        <div class="q-title-row">
+          <div class="q-title">${m.name} <span class="trim">${m.trim}</span></div>
+          <button class="btn btn-planner" onclick="openBudgetPlanner()">Budget Planner</button>
+        </div>
         <div class="q-sub">
           <div class="q-price-block">
             <span class="q-price">${ca$(r.price)}</span>
@@ -1964,6 +1970,225 @@ ${addons || warrantySelected ? `
   const w = window.open('', '_blank', 'width=1100,height=750');
   w.document.write(html);
   w.document.close();
+}
+
+function openBudgetPlanner() {
+  const sheetUrl = 'https://docs.google.com/spreadsheets/d/1nYN2OuBahUPu7Y1MhpVufL_KGzFWKrq4VLa5FE9ojwM/edit?gid=0#gid=0';
+  const csvUrl = 'https://docs.google.com/spreadsheets/d/1nYN2OuBahUPu7Y1MhpVufL_KGzFWKrq4VLa5FE9ojwM/export?format=csv&gid=0';
+
+  window.open(sheetUrl, '_blank');
+  const plannerWin = window.open('', 'budgetPlanner', 'width=1150,height=820,resizable=yes,scrollbars=yes');
+  if (!plannerWin) {
+    showToast('Popup blocked. Allow popups and try again.');
+    return;
+  }
+
+  plannerWin.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>Budget Planner</title>
+  <style>
+    :root{--bg:#0a0a0a;--s1:#111;--s2:#181818;--b:#2a2a2a;--t:#f0f0f0;--d:#8a8a8a;--red:#E40521;--blue:#4a9eff;--green:#00d47a;}
+    *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--t);font-family:'Segoe UI',system-ui,sans-serif;padding:18px}
+    .card{background:var(--s1);border:1px solid var(--b);border-radius:10px;padding:14px 16px}
+    .grid{display:grid;grid-template-columns:1.2fr 1fr 1fr auto;gap:10px;align-items:end}
+    label{display:block;font-size:12px;color:var(--d);margin-bottom:6px}
+    input,select{width:100%;padding:9px;border-radius:7px;border:1px solid var(--b);background:var(--s2);color:var(--t);font-family:inherit}
+    button{padding:9px 13px;border-radius:7px;border:1px solid var(--blue);background:rgba(74,158,255,.1);color:var(--blue);font-weight:700;cursor:pointer}
+    button:hover{background:rgba(74,158,255,.2)}
+    table{width:100%;border-collapse:collapse;margin-top:14px;font-size:13px}
+    th,td{border-bottom:1px solid var(--b);padding:9px 7px;text-align:left;vertical-align:top}
+    th{color:var(--d);font-size:11px;text-transform:uppercase;letter-spacing:.8px}
+    .pill{font-size:10px;border:1px solid var(--b);border-radius:999px;padding:1px 7px;display:inline-block}
+    .ok{color:var(--green)} .warn{color:#f5a623} .tiny{font-size:11px;color:var(--d)}
+  </style></head><body>
+  <div class="card">
+    <div style="font-size:18px;font-weight:800;margin-bottom:6px">Budget Planner</div>
+    <div class="tiny" style="margin-bottom:10px">Budget input is <b>before tax</b>. Used inventory auto-loads from Google Sheet and ignores sold units.</div>
+    <div class="grid">
+      <div><label>Budget type</label><select id="mode"><option value="monthly">Monthly budget (excl. tax)</option><option value="bw">Bi-weekly budget (excl. tax)</option></select></div>
+      <div><label>Budget amount</label><input id="budget" type="number" min="1" step="1" placeholder="e.g. 750"></div>
+      <div><label>Down payment</label><input id="down" type="number" min="0" step="1" value="0"></div>
+      <div><button id="run">Find Vehicles</button></div>
+    </div>
+    <div id="meta" class="tiny" style="margin-top:10px"></div>
+  </div>
+  <div class="card" style="margin-top:14px"><div id="out" class="tiny">Enter budget and click <b>Find Vehicles</b>.</div></div>
+  <script>
+  const NEW_DATA = ${JSON.stringify(M)};
+  const RATE_USED = 7.99;
+  const NOW_YEAR = new Date().getFullYear();
+  const CSV_URL = ${JSON.stringify(csvUrl)};
+  const SHEET_URL = ${JSON.stringify(sheetUrl)};
+
+  const fmt = n => '$' + Math.round(Number(n||0)).toLocaleString('en-CA');
+  const fm2 = n => '$' + Number(n||0).toFixed(2);
+  const financeMo = (p, mo, rate) => {
+    if (p <= 0) return 0;
+    if (!rate) return p / mo;
+    const r = rate / 100 / 12;
+    return p * r * Math.pow(1+r,mo) / (Math.pow(1+r,mo)-1);
+  };
+  const financeBW = (p, mo, rate) => {
+    if (p <= 0) return 0;
+    if (!rate) return p / (mo * 26/12);
+    const r = rate / 100 / 26, n = Math.round(mo * 26/12);
+    return p * r * Math.pow(1+r,n) / (Math.pow(1+r,n)-1);
+  };
+  const leaseMo = (cap, res, mo, rate) => (cap-res)/mo + (cap+res)*(rate/2400);
+  const mo2bw = mo => mo * 12 / 26;
+
+  const parseCsv = txt => {
+    const rows = [];
+    let row = [], cur = '', inQ = false;
+    for (let i=0;i<txt.length;i++) {
+      const c = txt[i], n = txt[i+1];
+      if (c === '"') { if (inQ && n === '"') { cur += '"'; i++; } else inQ = !inQ; continue; }
+      if (c === ',' && !inQ) { row.push(cur); cur = ''; continue; }
+      if ((c === '\\n' || c === '\\r') && !inQ) {
+        if (c === '\\r' && n === '\\n') i++;
+        row.push(cur); if (row.some(v => v.trim() !== '')) rows.push(row);
+        row = []; cur = ''; continue;
+      }
+      cur += c;
+    }
+    if (cur || row.length) { row.push(cur); if (row.some(v => v.trim() !== '')) rows.push(row); }
+    return rows;
+  };
+
+  const num = v => Number(String(v||'').replace(/[^0-9.-]/g,'')) || 0;
+  const findHeader = (headers, keys) => headers.findIndex(h => keys.some(k => h.includes(k)));
+  const maxTermByAge = age => {
+    if (age >= 10) return 48;
+    if (age === 9) return 60;
+    if (age === 8) return 72;
+    if (age === 7) return 60;
+    return 84;
+  };
+
+  async function getUsedInventory() {
+    const r = await fetch(CSV_URL, {cache:'no-store'});
+    if (!r.ok) throw new Error('Could not load used inventory sheet.');
+    const rows = parseCsv(await r.text());
+    if (!rows.length) return [];
+    const headers = rows[0].map(h => h.toLowerCase().trim());
+    const idxYear = findHeader(headers,['year']);
+    const idxPrice = findHeader(headers,['price','sale price','internet price','list']);
+    const idxStatus = findHeader(headers,['status','sold','availability']);
+    const idxStock = findHeader(headers,['stock']);
+    const idxModel = findHeader(headers,['model','vehicle','trim','description']);
+    const idxMake = findHeader(headers,['make']);
+    const idxKm = findHeader(headers,['km','mileage']);
+
+    const out = [];
+    for (let i=1;i<rows.length;i++) {
+      const r = rows[i];
+      const joined = r.join(' ').toLowerCase();
+      if (idxStatus >= 0 && /sold|deposit|unavailable/.test(String(r[idxStatus]||'').toLowerCase())) continue;
+      if (idxStatus < 0 && /\\bsold\\b/.test(joined)) continue;
+      const year = idxYear >= 0 ? num(r[idxYear]) : 0;
+      const price = idxPrice >= 0 ? num(r[idxPrice]) : 0;
+      if (!year || !price) continue;
+      const make = idxMake >= 0 ? String(r[idxMake]||'').trim() : '';
+      const model = idxModel >= 0 ? String(r[idxModel]||'').trim() : '';
+      out.push({
+        year, price,
+        stock: idxStock >= 0 ? String(r[idxStock]||'').trim() : '',
+        name: [year, make, model].filter(Boolean).join(' ').trim(),
+        km: idxKm >= 0 ? String(r[idxKm]||'').trim() : ''
+      });
+    }
+    return out;
+  }
+
+  function getNewMatches(monthlyBudget, bwBudget, down) {
+    const list = [];
+    for (const m of NEW_DATA) {
+      const price = Number(m.price||0);
+      const principal = Math.max(0, price - down);
+      if (!principal) continue;
+
+      const finTerms = [60,84].filter(t => m.fr && m.fr[t]);
+      for (const t of finTerms) {
+        const mo = financeMo(principal, t, m.fr[t]);
+        const bw = financeBW(principal, t, m.fr[t]);
+        if (mo <= monthlyBudget + 1e-6 || bw <= bwBudget + 1e-6) {
+          list.push({type:'New', method:'Finance', vehicle: m.name + ' ' + m.trim, price, term:t, rate:m.fr[t], mo, bw});
+        }
+      }
+
+      const leaseTerms = [36,60].filter(t => m.lr && m.lr[t] && m.rv && m.rv[t]);
+      for (const t of leaseTerms) {
+        const residual = price * Number(m.rv[t]||0);
+        const mo = leaseMo(principal, residual, t, m.lr[t]);
+        const bw = mo2bw(mo);
+        if (mo <= monthlyBudget + 1e-6 || bw <= bwBudget + 1e-6) {
+          list.push({type:'New', method:'Lease', vehicle: m.name + ' ' + m.trim, price, term:t, rate:m.lr[t], mo, bw});
+        }
+      }
+    }
+    return list;
+  }
+
+  function getUsedMatches(used, monthlyBudget, bwBudget, down) {
+    const list = [];
+    for (const u of used) {
+      const age = Math.max(0, NOW_YEAR - u.year);
+      const term = maxTermByAge(age);
+      const principal = Math.max(0, u.price - down);
+      const mo = financeMo(principal, term, RATE_USED);
+      const bw = financeBW(principal, term, RATE_USED);
+      if (mo <= monthlyBudget + 1e-6 || bw <= bwBudget + 1e-6) {
+        list.push({type:'Used', method:'Finance', vehicle:u.name || String(u.year), price:u.price, term, rate:RATE_USED, mo, bw, stock:u.stock, age, km:u.km});
+      }
+    }
+    return list;
+  }
+
+  function runPlanner(used) {
+    const mode = document.getElementById('mode').value;
+    const budget = num(document.getElementById('budget').value);
+    const down = num(document.getElementById('down').value);
+    if (!budget) { document.getElementById('out').innerHTML = '<span class="warn">Please enter budget amount.</span>'; return; }
+
+    const monthlyBudget = mode === 'monthly' ? budget : budget * 26 / 12;
+    const bwBudget = mode === 'bw' ? budget : budget * 12 / 26;
+    const combined = [...getNewMatches(monthlyBudget, bwBudget, down), ...getUsedMatches(used, monthlyBudget, bwBudget, down)];
+    combined.sort((a,b) => a.mo - b.mo);
+
+    document.getElementById('meta').innerHTML =
+      'Budget: <b>' + fm2(mode==='monthly'?monthlyBudget:bwBudget) + (mode==='monthly'?'/mo':'/2wk') + '</b> (excl. tax) · Down: <b>' + fmt(down) + '</b> · Used source: <a href="' + SHEET_URL + '" target="_blank" style="color:#4a9eff">Google Sheet</a>';
+    if (!combined.length) {
+      document.getElementById('out').innerHTML = '<span class="warn">No qualifying vehicles found with this budget/down payment.</span>';
+      return;
+    }
+
+    const rows = combined.slice(0,150).map(v => '<tr>'
+      + '<td><span class="pill">' + v.type + '</span></td>'
+      + '<td>' + v.vehicle + (v.stock ? '<div class="tiny">Stock: ' + v.stock + '</div>' : '') + (v.km ? '<div class="tiny">KM: ' + v.km + '</div>' : '') + '</td>'
+      + '<td>' + v.method + '</td>'
+      + '<td>' + v.term + ' mo</td>'
+      + '<td>' + v.rate + '%</td>'
+      + '<td>' + fmt(v.price) + '</td>'
+      + '<td class="ok">' + fm2(v.mo) + '/mo</td>'
+      + '<td class="ok">' + fm2(v.bw) + '/2wk</td>'
+      + '</tr>').join('');
+
+    document.getElementById('out').innerHTML = '<table><thead><tr><th>Type</th><th>Vehicle</th><th>Program</th><th>Term</th><th>Rate</th><th>Price</th><th>Monthly</th><th>Bi-weekly</th></tr></thead><tbody>' + rows + '</tbody></table>'
+      + '<div class="tiny" style="margin-top:10px">Used finance rules: 10+ years = 48 mo max; 9 years = 60 mo (assumption); 8 years = 72 mo; 7 years = 60 mo; newer = 84 mo. Sold units are excluded.</div>';
+  }
+
+  let USED = [];
+  (async () => {
+    const meta = document.getElementById('meta');
+    meta.textContent = 'Loading used inventory from Google Sheet...';
+    try {
+      USED = await getUsedInventory();
+      meta.textContent = 'Loaded ' + USED.length + ' available used units from Google Sheet.';
+    } catch (e) {
+      meta.innerHTML = '<span class="warn">' + e.message + '</span> Open sheet manually: <a href="' + SHEET_URL + '" target="_blank" style="color:#4a9eff">Google Sheet</a>';
+    }
+  })();
+  document.getElementById('run').addEventListener('click', () => runPlanner(USED));
+  </script></body></html>`);
+  plannerWin.document.close();
 }
 
 function copyQ() {
