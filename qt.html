@@ -601,7 +601,8 @@ function getRes(m, term) {
   // Use per-model confirmed km residual % table
   if (m.resKm) {
     const kmKey = kmAllowance >= 40000 ? 40000 : kmAllowance <= 12000 ? 12000 :
-                  kmAllowance <= 16000 ? 16000 : kmAllowance <= 20000 ? 20000 : 24000;
+                  kmAllowance <= 16000 ? 16000 : kmAllowance <= 20000 ? 20000 :
+                  kmAllowance <= 24000 ? 24000 : kmAllowance <= 32000 ? 32000 : 40000;
     const resPct = m.resKm[kmKey] ?? pct;
     const resVal = m.msrp * resPct;
     const isExact = m.resKm[kmKey] !== undefined;
@@ -1080,7 +1081,7 @@ function render() {
     <div class="km-bar">
       <span class="km-label">🚗 KM Allowance / Year</span>
       <div class="km-btns">
-        ${[12000,16000,20000,24000,40000].map(km => `
+        ${[12000,16000,20000,24000,32000,40000].map(km => `
           <button class="km-btn ${kmAllowance===km?'active':''}" onclick="setKM(${km})">${km===40000?'40k*':`${km/1000}k`}</button>
         `).join('')}
       </div>
@@ -1088,6 +1089,7 @@ function render() {
         ${kmAllowance === 20000 ? 'Standard · honda.ca default' :
           kmAllowance < 20000 ? `Fewer km → higher residual (est. +${ca$(Math.abs(m.msrp * kmResAdjPct(kmAllowance)))} vs 20k)` :
           kmAllowance === 24000 ? `Confirmed residual from honda.ca` :
+          kmAllowance === 32000 ? `Higher km → lower residual (est. −${ca$(Math.abs(m.msrp * kmResAdjPct(kmAllowance)))} vs 20k)` :
           `40k = 24k + 16k prepaid @ $0.08/km × 5yr = $6,400 baked in`}
       </span>
     </div>
