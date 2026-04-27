@@ -533,6 +533,7 @@ let cur = null, ov = {}, panelOpen = false;
 let downPayment = 0;
 let dpPct = null;
 let gapAmt = 2500;
+let optGAP = true;
 let optColor = false, optWheelLock = false, optLeaseGuard = false;
 let resOv = {};   // Per-model HFS residual overrides
 let incOv = {};   // Per-model incentive overrides { modelId: number }
@@ -1332,11 +1333,15 @@ function leaseCard(term, data, slot, optBWval, optMOval) {
     </div>`;
 }
 function finCard(term, data, slot, m2) {
-  const { mo, bw, mog, bwg, mogp, bwgp, rt } = data;
+  const { mo, bw, mog, bwg, rt } = data;
   const wOpen = finWarrantyOpen[term] || false;
   const wCost = warrantySelected ? warrantySelected.cost : 0;
   const cap2  = cur ? R(cur).price - downPayment : 0;
   const termVar = slot === 1 ? 'finTerm1' : 'finTerm2';
+  // Inline warranty+GAP payment (fixes bug where bwgp was Protection Plan, not Warranty)
+  const gapBase = optGAP ? gapAmt : 0;
+  const bwWithWar = fbw(cap2 + gapBase + wCost, term, rt);
+  const moWithWar = fmo(cap2 + gapBase + wCost, term, rt);
 
   return `
     <div class="pcard">
@@ -1364,10 +1369,16 @@ function finCard(term, data, slot, m2) {
           <span class="pay-num secondary">${ca$c(mo)}<span class="pay-unit">/mo</span></span>
         </div>
         <div class="pc-div"></div>
-        <div class="gap-box">
-          <div class="gap-hdr">GAP Insurance
-            <span class="gap-amt-note">+$${gapAmt.toLocaleString()} to principal</span>
+        <!-- GAP INSURANCE BOX -->
+        <div class="gap-box" style="${optGAP?'':'opacity:.45;'}">
+          <div class="gap-hdr">
+            <span>GAP Insurance</span>
+            <span style="display:flex;align-items:center;gap:8px;">
+              <span class="gap-amt-note">${optGAP?'+$'+gapAmt.toLocaleString()+' to principal':'excluded'}</span>
+              <button onclick="optGAP=!optGAP;render()" style="font-size:10px;padding:2px 7px;border-radius:3px;cursor:pointer;font-family:inherit;background:${optGAP?'rgba(0,212,122,.15)':'rgba(255,255,255,.06)'};border:1px solid ${optGAP?'var(--green)':'var(--border2)'};color:${optGAP?'var(--green)':'var(--dim)'};">${optGAP?'✓ On':'Off'}</button>
+            </span>
           </div>
+          ${optGAP ? `
           <div class="gap-row">
             <span class="gap-lbl">Bi-Weekly</span>
             <span class="gap-num">${ca$c(bwg)}<span class="pay-unit">/2wk</span></span>
@@ -1375,7 +1386,7 @@ function finCard(term, data, slot, m2) {
           <div class="gap-row">
             <span class="gap-lbl">Monthly</span>
             <span class="gap-num sm">${ca$c(mog)}<span class="pay-unit">/mo</span></span>
-          </div>
+          </div>` : ''}
         </div>
         <!-- WARRANTY SUB-MENU -->
         <div style="margin-top:10px">
@@ -1390,22 +1401,23 @@ function finCard(term, data, slot, m2) {
               const cost = getWarrantyPrice(p, tier);
               if (!cost) return '';
               const isSel = warrantySelected?.label === p.label;
-              const bwWithW = fbw(cap2+gapAmt+cost, term, rt);
+              const bwPreview = fbw(cap2 + gapBase + cost, term, rt);
               return '<div style="display:flex;align-items:center;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);gap:6px">'
                 + '<div style="font-size:11px;' + (isSel?'color:var(--green);font-weight:700':'color:var(--dim)') + '">' + p.label + '</div>'
                 + '<div style="font-size:11px;font-weight:600">$' + cost.toLocaleString() + '</div>'
-                + '<div style="font-size:11px;color:var(--green)">' + ca$c(bwWithW) + '/2wk</div>'
-                + '<button onclick="selectWarranty(\'' + p.label + '\',' + cost + ')" style="font-size:10px;padding:2px 8px;border-radius:3px;cursor:pointer;font-family:inherit;background:' + (isSel?'rgba(0,212,122,.2)':'none') + ';border:1px solid ' + (isSel?'var(--green)':'var(--border2)') + ';color:' + (isSel?'var(--green)':'var(--dim)') + '">' + (isSel?'✓':'Select') + '</button>'
+                + '<div style="font-size:11px;color:var(--green)">' + ca$c(bwPreview) + '/2wk</div>'
+                + '<button onclick="selectWarranty(\'' + p.label + '\',' + cost + ')" style="font-size:10px;padding:2px 8px;border-radius:3px;cursor:pointer;font-family:inherit;background:' + (isSel?'rgba(0,212,122,.2)':'none') + ';border:1px solid ' + (isSel?'var(--green)':'var(--border2)') + ';color:' + (isSel?'var(--green)':'var(--dim)') + '">' + (isSel?'✓ Selected':'Select') + '</button>'
                 + '</div>';
             }).join('')}
+            <button onclick="selectWarranty(null,0)" style="margin-top:8px;width:100%;background:none;border:1px solid var(--border2);color:var(--dim);padding:5px;border-radius:4px;font-size:11px;font-family:inherit;cursor:pointer;">✕ Remove Warranty</button>
           </div>` : ''}
           ${warrantySelected ? `
           <div style="margin-top:6px;padding:8px 10px;background:rgba(0,212,122,.06);border:1px solid var(--green-bdr);border-radius:5px;">
             <div style="display:flex;justify-content:space-between;align-items:baseline">
-              <span style="font-size:12px;color:var(--green)">With GAP + Warranty:</span>
-              <span style="font-size:20px;font-weight:700;color:var(--green)">${ca$c(bwgp)}/2wk</span>
+              <span style="font-size:12px;color:var(--green)">With${optGAP?' GAP +':''} Warranty:</span>
+              <span style="font-size:20px;font-weight:700;color:var(--green)">${ca$c(bwWithWar)}/2wk</span>
             </div>
-            <div style="font-size:11px;color:rgba(0,212,122,.5);text-align:right">${ca$c(mogp)}/mo</div>
+            <div style="font-size:11px;color:rgba(0,212,122,.5);text-align:right">${ca$c(moWithWar)}/mo</div>
           </div>` : ''}
         </div>
       </div>
