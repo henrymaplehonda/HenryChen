@@ -315,7 +315,8 @@ const M = [
  msrp:32200, price:35175, otd:39748, engine:'2.0L 150hp / CVT', drive:'FWD',
  lr:{36:3.49,60:4.49}, rv:{36:.55,60:.37}, fr:{60:4.49,84:4.99},
  // Confirmed residuals honda.ca Apr 26 2026 (60mo, 4.49%, cap $34,675.50 after $500 Lease Bonus):
- resKm:{20000:13562, 24000:12880, 32000:9680, 40000:6480}},
+ // Dollar values ÷ MSRP $32,200 → percentages
+ resKm:{20000:.42, 24000:.40, 32000:.30, 40000:.20}},
 
 // rv60=43% of MSRP @ 24k confirmed: $34,100×43%=$14,663 ✓ honda.ca Apr 25
 // rv60=45% of MSRP @ 20k confirmed: $34,100×45%=$15,345 ✓ honda.ca Apr 25
@@ -635,6 +636,9 @@ function getFees(m) {
 let breakdownOpen = false;
 let kmAllowance = 20000;
 let tradeInVal = 0, tradeInOwing = 0, leaseEquity = 0, optProtection = false, feesUpfront = false;
+let finWarrantyOpen = {};
+let leaseWarrantyOpen = {};
+let moreOptionsOpen = false;
 
 // Term selectors — which term to show on each of the 4 payment cards
 let leaseTerm1 = 24;   // left lease card — starts at 24mo
@@ -870,6 +874,9 @@ function render() {
   const l60mo = (r.lr60 && res60 !== null) ? lmo(cap, res60, 60, r.lr60) : null;
   const l36bw = mo2bw(l36mo), l60bw = l60mo !== null ? mo2bw(l60mo) : null;
 
+  // Finance protection cost — must be declared before getFinCard uses it
+  const prot = optProtection ? protCost(m) : 0;
+
   // Dynamic finance calculations for selected terms
   const getFinCard = (term) => {
     const rt = frForTerm(r, term);
@@ -887,10 +894,6 @@ function render() {
   // Options add-on (bi-weekly → monthly)
   const optBWval = optBW();
   const optMOval = bw2mo(optBWval);
-
-  // Finance
-  const prot = optProtection ? protCost(m) : 0;
-  // fc1 and fc2 already calculated above via getFinCard()
 
   // Legacy breakdown vars
   const f60mo = fmo(finP, 60, r.fr60);
@@ -1097,7 +1100,7 @@ function render() {
       </div>
       <span class="km-note">
         ${kmAllowance === 20000 ? 'Standard · honda.ca default' :
-          kmAllowance < 20000 ? `Fewer km → higher residual (est. +${ca$(Math.abs(kmResAdj(r.price, kmAllowance)))} vs 20k)` :
+          kmAllowance < 20000 ? `Fewer km → higher residual (est. +${ca$(Math.abs(m.msrp * kmResAdjPct(kmAllowance)))} vs 20k)` :
           kmAllowance === 24000 ? `Confirmed residual from honda.ca` :
           `40k = 24k + 16k prepaid @ $0.08/km × 5yr = $6,400 baked in`}
       </span>
@@ -1411,6 +1414,35 @@ function finCard(term, data, slot, m2) {
         </div>
       </div>
     </div>`;
+}
+
+function selectWarranty(label, cost) {
+  warrantySelected = label ? { label, cost } : null;
+  render();
+}
+
+function setKM(km) {
+  kmAllowance = km;
+  render();
+}
+
+function setDP(val) {
+  downPayment = Math.max(0, val);
+  render();
+}
+
+function save(key, val) {
+  if (!cur) return;
+  if (!ov[cur.id]) ov[cur.id] = {};
+  ov[cur.id][key] = parseFloat(val);
+  const wasOpen = panelOpen;
+  render();
+  if (wasOpen) document.getElementById('rpanel')?.classList.add('open');
+}
+
+function togglePanel() {
+  panelOpen = !panelOpen;
+  document.getElementById('rpanel')?.classList.toggle('open', panelOpen);
 }
 
 function toggleBreakdown() {
