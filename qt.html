@@ -842,7 +842,7 @@ function renderSb() {
   const cats = [...new Set(filtered.map(m => m.cat))];
   document.getElementById('sb').innerHTML =
     `<div style="padding:8px 10px;border-bottom:1px solid var(--border);">
-      <select onchange="selectedYear=parseInt(this.value);renderSb()" style="width:100%;background:var(--s2);border:1px solid var(--border2);color:var(--text);padding:7px 10px;border-radius:6px;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;outline:none;appearance:none;-webkit-appearance:none;text-align:center;">
+      <select onchange="selectedYear=parseInt(this.value);renderSb()" style="width:100%;background:var(--s2);border:1px solid var(--border2);color:var(--text);padding:7px 10px;border-radius:6px;font-size:14.3px;font-weight:700;font-family:inherit;cursor:pointer;outline:none;appearance:none;-webkit-appearance:none;text-align:center;">
         ${years.map(y => `<option value="${y}"${y === selectedYear ? ' selected' : ''}>${y} Model Year</option>`).join('')}
       </select>
     </div>`
