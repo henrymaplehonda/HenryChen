@@ -218,7 +218,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;font-size:16.5px;line-height:1.
 .tip-wrap{position:relative;display:inline-flex;align-items:center;gap:4px;cursor:pointer;}
 .tip-icon{font-size:11px;color:var(--blue);background:rgba(74,158,255,.12);border:1px solid rgba(74,158,255,.2);border-radius:50%;width:16px;height:16px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;}
 .tip-box{display:none;position:absolute;bottom:calc(100% + 6px);left:0;z-index:99;background:var(--s3);border:1px solid var(--border2);border-radius:8px;padding:10px 13px;min-width:220px;font-size:12px;color:var(--text);line-height:1.6;box-shadow:0 4px 16px rgba(0,0,0,.4);}
-.tip-wrap:hover .tip-box{display:block;}
+/* tip-box is used as a content template only; shown via #gt (fixed) */
 .tip-row{display:flex;justify-content:space-between;gap:16px;padding:2px 0;}
 .tip-row.tip-total{border-top:1px solid var(--border);margin-top:4px;padding-top:6px;font-weight:700;}
 
@@ -1929,6 +1929,35 @@ function showToast(msg) {
 document.addEventListener('keydown', e => {
   if ((e.ctrlKey||e.metaKey) && e.key === 'e') { e.preventDefault(); if (cur) togglePanel(); }
 });
+
+// Global fixed tooltip — escapes overflow:hidden/auto clipping on .pcard and .price-table
+(function() {
+  const gt = document.createElement('div');
+  gt.id = 'gt';
+  gt.style.cssText = 'position:fixed;z-index:9999;display:none;background:var(--s3);border:1px solid var(--border2);border-radius:8px;padding:10px 13px;min-width:220px;font-size:12px;color:var(--text);line-height:1.6;box-shadow:0 4px 16px rgba(0,0,0,.4);pointer-events:none;';
+  document.body.appendChild(gt);
+
+  document.addEventListener('mouseover', function(e) {
+    const wrap = e.target.closest('.tip-wrap');
+    if (!wrap) return;
+    const box = wrap.querySelector('.tip-box');
+    if (!box) return;
+    gt.innerHTML = box.innerHTML;
+    gt.style.display = 'block';
+    const rect = wrap.getBoundingClientRect();
+    const tipH = gt.offsetHeight;
+    const top = rect.top - tipH - 6;
+    gt.style.top = (top < 4 ? rect.bottom + 6 : top) + 'px';
+    const left = Math.min(rect.left, window.innerWidth - gt.offsetWidth - 4);
+    gt.style.left = Math.max(4, left) + 'px';
+  });
+
+  document.addEventListener('mouseout', function(e) {
+    const wrap = e.target.closest('.tip-wrap');
+    if (!wrap || wrap.contains(e.relatedTarget)) return;
+    gt.style.display = 'none';
+  });
+})();
 </script>
 </body>
 </html>
