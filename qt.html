@@ -365,7 +365,7 @@ const M = [
  msrp:46200, price:49171, otd:55563, engine:'2.0L Hybrid 204hp', drive:'FWD',
  lr:{36:3.49,60:4.49}, rv:{24:.66,30:.64,36:.59,42:.55,48:.48,54:.44,60:.39}, fr:{60:3.99,84:4.49}},
 
-// ── HR-V ─────────────────────────────────────────────────────────────────
+// ── HR-V (2026) ───────────────────────────────────────────────────────────
 {id:'hv-lf', cat:'HR-V', name:'HR-V', trim:'LX FWD',
  msrp:30465, price:33436, otd:37783, engine:'2.0L 158hp', drive:'FWD',
  lr:{36:4.49,60:5.49}, rv:{24:.68,30:.65,36:.59,42:.56,48:.50,54:.46,60:.42}, fr:{60:5.99,84:5.99}},
@@ -503,7 +503,32 @@ const M = [
 {id:'pr-tr', cat:'Prologue', name:'Prologue', trim:'Touring',
  msrp:64990, price:68131, otd:77638, engine:'Electric / Dual Motor', drive:'AWD',
  lr:{36:null,60:null}, rv:{24:.53,30:.50,36:.45,42:.42,48:.36,54:.33,60:.29}, fr:{60:1.99,84:1.99,96:1.99}},
+
+// ══════════════════════════════════════════════════════════════════════════
+//  2027 Model Year · Added Apr 28 2026
+//  Source: Maple Honda internal pricing sheet
+//  Rates/residuals: TBD — using 2026 programs as placeholder until 2027 programs release
+// ══════════════════════════════════════════════════════════════════════════
+
+// ── HR-V (2027) ───────────────────────────────────────────────────────────
+// Pricing from Maple Honda Apr 28 2026 · fees: fpdi $2,000 + $1,145 gov/dealer = $3,145
+{id:'hv27-lf', cat:'HR-V', name:'HR-V', trim:'LX FWD', year:2027,
+ msrp:30800, price:33945, otd:38358, engine:'2.0L 158hp', drive:'FWD',
+ lr:{36:4.49,60:5.49}, rv:{24:.68,30:.65,36:.59,42:.56,48:.50,54:.46,60:.42}, fr:{60:5.99,84:5.99}},
+
+{id:'hv27-la', cat:'HR-V', name:'HR-V', trim:'LX AWD', year:2027,
+ msrp:33100, price:36245, otd:40957, engine:'2.0L 158hp', drive:'AWD',
+ lr:{36:4.49,60:5.49}, rv:{24:.67,30:.64,36:.58,42:.55,48:.49,54:.45,60:.41}, fr:{60:5.99,84:5.99}},
+
+{id:'hv27-sp', cat:'HR-V', name:'HR-V', trim:'Sport AWD', year:2027,
+ msrp:36400, price:39545, otd:44686, engine:'2.0L 158hp', drive:'AWD',
+ lr:{36:4.49,60:5.49}, rv:{24:.66,30:.63,36:.57,42:.54,48:.48,54:.44,60:.39}, fr:{60:5.99,84:5.99}},
+
+{id:'hv27-el', cat:'HR-V', name:'HR-V', trim:'EX-L AWD', year:2027,
+ msrp:39200, price:42345, otd:47850, engine:'2.0L 158hp', drive:'AWD',
+ lr:{36:4.49,60:5.49}, rv:{24:.65,30:.62,36:.56,42:.53,48:.47,54:.43,60:.38}, fr:{60:5.99,84:5.99}},
 ];
+M.forEach(m => { if (!m.year) m.year = 2026; });
 
 // ═══════════════════════════════════════════════════════════════════════
 //  CALCULATOR
@@ -531,6 +556,7 @@ const ca$c  = n  => '$' + n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 //  STATE
 // ═══════════════════════════════════════════════════════════════════════
 let cur = null, ov = {}, panelOpen = false;
+let selectedYear = null;
 let downPayment = 0;
 let dpPct = null;
 let gapAmt = 2500;
@@ -805,22 +831,36 @@ function renderWarrantyPanel(m) {
 // ═══════════════════════════════════════════════════════════════════════
 //  SIDEBAR
 // ═══════════════════════════════════════════════════════════════════════
-(function buildSb() {
-  const cats = [...new Set(M.map(m => m.cat))];
-  document.getElementById('sb').innerHTML = cats.map(cat => {
-    const items = M.filter(m => m.cat === cat);
-    return `
-    <div class="sb-cat">${cat}</div>
-    ${items.map(m => `
-      <div class="sb-item" id="si-${m.id}" onclick="pick('${m.id}')"
-        style="padding:5px 14px 5px 16px;display:flex;justify-content:space-between;align-items:center;gap:4px;">
-        <div style="font-size:12.5px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;">
-          ${m.trim}${m.promo?'<span style="margin-left:4px;font-size:9px;font-weight:700;color:#ff7070;background:rgba(228,5,33,.12);padding:1px 4px;border-radius:3px;">⚡</span>':''}
-        </div>
-        <div style="font-size:11px;color:var(--dim);white-space:nowrap;flex-shrink:0;">${ca$(m.price)}</div>
-      </div>`).join('')}`;
-  }).join('');
-})();
+function renderSb() {
+  const years = [...new Set(M.map(m => m.year))].sort((a, b) => b - a);
+  if (!selectedYear) selectedYear = years[0];
+  const filtered = M.filter(m => m.year === selectedYear);
+  if (cur && cur.year !== selectedYear) {
+    cur = null;
+    document.getElementById('main').innerHTML = '<div class="welcome"><div class="welcome-icon">🚗</div><div>Select a model to begin</div></div>';
+  }
+  const cats = [...new Set(filtered.map(m => m.cat))];
+  document.getElementById('sb').innerHTML =
+    `<div style="padding:8px 10px;border-bottom:1px solid var(--border);">
+      <select onchange="selectedYear=parseInt(this.value);renderSb()" style="width:100%;background:var(--s2);border:1px solid var(--border2);color:var(--text);padding:7px 10px;border-radius:6px;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;outline:none;appearance:none;-webkit-appearance:none;text-align:center;">
+        ${years.map(y => `<option value="${y}"${y === selectedYear ? ' selected' : ''}>${y} Model Year</option>`).join('')}
+      </select>
+    </div>`
+    + cats.map(cat => {
+      const items = filtered.filter(m => m.cat === cat);
+      return `<div class="sb-cat"><span style="font-size:9px;color:var(--muted);margin-right:4px;font-weight:600;">${selectedYear}</span>${cat}</div>
+        ${items.map(m => `
+          <div class="sb-item" id="si-${m.id}" onclick="pick('${m.id}')"
+            style="padding:5px 14px 5px 16px;display:flex;justify-content:space-between;align-items:center;gap:4px;">
+            <div style="font-size:12.5px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;">
+              ${m.trim}${m.promo ? '<span style="margin-left:4px;font-size:9px;font-weight:700;color:#ff7070;background:rgba(228,5,33,.12);padding:1px 4px;border-radius:3px;">⚡</span>' : ''}
+            </div>
+            <div style="font-size:11px;color:var(--dim);white-space:nowrap;flex-shrink:0;">${ca$(m.price)}</div>
+          </div>`).join('')}`;
+    }).join('');
+  if (cur) document.getElementById('si-' + cur.id)?.classList.add('active');
+}
+renderSb();
 
 // ═══════════════════════════════════════════════════════════════════════
 //  PICK & RENDER
