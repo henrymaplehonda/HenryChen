@@ -536,21 +536,6 @@ let dpPct = null;
 let gapAmt = 2500;
 let optGAP = true;
 
-// Extra protections (accessories rolled into financing)
-const PROT_PRESETS = [
-  {name:'Window Tints',        cost:699 },
-  {name:'Mats',                cost:299 },
-  {name:'Rims & Tires Prot.', cost:1499},
-  {name:'Honda Locate',        cost:399 },
-  {name:'Ultimate Appearance', cost:899 },
-  {name:'PPF',                 cost:1999},
-];
-let extraProts = {};       // {name: true/false}
-let customProtName = '';
-let customProtCost = 0;
-let customProtOn   = false;
-let leaseProtOpen  = {};   // {term: bool}
-let finProtOpen    = {};   // {term: bool}
 let optColor = false, optWheelLock = false, optLeaseGuard = false;
 let resOv = {};   // Per-model HFS residual overrides
 let incOv = {};   // Per-model incentive overrides { modelId: number }
@@ -586,12 +571,6 @@ function resetAll() {
   panelOpen = false;
   finWarrantyOpen = {};
   leaseWarrantyOpen = {};
-  leaseProtOpen = {};
-  finProtOpen = {};
-  extraProts = {};
-  customProtOn = false;
-  customProtCost = 0;
-  customProtName = '';
   moreOptionsOpen = false;
   if (cur) {
     delete resOv[cur.id];
@@ -666,7 +645,7 @@ let leaseWarrantyOpen = {};
 let moreOptionsOpen = false;
 
 // Term selectors — which term to show on each of the 4 payment cards
-let leaseTerm1 = 24;   // left lease card — starts at 24mo
+let leaseTerm1 = 36;   // left lease card
 let leaseTerm2 = 60;   // right lease card
 let finTerm1   = 60;   // left finance card (default 5yr)
 let finTerm2   = 84;   // right finance card (default 7yr)
@@ -697,49 +676,6 @@ function protCost(m) {
   if (['HR-V','Accord','Prelude'].includes(m.cat)) return 796;
   if (m.cat === 'CR-V') return 896;
   return 996; // Pilot, Odyssey, Ridgeline, Passport, Prologue
-}
-function extraProtsCost() {
-  return PROT_PRESETS.reduce((s,p) => s + (extraProts[p.name] ? p.cost : 0), 0)
-       + (customProtOn && customProtCost > 0 ? customProtCost : 0);
-}
-function renderProtMenu(term, rt, mode) {
-  const eProt = extraProtsCost();
-  const cap2  = cur ? R(cur).price - downPayment : 0;
-  const gapBase = optGAP ? gapAmt : 0;
-  const wCost = warrantySelected ? warrantySelected.cost : 0;
-  let rows = PROT_PRESETS.map(p => {
-    const on = !!extraProts[p.name];
-    const preview = mode==='fin' ? ca$c(fbw(cap2 + gapBase + wCost + (on?0:p.cost) + eProt - (on?p.cost:0) + (on?p.cost:p.cost), term, rt)) : '';
-    // Simpler: just show cost
-    return '<div style="display:flex;align-items:center;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);gap:6px;">'
-      + '<span style="font-size:12px;' + (on?'color:var(--yellow);font-weight:700':'color:var(--dim)') + '">'+p.name+'</span>'
-      + '<span style="font-size:12px;font-weight:600;color:var(--text)">$'+p.cost.toLocaleString()+'</span>'
-      + '<button onclick="extraProts[\''+p.name+'\']= !extraProts[\''+p.name+'\'];render()" '
-      + 'style="font-size:10px;padding:2px 10px;border-radius:3px;cursor:pointer;font-family:inherit;'
-      + 'background:'+(on?'rgba(245,166,35,.2)':'none')+';border:1px solid '+(on?'var(--yellow)':'var(--border2)')+';color:'+(on?'var(--yellow)':'var(--dim)')+';">'
-      + (on?'✓ On':'Add')+'</button>'
-      + '</div>';
-  }).join('');
-  // Custom row
-  rows += '<div style="display:flex;align-items:center;gap:6px;padding:6px 0;flex-wrap:wrap;">'
-    + '<input placeholder="Item name" value="'+customProtName+'" '
-    + 'style="flex:1;min-width:90px;background:var(--s3);border:1px solid var(--border2);color:var(--text);padding:4px 7px;border-radius:4px;font-size:11px;font-family:inherit" '
-    + 'oninput="customProtName=this.value">'
-    + '<input type="number" placeholder="$0" value="'+(customProtCost||'')+'" '
-    + 'style="width:75px;background:var(--s3);border:1px solid var(--border2);color:var(--text);padding:4px 7px;border-radius:4px;font-size:11px;font-family:inherit;text-align:right" '
-    + 'oninput="customProtCost=parseFloat(this.value)||0">'
-    + '<button onclick="customProtOn=!customProtOn;render()" '
-    + 'style="font-size:10px;padding:2px 10px;border-radius:3px;cursor:pointer;font-family:inherit;'
-    + 'background:'+(customProtOn?'rgba(245,166,35,.2)':'none')+';border:1px solid '+(customProtOn?'var(--yellow)':'var(--border2)')+';color:'+(customProtOn?'var(--yellow)':'var(--dim)')+';">'
-    + (customProtOn?'✓ On':'Add Other')+'</button>'
-    + '</div>';
-  if (eProt > 0) {
-    rows += '<div style="margin-top:6px;padding:6px 8px;background:rgba(245,166,35,.07);border:1px solid rgba(245,166,35,.2);border-radius:4px;display:flex;justify-content:space-between;align-items:center;">'
-      + '<span style="font-size:11px;color:var(--yellow);font-weight:700">Total Protections</span>'
-      + '<span style="font-size:14px;font-weight:800;color:var(--yellow)">$'+eProt.toLocaleString()+'</span>'
-      + '</div>';
-  }
-  return '<div style="margin-top:8px;background:var(--s3);border:1px solid var(--border);border-radius:7px;padding:10px;max-height:280px;overflow-y:auto;">' + rows + '</div>';
 }
 
 // Option bi-weekly costs
@@ -899,10 +835,8 @@ function pick(id) {
   warrantySelected = null;
   finWarrantyOpen = {};
   leaseWarrantyOpen = {};
-  leaseProtOpen = {};
-  finProtOpen = {};
   moreOptionsOpen = false;
-  leaseTerm1 = 24;
+  leaseTerm1 = 36;
   leaseTerm2 = 60;
   finTerm1   = 60;
   finTerm2   = 84;
@@ -1373,19 +1307,6 @@ function leaseCard(term, data, slot, optBWval, optMOval) {
             <span style="font-size:12px;color:var(--purple);font-weight:600">${optLeaseGuard ? 'Added ✓' : 'Add'}</span>
           </label>
         </div>
-        <!-- PROTECTIONS SUB-MENU (LEASE) -->
-        ${(()=>{
-          const eProt = extraProtsCost();
-          const pOpen = leaseProtOpen[term] || false;
-          return `<div style="margin-top:8px">
-            <button onclick="leaseProtOpen[${term}]=!leaseProtOpen[${term}];render()"
-              style="width:100%;background:${eProt>0?'rgba(245,166,35,.08)':'none'};border:1px solid ${eProt>0?'rgba(245,166,35,.35)':'var(--border2)'};color:${eProt>0?'var(--yellow)':'var(--dim)'};padding:7px;border-radius:6px;font-size:12px;font-family:inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;">
-              🔧 Protections ${eProt>0?'✓ $'+eProt.toLocaleString() : pOpen?'▲ Hide':'▼ Add'}
-            </button>
-            ${pOpen ? renderProtMenu(term, rt, 'lease') : ''}
-            ${eProt>0 ? `<div style="margin-top:5px;font-size:11px;color:rgba(245,166,35,.6);text-align:right">$${eProt.toLocaleString()} financed separately</div>` : ''}
-          </div>`;
-        })()}
         <!-- WARRANTY SUB-MENU (LEASE) -->
         <div style="margin-top:10px">
           <button onclick="leaseWarrantyOpen[${term}]=!leaseWarrantyOpen[${term}];render()"
@@ -1444,14 +1365,12 @@ function leaseCard(term, data, slot, optBWval, optMOval) {
 function finCard(term, data, slot, m2) {
   const { mo, bw, mog, bwg, rt } = data;
   const wOpen  = finWarrantyOpen[term] || false;
-  const pOpen  = finProtOpen[term] || false;
   const wCost  = warrantySelected ? warrantySelected.cost : 0;
-  const eProt  = extraProtsCost();
   const cap2   = cur ? R(cur).price - downPayment : 0;
   const termVar = slot === 1 ? 'finTerm1' : 'finTerm2';
   const gapBase = optGAP ? gapAmt : 0;
-  // All-in payment: GAP + warranty + protections
-  const effCap    = cap2 + gapBase + wCost + eProt;
+  // All-in payment: GAP + warranty
+  const effCap    = cap2 + gapBase + wCost;
   const bwWithWar = fbw(effCap, term, rt);
   const moWithWar = fmo(effCap, term, rt);
 
@@ -1536,31 +1455,11 @@ function finCard(term, data, slot, m2) {
           <div style="margin-top:4px;padding:8px 10px;background:rgba(0,212,122,.04);border:1px solid var(--green-bdr);border-radius:5px;">
             <div style="font-size:10px;color:rgba(0,212,122,.4);margin-bottom:4px">GAP + Warranty combined</div>
             <div style="display:flex;justify-content:space-between;align-items:baseline">
-              <span style="font-size:12px;color:var(--green)">GAP + Warranty${eProt>0?' + Prot.':''}:</span>
+              <span style="font-size:12px;color:var(--green)">GAP + Warranty:</span>
               <span style="font-size:18px;font-weight:700;color:var(--green)">${ca$c(bwWithWar)}/2wk</span>
             </div>
             <div style="font-size:11px;color:rgba(0,212,122,.4);text-align:right">${ca$c(moWithWar)}/mo</div>
           </div>` : ''}` : ''}
-        </div>
-        <!-- PROTECTIONS SUB-MENU (FINANCE) -->
-        <div style="margin-top:8px">
-          <button onclick="finProtOpen[${term}]=!finProtOpen[${term}];render()"
-            style="width:100%;background:${eProt>0?'rgba(245,166,35,.08)':'none'};border:1px solid ${eProt>0?'rgba(245,166,35,.35)':'var(--border2)'};color:${eProt>0?'var(--yellow)':'var(--dim)'};padding:7px;border-radius:6px;font-size:12px;font-family:inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;">
-            🔧 Protections ${eProt>0?'✓ $'+eProt.toLocaleString() : pOpen?'▲ Hide':'▼ Add'}
-          </button>
-          ${pOpen ? renderProtMenu(term, rt, 'fin') : ''}
-          ${eProt>0 && !warrantySelected ? `
-          <div style="margin-top:5px;padding:8px 10px;background:rgba(245,166,35,.06);border:1px solid rgba(245,166,35,.25);border-radius:5px;">
-            <div style="display:flex;justify-content:space-between;align-items:baseline">
-              <span style="font-size:12px;color:var(--yellow)">With${optGAP?' GAP +':''} Protections:</span>
-              <span style="font-size:20px;font-weight:700;color:var(--yellow)">${ca$c(fbw(cap2+gapBase+eProt,term,rt))}/2wk</span>
-            </div>
-            <div style="font-size:11px;color:rgba(245,166,35,.5);text-align:right">${ca$c(fmo(cap2+gapBase+eProt,term,rt))}/mo</div>
-          </div>` : ''}
-          ${eProt>0 && warrantySelected ? `
-          <div style="margin-top:5px;padding:6px 10px;background:rgba(245,166,35,.04);border:1px solid rgba(245,166,35,.2);border-radius:4px;font-size:11px;color:rgba(245,166,35,.7);text-align:center">
-            Protections $${eProt.toLocaleString()} included in payment above ↑
-          </div>` : ''}
         </div>
       </div>
     </div>`;
@@ -1755,7 +1654,6 @@ function printQuote(autoSave) {
   const netOTD   = grossOTD - dpTaxIn;
   const ob   = optBW(), om = bw2mo(ob);
   const wCost  = warrantySelected ? warrantySelected.cost : 0;
-  const eProt  = extraProtsCost();
   const gapBase = optGAP ? gapAmt : 0;
   const lgBW  = optLeaseGuard ? OPT_LEASEGUARD_PRO : 0;
   const lgMO  = bw2mo(lgBW);
@@ -1764,12 +1662,8 @@ function printQuote(autoSave) {
   const lc1 = (()=>{const rt=lrForTerm(r,leaseTerm1);if(!rt)return null;const res=resForTerm(m,r,leaseTerm1);const mo=lmo(cap,res.val,leaseTerm1,rt);return {mo,bw:mo2bw(mo),res,rt};})();
   const lc2 = (()=>{const rt=lrForTerm(r,leaseTerm2);if(!rt)return null;const res=resForTerm(m,r,leaseTerm2);const mo=lmo(cap,res.val,leaseTerm2,rt);return {mo,bw:mo2bw(mo),res,rt};})();
   const fc1r = frForTerm(r,finTerm1), fc2r = frForTerm(r,finTerm2);
-  const fc1p = fc1r ? {bw:fbw(cap,finTerm1,fc1r),mo:fmo(cap,finTerm1,fc1r),bwg:fbw(cap+gapBase+wCost+eProt,finTerm1,fc1r),mog:fmo(cap+gapBase+wCost+eProt,finTerm1,fc1r),bwGapOnly:fbw(cap+gapBase,finTerm1,fc1r),rt:fc1r} : null;
-  const fc2p = fc2r ? {bw:fbw(cap,finTerm2,fc2r),mo:fmo(cap,finTerm2,fc2r),bwg:fbw(cap+gapBase+wCost+eProt,finTerm2,fc2r),mog:fmo(cap+gapBase+wCost+eProt,finTerm2,fc2r),bwGapOnly:fbw(cap+gapBase,finTerm2,fc2r),rt:fc2r} : null;
-
-  // Build selected protections list
-  const protList = [...PROT_PRESETS.filter(p=>extraProts[p.name]).map(p=>p.name+' $'+p.cost.toLocaleString()),
-    ...(customProtOn&&customProtCost>0?[(customProtName||'Other')+' $'+customProtCost.toLocaleString()]:[])];
+  const fc1p = fc1r ? {bw:fbw(cap,finTerm1,fc1r),mo:fmo(cap,finTerm1,fc1r),bwg:fbw(cap+gapBase+wCost,finTerm1,fc1r),mog:fmo(cap+gapBase+wCost,finTerm1,fc1r),bwGapOnly:fbw(cap+gapBase,finTerm1,fc1r),rt:fc1r} : null;
+  const fc2p = fc2r ? {bw:fbw(cap,finTerm2,fc2r),mo:fmo(cap,finTerm2,fc2r),bwg:fbw(cap+gapBase+wCost,finTerm2,fc2r),mog:fmo(cap+gapBase+wCost,finTerm2,fc2r),bwGapOnly:fbw(cap+gapBase,finTerm2,fc2r),rt:fc2r} : null;
 
   const addons = [
     optColor ? `Colour +$${OPT_COLOR}/2wk` : '',
@@ -1822,9 +1716,9 @@ function printQuote(autoSave) {
       rows.push(['+ GAP Bi-Wkly', ca$c(fcp.bwGapOnly), false]);
       rows.push(['+ GAP Monthly',  ca$c(fmo(cap+gapBase,term,fcp.rt)), true]);
     }
-    if (warrantySelected || eProt > 0) {
+    if (warrantySelected) {
       rows.push(['','',true]);
-      const allInLabel = [optGAP?'GAP':null, warrantySelected?'+ Warranty':null, eProt>0?'+ Prot.':null].filter(Boolean).join(' ');
+      const allInLabel = [optGAP?'GAP':null, warrantySelected?'+ Warranty':null].filter(Boolean).join(' ');
       rows.push([allInLabel+' 2wk', ca$c(fcp.bwg), false]);
       rows.push([allInLabel+' mo', ca$c(fcp.mog), true]);
     }
@@ -1951,14 +1845,12 @@ function printQuote(autoSave) {
 </div>
 
 <!-- OPTIONS & ADD-ONS -->
-${(addons||warrantySelected||eProt>0||optGAP) ? `
+${(addons||warrantySelected||optGAP) ? `
 <div class="opts-row">
   <span class="lbl">Add-ons:</span>
   ${addons ? `<span>${addons}</span>` : ''}
   ${optGAP ? `<span style="color:#1a7a45;font-weight:600">GAP $${gapAmt.toLocaleString()}</span>` : ''}
   ${warrantySelected ? `<span style="color:#1a7a45;font-weight:600">🛡 Warranty: ${warrantySelected.label} · $${warrantySelected.cost.toLocaleString()}</span>` : ''}
-  ${protList.length>0 ? `<span style="color:#7a5500;font-weight:600">🔧 Protections: ${protList.join(' · ')}</span>` : ''}
-  ${eProt>0 ? `<span style="font-weight:700;color:#7a5500">Total Prot. $${eProt.toLocaleString()}</span>` : ''}
 </div>` : ''}
 
 <!-- DISCLAIMER -->
@@ -1968,7 +1860,6 @@ ${(addons||warrantySelected||eProt>0||optGAP) ? `
   Lease rates & residuals are <b>estimates</b> — verify monthly with HFS at honda.ca before quoting.
   ${optGAP ? `GAP Insurance adds $${gapAmt.toLocaleString()} to financed amount. ` : ''}
   ${warrantySelected ? `Honda Plus Warranty ($${warrantySelected.cost.toLocaleString()}) added to financed principal. Dealer may sell for less. ` : ''}
-  ${eProt>0 ? `Protection products ($${eProt.toLocaleString()}) financed in principal. ` : ''}
   ${feesUpfront ? `Fees ($${fees.total.toLocaleString()} +HST) paid at delivery, removed from cap. ` : ''}
   All payments before HST. For accurate rates & residuals: <b>honda.ca/en/buildyourhonda</b>
 </div>
