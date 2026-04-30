@@ -10,9 +10,12 @@
 const M = [
 
 // ── CIVIC SEDAN (4D) ──────────────────────────────────────────────────────
+// Confirmed residual honda.ca Apr 30 2026 (60mo, 4.49%, 12k km/yr):
+// $12,469.60 ÷ $28,340 MSRP = 44% — matches cs-sp resKm grid (shared rv)
 {id:'cs-lx', cat:'Civic Sedan', name:'Civic Sedan', trim:'LX',
  msrp:28340, price:31306, otd:35376, engine:'2.0L 150hp', drive:'FWD',
- lr:{36:3.49,60:4.49}, rv:{24:.70,30:.66,36:.58,42:.54,48:.47,54:.44,60:.40}, fr:{60:4.49,84:4.99}},
+ lr:{36:3.49,60:4.49}, rv:{24:.70,30:.66,36:.58,42:.54,48:.47,54:.44,60:.40}, fr:{60:4.49,84:4.99},
+ resKm:{12000:.44,16000:.43,20000:.42,24000:.40,32000:.36,40000:.32}},
 
 {id:'cs-sp', cat:'Civic Sedan', name:'Civic Sedan', trim:'Sport',
  msrp:32200, price:35175, otd:39748, engine:'2.0L 150hp', drive:'FWD',
