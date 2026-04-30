@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code Prompt Kit — Henry's Dev Workflow</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap');
+
+  :root {
+    --bg: #0d0d0d;
+    --surface: #141414;
+    --border: #222;
+    --text: #e8e8e8;
+    --muted: #666;
+    --accent: #f5a623;
+    --accent2: #e8533a;
+    --green: #3dd68c;
+    --mono: 'Space Mono', monospace;
+    --sans: 'Syne', sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    min-height: 100vh;
+    padding: 32px 20px 60px;
+  }
+
+  .header {
+    max-width: 720px;
+    margin: 0 auto 48px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 28px;
+  }
+
+  .badge {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--accent);
+    text-transform: uppercase;
+    border: 1px solid var(--accent);
+    padding: 3px 8px;
+    margin-bottom: 16px;
+  }
+
+  h1 {
+    font-size: clamp(22px, 5vw, 36px);
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.5px;
+    margin-bottom: 10px;
+  }
+
+  h1 span { color: var(--accent); }
+
+  .subtitle {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 0.5px;
+  }
+
+  .flow-bar {
+    max-width: 720px;
+    margin: 0 auto 40px;
+    display: flex;
+    align-items: center;
+    gap: 0;
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+
+  .flow-step {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+  }
+
+  .flow-step .dot {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    flex-shrink: 0;
+  }
+
+  .flow-step.active .dot {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #000;
+    font-weight: 700;
+  }
+
+  .flow-step span {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .flow-step.active span { color: var(--accent); }
+
+  .arrow {
+    width: 24px;
+    height: 1px;
+    background: var(--border);
+    margin: 0 4px;
+    flex-shrink: 0;
+    position: relative;
+  }
+  .arrow::after {
+    content: '▶';
+    position: absolute;
+    right: -4px;
+    top: -5px;
+    font-size: 8px;
+    color: var(--border);
+  }
+
+  .cards {
+    max-width: 720px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .card-header:hover { background: #181818; }
+
+  .card-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .step-num {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 700;
+    color: #000;
+    background: var(--accent);
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .card:nth-child(2) .step-num { background: var(--accent2); }
+  .card:nth-child(3) .step-num { background: #7c6cf7; }
+  .card:nth-child(4) .step-num { background: var(--green); color: #000; }
+  .card:nth-child(5) .step-num { background: #3ab4f2; color: #000; }
+
+  .card-title {
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.2px;
+  }
+
+  .card-tag {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    border: 1px solid var(--border);
+    padding: 2px 6px;
+  }
+
+  .toggle-icon {
+    font-size: 16px;
+    color: var(--muted);
+    transition: transform 0.2s;
+    flex-shrink: 0;
+  }
+
+  .card.open .toggle-icon { transform: rotate(180deg); }
+
+  .card-body {
+    display: none;
+    padding: 18px;
+  }
+
+  .card.open .card-body { display: block; }
+
+  .context-line {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 14px;
+    padding-left: 2px;
+    border-left: 2px solid var(--border);
+    padding-left: 8px;
+    line-height: 1.6;
+  }
+
+  .prompt-block {
+    background: #0a0a0a;
+    border: 1px solid #1f1f1f;
+    border-radius: 2px;
+    position: relative;
+  }
+
+  .prompt-label {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 8px 12px 0;
+  }
+
+  .prompt-text {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: #c8c8c8;
+    line-height: 1.75;
+    padding: 10px 12px 12px;
+    white-space: pre-wrap;
+  }
+
+  .prompt-text .highlight {
+    color: var(--accent);
+    font-weight: 700;
+  }
+
+  .prompt-text .highlight2 { color: var(--green); }
+  .prompt-text .comment { color: #444; }
+
+  .copy-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: #1a1a1a;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 4px 8px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .copy-btn:hover {
+    background: var(--accent);
+    color: #000;
+    border-color: var(--accent);
+  }
+
+  .copy-btn.copied {
+    background: var(--green);
+    color: #000;
+    border-color: var(--green);
+  }
+
+  .note {
+    margin-top: 12px;
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.6;
+    padding-left: 8px;
+    border-left: 2px solid #222;
+  }
+
+  .note strong { color: #888; }
+
+  .rule-box {
+    max-width: 720px;
+    margin: 32px auto 0;
+    border: 1px solid var(--accent);
+    padding: 18px 20px;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+  }
+
+  .rule-icon {
+    font-size: 20px;
+    flex-shrink: 0;
+    line-height: 1;
+    margin-top: 2px;
+  }
+
+  .rule-content h3 {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+
+  .rule-content p {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: #aaa;
+    line-height: 1.8;
+  }
+
+  .rule-content p span {
+    color: var(--text);
+    font-weight: 700;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="badge">Claude Code · Prompt Kit</div>
+  <h1>Henry's Dev <span>Workflow</span></h1>
+  <div class="subtitle">Blitz Deal / hondabyhenry.ca · Inspect → Diagnose → Plan → Execute → Document</div>
+</div>
+
+<div class="flow-bar">
+  <div class="flow-step active"><div class="dot">1</div><span>Inspect</span></div>
+  <div class="arrow"></div>
+  <div class="flow-step active"><div class="dot">2</div><span>Diagnose</span></div>
+  <div class="arrow"></div>
+  <div class="flow-step active"><div class="dot">3</div><span>Plan</span></div>
+  <div class="arrow"></div>
+  <div class="flow-step active"><div class="dot">4</div><span>Execute</span></div>
+  <div class="arrow"></div>
+  <div class="flow-step active"><div class="dot">5</div><span>Document</span></div>
+</div>
+
+<div class="cards">
+
+  <!-- Card 1 -->
+  <div class="card open">
+    <div class="card-header" onclick="toggleCard(this)">
+      <div class="card-left">
+        <div class="step-num">1</div>
+        <div class="card-title">Session Start — Inspect First</div>
+      </div>
+      <div class="card-tag">Every new session</div>
+      <div class="toggle-icon">▼</div>
+    </div>
+    <div class="card-body">
+      <div class="context-line">Use at the start of every Claude Code session before touching any file.<br>Works for Blitz Deal, hondabyhenry.ca, or any future project.</div>
+      <div class="prompt-block">
+        <div class="prompt-label">Prompt — Copy & Paste</div>
+        <div class="prompt-text"><span class="highlight">Do not code yet.</span> First inspect this project.
+
+Explain:
+<span class="highlight2">1.</span> What this app does and who it's for
+<span class="highlight2">2.</span> Main folders and files — what each one does
+<span class="highlight2">3.</span> Current data flow — how info moves through the app
+<span class="highlight2">4.</span> Any messy, fragile, or risky areas I should know about
+<span class="highlight2">5.</span> What you need from me before we make any edits
+
+<span class="comment">// Paste repo structure or key file contents below this line</span></div>
+        <button class="copy-btn" onclick="copyPrompt(this, 1)">Copy</button>
+      </div>
+      <div class="note"><strong>Why:</strong> Forces Claude to build a mental model of your project before suggesting anything. You'll catch misunderstandings before they become bad edits.</div>
+    </div>
+  </div>
+
+  <!-- Card 2 -->
+  <div class="card">
+    <div class="card-header" onclick="toggleCard(this)">
+      <div class="card-left">
+        <div class="step-num">2</div>
+        <div class="card-title">Something Broke — Diagnose the Error</div>
+      </div>
+      <div class="card-tag">When things break</div>
+      <div class="toggle-icon">▼</div>
+    </div>
+    <div class="card-body">
+      <div class="context-line">When the site behaves wrong or something stops working.<br>Paste the terminal output or describe what you're seeing.</div>
+      <div class="prompt-block">
+        <div class="prompt-label">Prompt — Copy & Paste</div>
+        <div class="prompt-text"><span class="highlight">Do not change any files yet.</span>
+
+Read this error and explain:
+<span class="highlight2">1.</span> Root cause in plain English — what actually went wrong
+<span class="highlight2">2.</span> Which file(s) are involved
+<span class="highlight2">3.</span> Why it's happening (logic issue, config issue, missing dependency, etc.)
+<span class="highlight2">4.</span> The safest fix — what to change, and what NOT to touch
+<span class="highlight2">5.</span> Any side effects I should watch for after the fix
+
+<span class="comment">// Paste terminal error or describe the bug below this line</span></div>
+        <button class="copy-btn" onclick="copyPrompt(this, 2)">Copy</button>
+      </div>
+      <div class="note"><strong>Why:</strong> Stops Claude from patching symptoms. Forces it to identify the real cause so the fix actually holds.</div>
+    </div>
+  </div>
+
+  <!-- Card 3 -->
+  <div class="card">
+    <div class="card-header" onclick="toggleCard(this)">
+      <div class="card-left">
+        <div class="step-num">3</div>
+        <div class="card-title">New Feature — Build the Plan First</div>
+      </div>
+      <div class="card-tag">Before any new feature</div>
+      <div class="toggle-icon">▼</div>
+    </div>
+    <div class="card-body">
+      <div class="context-line">Use before adding anything new to Blitz Deal — a new model, a new calculator field, a new section on hondabyhenry.ca.</div>
+      <div class="prompt-block">
+        <div class="prompt-label">Prompt — Copy & Paste</div>
+        <div class="prompt-text">I want to add: <span class="highlight">[describe the feature]</span>
+
+<span class="highlight">Do not write any code yet.</span>
+
+First give me a plan:
+<span class="highlight2">1.</span> Which existing files are involved
+<span class="highlight2">2.</span> What needs to be added vs. what needs to be changed
+<span class="highlight2">3.</span> The exact implementation steps in order
+<span class="highlight2">4.</span> Risks — what could break or behave unexpectedly
+<span class="highlight2">5.</span> What I should test after it's done
+
+I'll review and approve before you write anything.</div>
+        <button class="copy-btn" onclick="copyPrompt(this, 3)">Copy</button>
+      </div>
+      <div class="note"><strong>Why:</strong> Prevents the "random changes that break everything" problem. You see the whole plan before a single line is written.</div>
+    </div>
+  </div>
+
+  <!-- Card 4 -->
+  <div class="card">
+    <div class="card-header" onclick="toggleCard(this)">
+      <div class="card-left">
+        <div class="step-num">4</div>
+        <div class="card-title">Approved — Now Execute Safely</div>
+      </div>
+      <div class="card-tag">After plan approval</div>
+      <div class="toggle-icon">▼</div>
+    </div>
+    <div class="card-body">
+      <div class="context-line">Only run this after you've reviewed and approved the plan from Step 3. Keep control of each change.</div>
+      <div class="prompt-block">
+        <div class="prompt-label">Prompt — Copy & Paste</div>
+        <div class="prompt-text">Plan approved. Now implement it.
+
+Rules:
+<span class="highlight2">—</span> Make changes <span class="highlight">one file at a time</span>
+<span class="highlight2">—</span> After each file, show me what changed and why
+<span class="highlight2">—</span> Do not move to the next file until I confirm
+<span class="highlight2">—</span> If anything looks different from the plan, <span class="highlight">stop and tell me</span>
+<span class="highlight2">—</span> At the end, give me exact steps to test that it works
+
+Start with: <span class="highlight">[first file from the plan]</span></div>
+        <button class="copy-btn" onclick="copyPrompt(this, 4)">Copy</button>
+      </div>
+      <div class="note"><strong>Why:</strong> Keeps edits atomic and reviewable. You stay in control instead of getting a 10-file dump you don't fully understand.</div>
+    </div>
+  </div>
+
+  <!-- Card 5 -->
+  <div class="card">
+    <div class="card-header" onclick="toggleCard(this)">
+      <div class="card-left">
+        <div class="step-num">5</div>
+        <div class="card-title">Session Done — Write the PROJECT_NOTES</div>
+      </div>
+      <div class="card-tag">End of every session</div>
+      <div class="toggle-icon">▼</div>
+    </div>
+    <div class="card-body">
+      <div class="context-line">Run this at the end of any session where files were changed. Keeps a running log of your project state.</div>
+      <div class="prompt-block">
+        <div class="prompt-label">Prompt — Copy & Paste</div>
+        <div class="prompt-text">Create a <span class="highlight">PROJECT_NOTES.md</span> entry for this session:
+
+<span class="highlight2">## Session — [today's date]</span>
+
+Sections to include:
+<span class="highlight2">### What Changed</span>
+List every file edited and what was done
+
+<span class="highlight2">### Why It Changed</span>
+The reason / goal behind the changes
+
+<span class="highlight2">### How to Test</span>
+Exact steps to confirm it's working
+
+<span class="highlight2">### Known Issues</span>
+Anything incomplete, fragile, or worth watching
+
+<span class="highlight2">### Next Steps</span>
+What to tackle in the next session
+
+Keep it concise. This is my project memory.</div>
+        <button class="copy-btn" onclick="copyPrompt(this, 5)">Copy</button>
+      </div>
+      <div class="note"><strong>Why:</strong> When you come back after a week — or hand something off — you won't lose context. This is your project's running changelog.</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="rule-box">
+  <div class="rule-icon">⚡</div>
+  <div class="rule-content">
+    <h3>Your Golden Rule</h3>
+    <p>
+      <span>No coding before diagnosis.</span> No diagnosis without reading files.<br>
+      <span>No big edit without a written plan.</span> No finished task without test steps.
+    </p>
+  </div>
+</div>
+
+<script>
+function toggleCard(header) {
+  header.parentElement.classList.toggle('open');
+}
+
+const prompts = {
+  1: `Do not code yet. First inspect this project.
+
+Explain:
+1. What this app does and who it's for
+2. Main folders and files — what each one does
+3. Current data flow — how info moves through the app
+4. Any messy, fragile, or risky areas I should know about
+5. What you need from me before we make any edits
+
+// Paste repo structure or key file contents below this line`,
+
+  2: `Do not change any files yet.
+
+Read this error and explain:
+1. Root cause in plain English — what actually went wrong
+2. Which file(s) are involved
+3. Why it's happening (logic issue, config issue, missing dependency, etc.)
+4. The safest fix — what to change, and what NOT to touch
+5. Any side effects I should watch for after the fix
+
+// Paste terminal error or describe the bug below this line`,
+
+  3: `I want to add: [describe the feature]
+
+Do not write any code yet.
+
+First give me a plan:
+1. Which existing files are involved
+2. What needs to be added vs. what needs to be changed
+3. The exact implementation steps in order
+4. Risks — what could break or behave unexpectedly
+5. What I should test after it's done
+
+I'll review and approve before you write anything.`,
+
+  4: `Plan approved. Now implement it.
+
+Rules:
+— Make changes one file at a time
+— After each file, show me what changed and why
+— Do not move to the next file until I confirm
+— If anything looks different from the plan, stop and tell me
+— At the end, give me exact steps to test that it works
+
+Start with: [first file from the plan]`,
+
+  5: `Create a PROJECT_NOTES.md entry for this session:
+
+## Session — [today's date]
+
+### What Changed
+List every file edited and what was done
+
+### Why It Changed
+The reason / goal behind the changes
+
+### How to Test
+Exact steps to confirm it's working
+
+### Known Issues
+Anything incomplete, fragile, or worth watching
+
+### Next Steps
+What to tackle in the next session
+
+Keep it concise. This is my project memory.`
+};
+
+function copyPrompt(btn, num) {
+  navigator.clipboard.writeText(prompts[num]).then(() => {
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = 'Copy';
+      btn.classList.remove('copied');
+    }, 2000);
+  });
+}
+</script>
+</body>
+</html>
