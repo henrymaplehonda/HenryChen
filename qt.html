@@ -1066,7 +1066,7 @@ function render() {
         <div class="pt-lbl">${downPayment>0?'OTD after Down Pmt':'OTD (incl 13% HST)'}</div>
         <div class="pt-val dim">${ca$(dynamicOTD)}</div>
         ${downPayment>0?`<div style="font-size:10px;color:var(--muted);margin-top:2px">Gross OTD ${ca$(grossOTD)}</div>`:''}
-        ${feesUpfront?`<div style="font-size:10px;color:var(--yellow);margin-top:2px">${ca$(fees.total * 1.13)} (tax in) due on delivery</div>`:''}
+        ${feesUpfront?`<div style="font-size:10px;color:var(--yellow);margin-top:2px">${ca$(fees.total)} fees paid at delivery</div>`:''}
       </div>
     </div>
 
@@ -1103,7 +1103,7 @@ function render() {
           style="width:15px;height:15px;accent-color:var(--yellow);cursor:pointer;">
         <label for="fees-upfront" style="cursor:pointer;">
           <span style="font-size:13px;font-weight:600;color:${feesUpfront?'var(--yellow)':'var(--dim)'}">Fees Upfront</span>
-          <span style="font-size:11px;color:var(--dim);margin-left:5px">${feesUpfront?`${ca$(fees.total * 1.13)} (tax in) due on delivery`:'Roll fees into payment'}</span>
+          <span style="font-size:11px;color:var(--dim);margin-left:5px">${feesUpfront?`${ca$(fees.total)} paid at delivery`:'Roll fees into payment'}</span>
         </label>
       </div>
     </div>
@@ -1864,7 +1864,7 @@ function printQuote(autoSave) {
     <span class="price">Selling: ${ca$(r.price)}</span>
     <span>Gross OTD (incl HST): <b>${ca$(grossOTD)}</b></span>
     ${downPayment>0?`<span style="color:#c00">− Down ${ca$(dpTaxIn)} tax-in → Net OTD: <b>${ca$(netOTD)}</b></span>`:''}
-    ${feesUpfront?`<span style="color:#b87a00">${ca$(fees.total * 1.13)} (tax in) due on delivery</span>`:''}
+    ${feesUpfront?`<span style="color:#b87a00">${ca$(fees.total)} fees paid at delivery</span>`:''}
     ${tradeInVal>0?`<span>Trade-in: <b>${ca$(tradeInVal)}</b>${tradeInOwing>0?' (owing '+ca$(tradeInOwing)+')':''}</span>`:''}
     ${leaseEquity>0?`<span>Lease equity: <b>${ca$(leaseEquity)}</b></span>`:''}
     <span>Adj. Cap: <b>${ca$(cap)}</b></span>
@@ -1900,7 +1900,7 @@ ${(addons||warrantySelected||optGAP) ? `
   Lease rates & residuals are <b>estimates</b> — verify monthly with HFS at honda.ca before quoting.
   ${optGAP ? `GAP Insurance adds $${gapAmt.toLocaleString()} to financed amount. ` : ''}
   ${warrantySelected ? `Honda Plus Warranty ($${warrantySelected.cost.toLocaleString()}) added to financed principal. Dealer may sell for less. ` : ''}
-  ${feesUpfront ? `Fees ($${(fees.total * 1.13).toFixed(2)} tax-in) due on delivery, removed from cap. ` : ''}
+  ${feesUpfront ? `Fees ($${fees.total.toLocaleString()} +HST) paid at delivery, removed from cap. ` : ''}
   All payments before HST. For accurate rates & residuals: <b>honda.ca/en/buildyourhonda</b>
 </div>
 
