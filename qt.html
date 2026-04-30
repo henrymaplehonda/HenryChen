@@ -1785,9 +1785,16 @@ function printQuote(autoSave) {
   .veh { margin-bottom:12px; }
   .veh-name { font-size:22px; font-weight:800; letter-spacing:-.5px; color:#111; }
   .veh-trim { color:#666; font-weight:400; }
-  .veh-sub  { display:flex; gap:16px; flex-wrap:wrap; margin-top:5px; font-size:12px; color:#555; }
-  .veh-sub b { color:#111; }
-  .veh-sub .price { font-size:16px; font-weight:700; color:#E40521; }
+  .veh-sub  { margin-top:8px; }
+  .price-row { display:flex; align-items:center; gap:0; background:#f8f8f8; border:1px solid #e0e0e0; border-radius:8px; overflow:hidden; margin-bottom:6px; }
+  .price-col { display:flex; flex-direction:column; gap:2px; padding:8px 14px; flex:1; }
+  .price-col.highlight { background:#fff; border-left:2px solid #E40521; }
+  .pr-lbl { font-size:10px; font-weight:600; color:#888; text-transform:uppercase; letter-spacing:.4px; white-space:nowrap; }
+  .pr-val { font-size:15px; font-weight:700; color:#111; }
+  .pr-val.red { color:#c00; }
+  .pr-arrow { font-size:16px; font-weight:300; color:#bbb; padding:0 2px; flex-shrink:0; }
+  .pr-sep { width:1px; background:#e0e0e0; align-self:stretch; flex-shrink:0; margin:0 4px; }
+  .veh-meta { font-size:11px; color:#777; }
   .inc-tags { display:flex; gap:6px; flex-wrap:wrap; margin-top:6px; }
   .inc-tag { font-size:10px; font-weight:700; background:#f0faf5; border:1px solid #b2dfc8; color:#1a7a45; padding:2px 8px; border-radius:3px; }
 
@@ -1857,17 +1864,38 @@ function printQuote(autoSave) {
 <div class="veh">
   <div class="veh-name">2026 ${m.name} <span class="veh-trim">${m.trim}</span></div>
   <div class="veh-sub">
-    <span>MSRP: <b>${ca$(m.msrp)}</b></span>
-    <span>+ Fees: <b>${ca$(fees.total)}</b></span>
-    <span class="price">Selling: ${ca$(r.price)}</span>
-    <span>Gross OTD (incl HST): <b>${ca$(grossOTD)}</b></span>
-    ${downPayment>0?`<span style="color:#c00">− Down ${ca$(dpTaxIn)} tax-in → Net OTD: <b>${ca$(netOTD)}</b></span>`:''}
-    ${feesUpfront?`<span style="color:#b87a00">${ca$(fees.total)} fees paid at delivery</span>`:''}
-    ${tradeInVal>0?`<span>Trade-in: <b>${ca$(tradeInVal)}</b>${tradeInOwing>0?' (owing '+ca$(tradeInOwing)+')':''}</span>`:''}
-    ${leaseEquity>0?`<span>Lease equity: <b>${ca$(leaseEquity)}</b></span>`:''}
-    <span>Adj. Cap: <b>${ca$(cap)}</b></span>
-    <span>${m.engine} · ${m.drive}</span>
-    ${m.promo ? `<span>⚡ HFS Promo: <b>${m.promo.rate}% 60mo</b> to ${m.promo.exp}</span>` : ''}
+    <div class="price-row">
+      <div class="price-col">
+        <div class="pr-lbl">MSRP</div>
+        <div class="pr-val">${ca$(m.msrp)}</div>
+      </div>
+      <div class="pr-arrow">+</div>
+      <div class="price-col">
+        <div class="pr-lbl">+ Fees${feesUpfront ? ' · paid on delivery' : ''}</div>
+        <div class="pr-val">${ca$(feesUpfront ? Math.round(fees.total * 1.13) : fees.total)}${feesUpfront ? '<span style="font-size:10px;color:#888;margin-left:3px">+tax</span>' : ''}</div>
+      </div>
+      <div class="pr-arrow">−</div>
+      <div class="price-col">
+        <div class="pr-lbl">− Incentive (tax-in)</div>
+        <div class="pr-val red">${ca$(getIncAmt(m))}</div>
+      </div>
+      <div class="pr-arrow">=</div>
+      <div class="price-col highlight">
+        <div class="pr-lbl">Selling Price</div>
+        <div class="pr-val">${ca$(r.price)}</div>
+      </div>
+      <div class="pr-sep"></div>
+      <div class="price-col">
+        <div class="pr-lbl">Adj. Cap / Principal</div>
+        <div class="pr-val">${ca$(cap)}</div>
+      </div>
+      <div class="pr-sep"></div>
+      <div class="price-col highlight">
+        <div class="pr-lbl">OTD (incl. 13% HST)</div>
+        <div class="pr-val">${ca$(grossOTD)}</div>
+      </div>
+    </div>
+    <div class="veh-meta">${m.engine} · ${m.drive}${m.promo ? ` · ⚡ HFS Promo: ${m.promo.rate}% 60mo to ${m.promo.exp}` : ''}</div>
   </div>
   ${incHtml ? `<div class="inc-tags">${incHtml}</div>` : ''}
 </div>
@@ -1875,9 +1903,9 @@ function printQuote(autoSave) {
 <!-- PAYMENT CARDS -->
 <div class="pgrid">
   ${pc(`${leaseTerm1}mo Lease · ${lc1?lc1.rt+'%':'STD'} APR`, 'lease', makeLeaseRows(lc1, leaseTerm1),
-    lc1 ? `Res: ${ca$(lc1.res.val)} (${(lc1.res.pct*100).toFixed(1)}%) · ${lc1.res.confirmed?'✓ Confirmed':'Est.'} · ${kmAllowance.toLocaleString()} km/yr` : 'STD rate')}
+    lc1 ? `Res: ${ca$(lc1.res.val)} (${(lc1.res.pct*100).toFixed(1)}%) · Est. · ${kmAllowance.toLocaleString()} km/yr` : 'STD rate')}
   ${pc(`${leaseTerm2}mo Lease · ${lc2?lc2.rt+'%':'STD'} APR`, 'lease', makeLeaseRows(lc2, leaseTerm2),
-    lc2 ? `Res: ${ca$(lc2.res.val)} (${(lc2.res.pct*100).toFixed(1)}%) · ${lc2.res.confirmed?'✓ Confirmed':'Est.'} · ${kmAllowance.toLocaleString()} km/yr` : 'STD rate')}
+    lc2 ? `Res: ${ca$(lc2.res.val)} (${(lc2.res.pct*100).toFixed(1)}%) · Est. · ${kmAllowance.toLocaleString()} km/yr` : 'STD rate')}
   ${pc(`${finTerm1}mo Finance · ${fc1p?fc1p.rt+'%':'STD'} APR`, 'finance', makeFinRows(fc1p, finTerm1))}
   ${pc(`${finTerm2}mo Finance · ${fc2p?fc2p.rt+'%':'STD'} APR`, 'finance', makeFinRows(fc2p, finTerm2))}
 </div>
