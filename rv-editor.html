@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='18' fill='%23E40521'/><text x='50' y='76' font-size='72' text-anchor='middle' fill='white' font-weight='900' font-family='Arial,sans-serif'>%</text></svg>">
+<title>RV Editor — Maple Honda</title>
+<script src="models-data.js"></script>
+<style>
+:root{
+  --red:#E40521; --bg:#0a0a0a; --s1:#111; --s2:#181818; --s3:#202020;
+  --border:#272727; --border2:#333; --text:#f0f0f0; --dim:#ccc; --muted:#888;
+  --blue:#4a9eff; --green:#00d47a; --yellow:#f5a623; --purple:#a87cf5;
+  --edited:#f5a623;
+}
+
+/* GATE */
+#gate{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:999;}
+#rv-main{display:none;flex-direction:column;min-height:100vh;}
+#rv-main.unlocked{display:flex;}
+.gate-box{background:var(--s1);border:1px solid var(--border2);border-radius:14px;padding:40px 36px;width:320px;text-align:center;display:flex;flex-direction:column;gap:14px;}
+.gate-logo{font-size:36px;line-height:1;}
+.gate-title{font-size:18px;font-weight:700;letter-spacing:-.3px;}
+.gate-sub{font-size:12px;color:var(--muted);}
+.gate-input{width:100%;padding:11px 14px;background:var(--s3);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:16px;text-align:center;letter-spacing:4px;font-family:inherit;transition:border-color .15s;}
+.gate-input:focus{outline:none;border-color:var(--red);}
+.gate-btn{width:100%;padding:11px;background:var(--red);border:none;border-radius:8px;color:#fff;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;transition:opacity .15s;}
+.gate-btn:hover{opacity:.85;}
+.gate-err{font-size:12px;color:#ff7070;min-height:16px;}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Segoe UI',system-ui,sans-serif;font-size:14px;line-height:1.4;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;}
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px;}
+
+/* HEADER */
+.hdr{background:var(--s1);border-bottom:1px solid var(--border);height:54px;padding:0 20px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;position:sticky;top:0;z-index:100;}
+.hdr-left{display:flex;align-items:center;gap:12px;}
+.logo{width:32px;height:32px;background:var(--red);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900;color:#fff;}
+.hdr-title{font-size:16px;font-weight:700;letter-spacing:-.3px;}
+.hdr-sub{font-size:11px;color:var(--muted);margin-top:1px;}
+.badge{font-size:10px;font-weight:700;letter-spacing:.4px;padding:2px 8px;border-radius:4px;background:rgba(0,212,122,.1);border:1px solid rgba(0,212,122,.2);color:var(--green);}
+.hdr-right{display:flex;align-items:center;gap:10px;}
+.edited-count{font-size:11px;color:var(--yellow);display:none;}
+.edited-count.show{display:block;}
+.btn{padding:7px 16px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:opacity .15s;letter-spacing:-.2px;}
+.btn-dl{background:var(--red);color:#fff;}
+.btn-dl:hover{opacity:.85;}
+.btn-secondary{background:var(--s3);color:var(--dim);border:1px solid var(--border2);}
+.btn-secondary:hover{background:#2a2a2a;}
+
+/* TABS */
+.tabs{display:flex;border-bottom:1px solid var(--border);background:var(--s1);padding:0 20px;flex-shrink:0;position:sticky;top:54px;z-index:99;}
+.tab{padding:12px 18px;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:color .15s;}
+.tab:hover{color:var(--dim);}
+.tab.active{color:var(--text);border-color:var(--red);}
+
+/* CONTENT */
+.content{flex:1;overflow:auto;padding:20px;}
+.panel{display:none;}
+.panel.active{display:block;}
+
+/* INFO BAR */
+.info-bar{display:flex;align-items:center;gap:16px;margin-bottom:16px;padding:10px 14px;background:var(--s2);border:1px solid var(--border);border-radius:8px;font-size:12px;color:var(--muted);}
+.info-bar strong{color:var(--dim);}
+.info-tip{margin-left:auto;display:flex;align-items:center;gap:6px;}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--yellow);flex-shrink:0;}
+
+/* CATEGORY SECTION */
+.cat-block{margin-bottom:28px;}
+.cat-label{font-size:10px;font-weight:800;letter-spacing:1.4px;text-transform:uppercase;color:var(--muted);padding:6px 0 8px;display:flex;align-items:center;gap:10px;}
+.cat-label::after{content:'';flex:1;height:1px;background:var(--border);}
+
+/* TABLE */
+.rv-table{width:100%;border-collapse:collapse;font-size:13px;}
+.rv-table th{background:var(--s2);color:var(--muted);font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;padding:7px 10px;text-align:center;border-bottom:1px solid var(--border);white-space:nowrap;}
+.rv-table th.col-trim{text-align:left;width:160px;}
+.rv-table th.col-msrp{text-align:right;}
+.rv-table td{padding:5px 6px;border-bottom:1px solid var(--border);vertical-align:middle;}
+.rv-table td.col-trim{padding-left:10px;font-weight:600;color:var(--dim);}
+.rv-table td.col-msrp{text-align:right;color:var(--muted);font-size:12px;padding-right:10px;font-variant-numeric:tabular-nums;}
+.rv-table tr:hover td{background:rgba(255,255,255,.02);}
+
+/* INPUTS */
+.rv-input{width:44px;padding:5px 4px;background:var(--s3);border:1px solid var(--border2);border-radius:5px;color:var(--text);font-size:13px;font-family:inherit;font-variant-numeric:tabular-nums;text-align:center;transition:border-color .15s,background .15s;-moz-appearance:textfield;}
+.rv-input::-webkit-inner-spin-button,.rv-input::-webkit-outer-spin-button{-webkit-appearance:none;}
+.rv-input:focus{outline:none;border-color:var(--blue);background:#1a2030;}
+.rv-input.edited{border-color:var(--yellow);color:var(--yellow);}
+.rv-input.empty{background:transparent;border-color:transparent;color:var(--border2);cursor:not-allowed;}
+.pct-wrap{display:flex;align-items:center;justify-content:center;gap:1px;}
+.pct-sym{font-size:10px;color:var(--muted);}
+
+/* KM GRID EXTRAS */
+.km-car-name{font-size:12px;color:var(--muted);}
+
+/* YEAR BADGE */
+.yr-badge{font-size:9px;font-weight:700;letter-spacing:.3px;padding:1px 5px;border-radius:3px;background:rgba(168,124,245,.15);border:1px solid rgba(168,124,245,.25);color:var(--purple);margin-left:5px;}
+
+/* FOOTER */
+.footer{padding:14px 20px;border-top:1px solid var(--border);font-size:11px;color:var(--muted);display:flex;justify-content:space-between;align-items:center;flex-shrink:0;}
+</style>
+</head>
+<body>
+
+<!-- PASSWORD GATE -->
+<div id="gate">
+  <div class="gate-box">
+    <div class="gate-logo">%</div>
+    <div class="gate-title">RV Editor</div>
+    <div class="gate-sub">Maple Honda · Admin Access Required</div>
+    <input class="gate-input" id="pw" type="password" placeholder="••••" maxlength="10"
+      onkeydown="if(event.key==='Enter')unlock()">
+    <button class="gate-btn" onclick="unlock()">Sign In</button>
+    <div class="gate-err" id="err"></div>
+  </div>
+</div>
+
+<!-- MAIN (hidden until auth) -->
+<div id="rv-main">
+
+<!-- HEADER -->
+<div class="hdr">
+  <div class="hdr-left">
+    <div class="logo">%</div>
+    <div>
+      <div class="hdr-title">RV Editor</div>
+      <div class="hdr-sub">Maple Honda · Residual Value Management</div>
+    </div>
+    <div class="badge">LIVE — models-data.js</div>
+  </div>
+  <div class="hdr-right">
+    <span class="edited-count" id="editedCount">0 edits</span>
+    <button class="btn btn-secondary" onclick="resetAll()">Reset</button>
+    <button class="btn btn-dl" onclick="downloadModelsData()">↓ Download models-data.js</button>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <div class="tab active" data-tab="rv" onclick="switchTab('rv')">Residual Values (% of MSRP)</div>
+  <div class="tab" data-tab="km" onclick="switchTab('km')">KM Grid Adjustments</div>
+</div>
+
+<!-- CONTENT -->
+<div class="content">
+
+  <!-- ── RESIDUAL VALUES TAB ── -->
+  <div class="panel active" id="panel-rv">
+    <div class="info-bar">
+      <strong>Source:</strong> April 2026 Honda Canada Program (NAS081-26) · 24,000 km/yr basis
+      <span>|</span>
+      <strong>Usage:</strong> qt.html · compare.html (via models-data.js)
+      <div class="info-tip">
+        <div class="dot"></div>
+        <span>Edited cells shown in amber — download to apply changes</span>
+      </div>
+    </div>
+    <div id="rv-body"></div>
+  </div>
+
+  <!-- ── KM GRID TAB ── -->
+  <div class="panel" id="panel-km">
+    <div class="info-bar">
+      <strong>Base:</strong> 24,000 km/yr · Values shown as % of MSRP
+      <span>|</span>
+      <strong>Pattern:</strong> 24k = base rv60 · ↓km = higher residual · ↑km = lower residual
+      <div class="info-tip">
+        <div class="dot"></div>
+        <span>Only cars with published Honda km grids shown</span>
+      </div>
+    </div>
+    <div id="km-body"></div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<div class="footer" style="flex-shrink:0">
+  <span>All values are % of MSRP. Download generates a replacement <code>models-data.js</code> — back up the original first.</span>
+  <span id="footer-stamp"></span>
+</div>
+
+<script>
+// ── STATE ──────────────────────────────────────────────────────────────────
+// Deep clone M so we can track original vs edited
+const original = JSON.parse(JSON.stringify(M));
+const edited    = JSON.parse(JSON.stringify(M));
+let editCount   = 0;
+
+const RV_TERMS = [24,30,36,42,48,54,60];
+const KM_KEYS  = [12000,16000,20000,24000,32000,40000];
+const KM_LABELS= ['12k','16k','20k','24k','32k','40k'];
+
+// ── HELPERS ────────────────────────────────────────────────────────────────
+const ca$ = n => '$' + n.toLocaleString('en-CA');
+
+function groupByCat(arr) {
+  const map = new Map();
+  arr.forEach(m => {
+    const key = (m.year && m.year !== 2026) ? `${m.cat} (${m.year})` : m.cat;
+    if (!map.has(key)) map.set(key, []);
+    map.get(key).push(m);
+  });
+  return map;
+}
+
+function rvPct(m, term) {
+  const v = m.rv[term];
+  return v !== undefined ? Math.round(v * 100) : null;
+}
+
+function kmPct(m, km) {
+  if (!m.resKm) return null;
+  const v = m.resKm[km];
+  return v !== undefined ? Math.round(v * 100) : null;
+}
+
+function updateEditedCount() {
+  editCount = 0;
+  document.querySelectorAll('.rv-input.edited').forEach(() => editCount++);
+  const el = document.getElementById('editedCount');
+  el.textContent = editCount + (editCount === 1 ? ' edit' : ' edits');
+  el.classList.toggle('show', editCount > 0);
+}
+
+// ── RENDER RV TABLE ────────────────────────────────────────────────────────
+function renderRV() {
+  const container = document.getElementById('rv-body');
+  const groups = groupByCat(edited);
+  let html = '';
+
+  groups.forEach((cars, catLabel) => {
+    html += `<div class="cat-block">
+      <div class="cat-label">${catLabel}</div>
+      <table class="rv-table">
+        <thead><tr>
+          <th class="col-trim">Trim</th>
+          <th class="col-msrp">MSRP</th>
+          ${RV_TERMS.map(t => `<th>${t}mo</th>`).join('')}
+        </tr></thead>
+        <tbody>`;
+
+    cars.forEach(m => {
+      const yr = (m.year && m.year !== 2026) ? `<span class="yr-badge">${m.year}</span>` : '';
+      html += `<tr>
+        <td class="col-trim">${m.trim}${yr}</td>
+        <td class="col-msrp">${ca$(m.msrp)}</td>`;
+
+      RV_TERMS.forEach(term => {
+        const val = rvPct(m, term);
+        const origVal = original.find(o => o.id === m.id) ? rvPct(original.find(o => o.id === m.id), term) : null;
+        if (val === null) {
+          html += `<td><input class="rv-input empty" type="number" value="" disabled></td>`;
+        } else {
+          const isEdited = val !== origVal;
+          html += `<td>
+            <div class="pct-wrap">
+              <input class="rv-input${isEdited?' edited':''}" type="number"
+                min="0" max="100" step="1"
+                value="${val}"
+                data-id="${m.id}" data-term="${term}" data-type="rv"
+                oninput="handleInput(this)">
+              <span class="pct-sym">%</span>
+            </div></td>`;
+        }
+      });
+
+      html += `</tr>`;
+    });
+
+    html += `</tbody></table></div>`;
+  });
+
+  container.innerHTML = html;
+}
+
+// ── RENDER KM TABLE ────────────────────────────────────────────────────────
+function renderKM() {
+  const container = document.getElementById('km-body');
+  const carsWithKm = edited.filter(m => m.resKm && Object.keys(m.resKm).length > 0);
+  const groups = groupByCat(carsWithKm);
+  let html = '';
+
+  if (carsWithKm.length === 0) {
+    container.innerHTML = '<div style="padding:40px;text-align:center;color:var(--muted)">No km grid data in models-data.js</div>';
+    return;
+  }
+
+  groups.forEach((cars, catLabel) => {
+    html += `<div class="cat-block">
+      <div class="cat-label">${catLabel}</div>
+      <table class="rv-table">
+        <thead><tr>
+          <th class="col-trim">Trim</th>
+          <th class="col-msrp">MSRP</th>
+          ${KM_LABELS.map((l,i) => {
+            const km = KM_KEYS[i];
+            return `<th${km===24000?' style="border-left:1px solid var(--blue);border-right:1px solid var(--blue);color:var(--blue)"':''}>${l}</th>`;
+          }).join('')}
+        </tr></thead>
+        <tbody>`;
+
+    cars.forEach(m => {
+      const yr = (m.year && m.year !== 2026) ? `<span class="yr-badge">${m.year}</span>` : '';
+      html += `<tr>
+        <td class="col-trim">${m.trim}${yr}<br><span class="km-car-name">${m.name}</span></td>
+        <td class="col-msrp">${ca$(m.msrp)}</td>`;
+
+      KM_KEYS.forEach(km => {
+        const val = kmPct(m, km);
+        const orig = original.find(o => o.id === m.id);
+        const origVal = orig ? kmPct(orig, km) : null;
+        const isBase = km === 24000;
+        const style = isBase ? ' style="border-left:1px solid rgba(74,158,255,.2);border-right:1px solid rgba(74,158,255,.2)"' : '';
+
+        if (val === null) {
+          html += `<td${style}><input class="rv-input empty" type="number" value="" disabled></td>`;
+        } else {
+          const isEdited = val !== origVal;
+          html += `<td${style}>
+            <div class="pct-wrap">
+              <input class="rv-input${isEdited?' edited':''}${isBase?' ':''}${isBase?'style="border-color:rgba(74,158,255,.3)"':''}" type="number"
+                min="0" max="100" step="1"
+                value="${val}"
+                data-id="${m.id}" data-km="${km}" data-type="km"
+                oninput="handleInput(this)">
+              <span class="pct-sym">%</span>
+            </div></td>`;
+        }
+      });
+
+      html += `</tr>`;
+    });
+
+    html += `</tbody></table></div>`;
+  });
+
+  container.innerHTML = html;
+}
+
+// ── INPUT HANDLER ──────────────────────────────────────────────────────────
+function handleInput(el) {
+  const id   = el.dataset.id;
+  const type = el.dataset.type;
+  const val  = parseFloat(el.value);
+  const m    = edited.find(x => x.id === id);
+  const orig = original.find(x => x.id === id);
+  if (!m) return;
+
+  if (isNaN(val) || val < 0 || val > 100) {
+    el.classList.add('edited');
+    return;
+  }
+
+  const dec = Math.round(val) / 100;
+
+  if (type === 'rv') {
+    const term = parseInt(el.dataset.term);
+    m.rv[term] = dec;
+    const origDec = orig?.rv[term];
+    el.classList.toggle('edited', Math.round(dec * 100) !== Math.round((origDec||0) * 100));
+  } else if (type === 'km') {
+    const km = parseInt(el.dataset.km);
+    m.resKm[km] = dec;
+    const origDec = orig?.resKm?.[km];
+    el.classList.toggle('edited', Math.round(dec * 100) !== Math.round((origDec||0) * 100));
+  }
+
+  updateEditedCount();
+}
+
+// ── RESET ──────────────────────────────────────────────────────────────────
+function resetAll() {
+  const fresh = JSON.parse(JSON.stringify(original));
+  edited.splice(0, edited.length, ...fresh);
+  renderRV();
+  renderKM();
+  updateEditedCount();
+}
+
+// ── TAB SWITCH ─────────────────────────────────────────────────────────────
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === name));
+  document.querySelectorAll('.panel').forEach(p => p.classList.toggle('active', p.id === 'panel-' + name));
+}
+
+// ── SERIALIZE models-data.js ───────────────────────────────────────────────
+function serializeModelsData() {
+  const CAT_ORDER = [
+    'Civic Sedan','Civic Hatchback','Prelude','Accord','HR-V','CR-V',
+    'Passport','Pilot','Odyssey','Ridgeline','Prologue'
+  ];
+
+  // Group cars, 2026 first then 2027
+  const by2026 = edited.filter(m => !m.year || m.year === 2026);
+  const by2027 = edited.filter(m => m.year && m.year !== 2026);
+
+  function fmt(n) {
+    if (n === null) return 'null';
+    if (typeof n === 'number') return n;
+    return JSON.stringify(n);
+  }
+
+  function fmtObj(obj) {
+    return '{' + Object.entries(obj).map(([k,v]) => `${k}:${fmt(v)}`).join(',') + '}';
+  }
+
+  function fmtDecObj(obj) {
+    return '{' + Object.entries(obj).map(([k,v]) => {
+      const d = (Math.round(v * 100) / 100).toFixed(2).replace(/\.?0+$/, '');
+      return `${k}:${d}`;
+    }).join(',') + '}';
+  }
+
+  function carLine(m) {
+    let s = `{id:'${m.id}', cat:'${m.cat}', name:'${m.name}', trim:'${m.trim}'`;
+    if (m.year && m.year !== 2026) s += `, year:${m.year}`;
+    s += `,\n msrp:${m.msrp}, price:${m.price}, otd:${m.otd}, engine:'${m.engine}', drive:'${m.drive}',\n`;
+    s += ` lr:${fmtObj(m.lr)}, rv:${fmtDecObj(m.rv)}, fr:${fmtObj(m.fr)}`;
+    if (m.resKm && Object.keys(m.resKm).length) {
+      s += `,\n resKm:${fmtDecObj(m.resKm)}`;
+    }
+    s += '}';
+    return s;
+  }
+
+  function catBlock(label, cars) {
+    if (!cars.length) return '';
+    const bar = '─'.repeat(Math.max(2, 68 - label.length));
+    return `\n// ── ${label} ${bar}\n` +
+           cars.map(m => carLine(m)).join(',\n\n') + ',\n';
+  }
+
+  const today = new Date().toLocaleDateString('en-CA',{year:'numeric',month:'long',day:'numeric'});
+
+  let out = `// ═══════════════════════════════════════════════════════════════════════
+//  MODELS — Shared between qt.html and compare.html
+//  Selling prices from Maple Honda internal sheet, April 25, 2026
+//  Lease & finance RATES confirmed from April 2026 Honda Programs (NAS081-26)
+//  Residuals: Official Honda Canada 2026 Residual Values sheet
+//  Residual basis: % of MSRP · KM basis: 24,000 km/yr
+//  km adjustment: ±2% of MSRP per 4,000 km/yr from 24k base
+//  Last edited via RV Editor: ${today}
+// ═══════════════════════════════════════════════════════════════════════
+
+const M = [
+`;
+
+  // 2026 cars in category order
+  CAT_ORDER.forEach(cat => {
+    const cars = by2026.filter(m => m.cat === cat);
+    out += catBlock(cat, cars);
+  });
+  // any 2026 cats not in CAT_ORDER
+  const covered = new Set(CAT_ORDER);
+  const extra2026 = by2026.filter(m => !covered.has(m.cat));
+  if (extra2026.length) {
+    const cats = [...new Set(extra2026.map(m => m.cat))];
+    cats.forEach(cat => out += catBlock(cat, extra2026.filter(m => m.cat === cat)));
+  }
+
+  // 2027 cars
+  if (by2027.length) {
+    out += `
+// ══════════════════════════════════════════════════════════════════════════
+//  2027 Model Year · Added Apr 28 2026
+//  Source: Maple Honda internal pricing sheet
+//  Rates/residuals: TBD — using 2026 programs as placeholder until 2027 programs release
+// ══════════════════════════════════════════════════════════════════════════
+`;
+    const cats2027 = [...new Set(by2027.map(m => m.cat))];
+    cats2027.forEach(cat => out += catBlock(cat + ' (2027)', by2027.filter(m => m.cat === cat)));
+  }
+
+  out += `];\nM.forEach(m => { if (!m.year) m.year = 2026; });\n`;
+  return out;
+}
+
+// ── DOWNLOAD ───────────────────────────────────────────────────────────────
+function downloadModelsData() {
+  const content  = serializeModelsData();
+  const blob     = new Blob([content], {type:'text/javascript;charset=utf-8'});
+  const url      = URL.createObjectURL(blob);
+  const a        = document.createElement('a');
+  a.href         = url;
+  a.download     = 'models-data.js';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+// ── INIT ───────────────────────────────────────────────────────────────────
+document.getElementById('footer-stamp').textContent =
+  `Loaded ${M.length} models · ${new Date().toLocaleString('en-CA',{dateStyle:'medium',timeStyle:'short'})}`;
+
+renderRV();
+renderKM();
+
+// ── AUTH ───────────────────────────────────────────────────────────────────
+const ADMIN_PW  = '0512';
+const AUTH_KEY  = 'mh_admin_auth';
+
+function unlock() {
+  const val = document.getElementById('pw').value;
+  if (val === ADMIN_PW) {
+    sessionStorage.setItem(AUTH_KEY, '1');
+    showApp();
+  } else {
+    const e = document.getElementById('err');
+    e.textContent = 'Incorrect password.';
+    setTimeout(() => e.textContent = '', 2000);
+    document.getElementById('pw').value = '';
+  }
+}
+
+function showApp() {
+  document.getElementById('gate').style.display    = 'none';
+  document.getElementById('rv-main').classList.add('unlocked');
+}
+
+// Auto-unlock if already authenticated from admin.html
+if (sessionStorage.getItem(AUTH_KEY) === '1') {
+  showApp();
+}
+</script>
+
+</div><!-- /#rv-main -->
+</body>
+</html>

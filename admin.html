@@ -150,6 +150,7 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,san
     </div>
     <div class="adm-actions">
       <span class="save-indicator" id="save-indicator">✓ Saved</span>
+      <a href="rv-editor.html" target="_blank" class="btn btn-reset" style="text-decoration:none">% RV Editor ↗</a>
       <button class="btn btn-reset" onclick="confirmReset()">↺ Reset to Default</button>
       <button class="btn btn-export" onclick="exportFiles()">⬇ Export qt.html</button>
       <button class="btn btn-save" onclick="saveAll()">💾 Save All Changes</button>
@@ -212,6 +213,7 @@ const META_KEY = 'mh_admin_meta';
 
 function unlock(){
   if(document.getElementById('pw').value === ADMIN_PW){
+    sessionStorage.setItem('mh_admin_auth','1');
     document.getElementById('gate').style.display = 'none';
     document.getElementById('admin').style.display = 'block';
     init();
