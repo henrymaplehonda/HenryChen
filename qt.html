@@ -1183,20 +1183,25 @@ function render() {
       </div>
     </div>
 
-    <!-- LEASE CARDS -->
-    <div class="sec-hdr">Lease Options
-      <span class="sec-note">&nbsp;· ${kmAllowance.toLocaleString()} km/yr · Enter actual HFS residual $ on each card</span>
-    </div>
-    <div class="pgrid">
-      ${lcard1 ? leaseCard(leaseTerm1, lcard1, 1, optBWval, optMOval) : `<div class="empty-card">STD rate — no promo for this term</div>`}
-      ${lcard2 ? leaseCard(leaseTerm2, lcard2, 2, optBWval, optMOval) : `<div class="empty-card">STD rate — no promo for this term</div>`}
-    </div>
-
-    <!-- FINANCE CARDS -->
-    <div class="sec-hdr">Finance Options</div>
-    <div class="pgrid">
-      ${fc1 ? finCard(finTerm1, fc1, 1, m) : `<div class="empty-card">STD rate</div>`}
-      ${fc2 ? finCard(finTerm2, fc2, 2, m) : `<div class="empty-card">STD rate</div>`}
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:22px;">
+      <div>
+        <!-- LEASE CARDS -->
+        <div class="sec-hdr">Lease Options
+          <span class="sec-note">&nbsp;· ${kmAllowance.toLocaleString()} km/yr · Enter actual HFS residual $ on each card</span>
+        </div>
+        <div class="pgrid" style="margin-bottom:0;">
+          ${lcard1 ? leaseCard(leaseTerm1, lcard1, 1, optBWval, optMOval) : `<div class="empty-card">STD rate — no promo for this term</div>`}
+          ${lcard2 ? leaseCard(leaseTerm2, lcard2, 2, optBWval, optMOval) : `<div class="empty-card">STD rate — no promo for this term</div>`}
+        </div>
+      </div>
+      <div>
+        <!-- FINANCE CARDS -->
+        <div class="sec-hdr">Finance Options</div>
+        <div class="pgrid" style="margin-bottom:0;">
+          ${fc1 ? finCard(finTerm1, fc1, 1, m) : `<div class="empty-card">STD rate</div>`}
+          ${fc2 ? finCard(finTerm2, fc2, 2, m) : `<div class="empty-card">STD rate</div>`}
+        </div>
+      </div>
     </div>
 
     <!-- MORE OPTIONS: ALL TERMS -->
