@@ -391,11 +391,11 @@ function renderCompare() {
       </tr>
       <tr class="ct-row">
         <td class="ct-label">Bi-Weekly</td>
-        ${active.map((m,i)=>valCell(lbw(m)?ca$c(lbw(m)):null, bestLbw[i], 'blue')).join('')}
+        ${active.map((m,i)=>valCell(lbw(m)?ca$c(lbw(m))+'<span class="tax-tag">+tax</span>':null, bestLbw[i], 'blue')).join('')}
       </tr>
       <tr class="ct-row">
         <td class="ct-label">Monthly</td>
-        ${active.map(m=>`<td class="ct-val dim">${lmop(m)?ca$c(lmop(m)):'STD'}</td>`).join('')}
+        ${active.map(m=>`<td class="ct-val dim">${lmop(m)?ca$c(lmop(m))+'<span class="tax-tag">+tax</span>':'STD'}</td>`).join('')}
       </tr>
       <tr class="ct-row">
         <td class="ct-label">Est. Residual</td>
@@ -418,11 +418,11 @@ function renderCompare() {
       </tr>
       <tr class="ct-row">
         <td class="ct-label">Bi-Weekly</td>
-        ${active.map((m,i)=>valCell(fbwv(m)?ca$c(fbwv(m)):null, bestFbw[i], 'green')).join('')}
+        ${active.map((m,i)=>valCell(fbwv(m)?ca$c(fbwv(m))+'<span class="tax-tag">+tax</span>':null, bestFbw[i], 'green')).join('')}
       </tr>
       <tr class="ct-row">
         <td class="ct-label">Monthly</td>
-        ${active.map(m=>`<td class="ct-val dim">${fmov(m)?ca$c(fmov(m)):'STD'}</td>`).join('')}
+        ${active.map(m=>`<td class="ct-val dim">${fmov(m)?ca$c(fmov(m))+'<span class="tax-tag">+tax</span>':'STD'}</td>`).join('')}
       </tr>
       <tr class="ct-row">
         <td class="ct-label">Total Payments (est)</td>

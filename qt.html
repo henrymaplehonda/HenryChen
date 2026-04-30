@@ -155,6 +155,8 @@ body{font-family:'Segoe UI',system-ui,sans-serif;font-size:16.5px;line-height:1.
 .pay-num{font-size:28px;font-weight:800;line-height:1;letter-spacing:-1px;}
 .pay-num.secondary{font-size:18px;font-weight:500;color:var(--dim);letter-spacing:-.5px;}
 .pay-unit{font-size:13px;font-weight:400;color:var(--muted);margin-left:3px;}
+.pay-unit::after{content:' +tax';margin-left:2px;font-size:11px;font-weight:500;color:var(--muted);opacity:.85;}
+.tax-tag{font-size:.78em;font-weight:500;color:var(--muted);margin-left:3px;opacity:.85;}
 .pc-div{height:1px;background:var(--border);margin:12px 0;}
 
 /* ── RESIDUAL ── */
@@ -577,7 +579,7 @@ function renderWarrantyPanel(m) {
               <div style="${bg};padding:9px 12px;border-top:1px solid var(--border)">${p.label}</div>
               <div style="${bg};padding:9px 12px;border-top:1px solid var(--border);border-left:1px solid var(--border);text-align:center;font-weight:600">$${cost.toLocaleString()}</div>
               <div style="${bg};padding:9px 12px;border-top:1px solid var(--border);border-left:1px solid var(--border);text-align:center;color:var(--green);font-size:12px">
-                5yr: ${ca$c(bw60)}/2wk<br>7yr: ${ca$c(bw84)}/2wk
+                5yr: ${ca$c(bw60)}/2wk +tax<br>7yr: ${ca$c(bw84)}/2wk +tax
               </div>
               <div style="${bg};padding:6px 12px;border-top:1px solid var(--border);border-left:1px solid var(--border);text-align:center">
                 <button onclick="selectWarranty('${p.label}',${cost})"
@@ -1000,8 +1002,8 @@ function render() {
                 return '<div style="background:var(--s1);border:1px solid var(--blue-bdr);border-radius:6px;padding:7px 10px;display:flex;justify-content:space-between;align-items:center;">'
                   + '<div><span style="font-size:12px;color:var(--blue);font-weight:700;">' + mo + ' mo</span>'
                   + '<span style="font-size:10px;color:var(--muted);margin-left:6px;">' + rt + '% · Res ' + ca$(resObj.val) + '</span></div>'
-                  + '<div style="text-align:right;"><div style="font-size:15px;font-weight:800;">' + ca$c(bwTotal) + '<span style="font-size:10px;font-weight:400;color:var(--dim)">/2wk</span></div>'
-                  + '<div style="font-size:11px;color:var(--dim);">' + ca$c(moTotal) + '/mo</div></div>'
+                  + '<div style="text-align:right;"><div style="font-size:15px;font-weight:800;">' + ca$c(bwTotal) + '<span style="font-size:10px;font-weight:400;color:var(--dim)">/2wk</span><span class="tax-tag">+tax</span></div>'
+                  + '<div style="font-size:11px;color:var(--dim);">' + ca$c(moTotal) + '/mo<span class="tax-tag">+tax</span></div></div>'
                   + '</div>';
               }).join('')}
             </div>
@@ -1024,8 +1026,8 @@ function render() {
                 return '<div style="background:var(--s1);border:1px solid var(--green-bdr);border-radius:6px;padding:7px 10px;display:flex;justify-content:space-between;align-items:center;">'
                   + '<div><span style="font-size:12px;color:var(--green);font-weight:700;">' + mo + ' mo</span>'
                   + '<span style="font-size:10px;color:var(--muted);margin-left:6px;">' + rt + '% APR</span></div>'
-                  + '<div style="text-align:right;"><div style="font-size:15px;font-weight:800;">' + ca$c(bwP) + '<span style="font-size:10px;font-weight:400;color:var(--dim)">/2wk</span></div>'
-                  + '<div style="font-size:11px;color:var(--dim);">' + ca$c(moP) + '/mo</div></div>'
+                  + '<div style="text-align:right;"><div style="font-size:15px;font-weight:800;">' + ca$c(bwP) + '<span style="font-size:10px;font-weight:400;color:var(--dim)">/2wk</span><span class="tax-tag">+tax</span></div>'
+                  + '<div style="font-size:11px;color:var(--dim);">' + ca$c(moP) + '/mo<span class="tax-tag">+tax</span></div></div>'
                   + '</div>';
               }).join('')}
             </div>
@@ -1144,9 +1146,9 @@ function leaseCard(term, data, slot, optBWval, optMOval) {
             <div style="font-size:10px;color:rgba(0,212,122,.5);margin-bottom:4px">Base lease + Warranty (financed @ ${rt}%)</div>
             <div style="display:flex;justify-content:space-between;align-items:baseline">
               <span style="font-size:12px;color:var(--green)">Total Bi-Weekly:</span>
-              <span style="font-size:20px;font-weight:700;color:var(--green)">${ca$c(totalBW + fbw(warrantySelected.cost, term, rt))}/2wk</span>
+              <span style="font-size:20px;font-weight:700;color:var(--green)">${ca$c(totalBW + fbw(warrantySelected.cost, term, rt))}/2wk<span class="tax-tag">+tax</span></span>
             </div>
-            <div style="font-size:11px;color:rgba(0,212,122,.5);text-align:right">${ca$c(totalMO + fmo(warrantySelected.cost, term, rt))}/mo</div>
+            <div style="font-size:11px;color:rgba(0,212,122,.5);text-align:right">${ca$c(totalMO + fmo(warrantySelected.cost, term, rt))}/mo<span class="tax-tag">+tax</span></div>
           </div>` : ''}
         </div>
         <div class="pc-div"></div>
@@ -1256,18 +1258,18 @@ function finCard(term, data, slot, m2) {
             <div style="font-size:10px;color:rgba(0,212,122,.5);margin-bottom:4px">Base + Warranty only</div>
             <div style="display:flex;justify-content:space-between;align-items:baseline">
               <span style="font-size:12px;color:var(--green)">With Warranty:</span>
-              <span style="font-size:20px;font-weight:700;color:var(--green)">${ca$c(fbw(cap2+wCost, term, rt))}/2wk</span>
+              <span style="font-size:20px;font-weight:700;color:var(--green)">${ca$c(fbw(cap2+wCost, term, rt))}/2wk<span class="tax-tag">+tax</span></span>
             </div>
-            <div style="font-size:11px;color:rgba(0,212,122,.5);text-align:right">${ca$c(fmo(cap2+wCost, term, rt))}/mo</div>
+            <div style="font-size:11px;color:rgba(0,212,122,.5);text-align:right">${ca$c(fmo(cap2+wCost, term, rt))}/mo<span class="tax-tag">+tax</span></div>
           </div>
           ${optGAP ? `
           <div style="margin-top:4px;padding:8px 10px;background:rgba(0,212,122,.04);border:1px solid var(--green-bdr);border-radius:5px;">
             <div style="font-size:10px;color:rgba(0,212,122,.4);margin-bottom:4px">GAP + Warranty combined</div>
             <div style="display:flex;justify-content:space-between;align-items:baseline">
               <span style="font-size:12px;color:var(--green)">GAP + Warranty:</span>
-              <span style="font-size:18px;font-weight:700;color:var(--green)">${ca$c(bwWithWar)}/2wk</span>
+              <span style="font-size:18px;font-weight:700;color:var(--green)">${ca$c(bwWithWar)}/2wk<span class="tax-tag">+tax</span></span>
             </div>
-            <div style="font-size:11px;color:rgba(0,212,122,.4);text-align:right">${ca$c(moWithWar)}/mo</div>
+            <div style="font-size:11px;color:rgba(0,212,122,.4);text-align:right">${ca$c(moWithWar)}/mo<span class="tax-tag">+tax</span></div>
           </div>` : ''}` : ''}
         </div>
       </div>
@@ -1356,8 +1358,8 @@ function renderBreakdown(m, r, res36obj, res60obj, l36mo, l36bw, l60mo, l60bw, f
           <span class="bk-val">${ca$(res)} (${(resObj.pct*100).toFixed(1)}%)</span>
         </div>
         <div class="bk-row"><span class="bk-lbl">Amount to Amortize</span><span class="bk-val">${ca$(amort)}</span></div>
-        <div class="bk-row total"><span class="bk-lbl">Bi-Weekly Payment</span><span class="bk-val">${ca$c(biw + om + (months===60&&optLeaseGuard?OPT_LEASEGUARD_PRO:0))}/2wk</span></div>
-        <div class="bk-row"><span class="bk-lbl">Monthly Equivalent</span><span class="bk-val">${ca$c(monthly + om + (months===60&&optLeaseGuard?OPT_LEASEGUARD_PRO:0))}/mo</span></div>
+        <div class="bk-row total"><span class="bk-lbl">Bi-Weekly Payment</span><span class="bk-val">${ca$c(biw + om + (months===60&&optLeaseGuard?OPT_LEASEGUARD_PRO:0))}/2wk<span class="tax-tag">+tax</span></span></div>
+        <div class="bk-row"><span class="bk-lbl">Monthly Equivalent</span><span class="bk-val">${ca$c(monthly + om + (months===60&&optLeaseGuard?OPT_LEASEGUARD_PRO:0))}/mo<span class="tax-tag">+tax</span></span></div>
         <div class="bk-row indent"><span class="bk-lbl"># of Bi-Weekly Payments</span><span class="bk-val">${nPmtR}</span></div>
         <div class="bk-row indent"><span class="bk-lbl">Total of Payments</span><span class="bk-val">${ca$(totalPmts)}</span></div>
         <div class="bk-row indent"><span class="bk-lbl">KM Allowance</span><span class="bk-val">${kmAllowance.toLocaleString()}/yr · ${totalKM.toLocaleString()} total</span></div>
@@ -1383,14 +1385,14 @@ function renderBreakdown(m, r, res36obj, res60obj, l36mo, l36bw, l60mo, l60bw, f
       <div class="bk-section" id="${anchorId}">
         <div class="bk-sec-title-big">💳 Finance · ${months} months @ ${rate}% APR</div>
         <div class="bk-row"><span class="bk-lbl">Principal (after down payment)</span><span class="bk-val">${ca$(cap)}</span></div>
-        <div class="bk-row total"><span class="bk-lbl">Bi-Weekly Payment</span><span class="bk-val">${ca$c(biw)}/2wk</span></div>
-        <div class="bk-row"><span class="bk-lbl">Monthly Payment</span><span class="bk-val">${ca$c(monthly)}/mo</span></div>
+        <div class="bk-row total"><span class="bk-lbl">Bi-Weekly Payment</span><span class="bk-val">${ca$c(biw)}/2wk<span class="tax-tag">+tax</span></span></div>
+        <div class="bk-row"><span class="bk-lbl">Monthly Payment</span><span class="bk-val">${ca$c(monthly)}/mo<span class="tax-tag">+tax</span></span></div>
         <div class="bk-row indent"><span class="bk-lbl"># of Monthly Payments</span><span class="bk-val">${nPmt}</span></div>
         <div class="bk-row indent"><span class="bk-lbl">Total of Payments</span><span class="bk-val">${ca$(totalPmts)}</span></div>
         <div class="bk-row indent"><span class="bk-lbl">Total Cost of Borrowing</span><span class="bk-val">${ca$(totalCost)}</span></div>
         <div style="margin-top:10px;font-size:13px;font-weight:700;color:var(--green);padding-bottom:6px;border-bottom:1px solid var(--border)">+ GAP Insurance ($${gapAmt.toLocaleString()})</div>
-        <div class="bk-row"><span class="bk-lbl">Monthly w/ GAP</span><span class="bk-val">${ca$c(fmo(cap+gapAmt,months,rate))}/mo</span></div>
-        <div class="bk-row"><span class="bk-lbl">Bi-Weekly w/ GAP</span><span class="bk-val">${ca$c(fbw(cap+gapAmt,months,rate))}/2wk</span></div>
+        <div class="bk-row"><span class="bk-lbl">Monthly w/ GAP</span><span class="bk-val">${ca$c(fmo(cap+gapAmt,months,rate))}/mo<span class="tax-tag">+tax</span></span></div>
+        <div class="bk-row"><span class="bk-lbl">Bi-Weekly w/ GAP</span><span class="bk-val">${ca$c(fbw(cap+gapAmt,months,rate))}/2wk<span class="tax-tag">+tax</span></span></div>
       </div>`;
   }
 
@@ -1504,8 +1506,8 @@ function printQuote(autoSave) {
   function makeLeaseRows(lc, term) {
     if (!lc) return [['N/A','STD rate — no promo',false]];
     return [
-      ['Bi-Weekly', ca$c(lc.bw + ob + lgBW), false],
-      ['Monthly',   ca$c(lc.mo + om + lgMO), true],
+      ['Bi-Weekly', ca$c(lc.bw + ob + lgBW)+' +tax', false],
+      ['Monthly',   ca$c(lc.mo + om + lgMO)+' +tax', true],
       ['Rate',      `${lc.rt}% APR`, true],
       ['Residual',  `${ca$(lc.res.val)} (${(lc.res.pct*100).toFixed(1)}%)`, true],
       ['KM/yr',     `${kmAllowance.toLocaleString()} km`, true],
@@ -1516,14 +1518,14 @@ function printQuote(autoSave) {
   function makeFinRows(fcp, term) {
     if (!fcp) return [['N/A','STD rate',false]];
     const rows = [
-      ['Bi-Weekly', ca$c(fcp.bw), false],
-      ['Monthly',   ca$c(fcp.mo), true],
+      ['Bi-Weekly', ca$c(fcp.bw)+' +tax', false],
+      ['Monthly',   ca$c(fcp.mo)+' +tax', true],
       ['Rate',      `${fcp.rt}% APR`, true],
     ];
     if (optGAP) {
       rows.push(['','',true]);
-      rows.push(['+ GAP Bi-Wkly', ca$c(fcp.bwGapOnly), false]);
-      rows.push(['+ GAP Monthly',  ca$c(fmo(cap+gapBase,term,fcp.rt)), true]);
+      rows.push(['+ GAP Bi-Wkly', ca$c(fcp.bwGapOnly)+' +tax', false]);
+      rows.push(['+ GAP Monthly',  ca$c(fmo(cap+gapBase,term,fcp.rt))+' +tax', true]);
     }
     if (warrantySelected) {
       rows.push(['','',true]);
@@ -1733,21 +1735,21 @@ function copyQ() {
     ``,
     `── LEASE ──────────────────────────────────────────`,
     `3 Year / ${r.lr36}% APR${m.promo&&m.promo.term===36?' (HFS Promo)':' (est. buy rate)'}`,
-    `  Monthly: ${ca$c(l36+om)}/mo  ·  Bi-Weekly: ${ca$c(mo2bw(l36)+ob)}/2wk`,
+    `  Monthly: ${ca$c(l36+om)}/mo +tax  ·  Bi-Weekly: ${ca$c(mo2bw(l36)+ob)}/2wk +tax`,
     `  Residual: ${ca$(res36)} (${Math.round(r.rv36*100)}% — estimate)`,
     ``,
     l60 ? `5 Year / ${r.lr60}% APR${m.promo&&m.promo.term===60?' (HFS Promo)':''}` : `5 Year: N/A`,
-    l60 ? `  Monthly: ${ca$c(l60+om)}/mo  ·  Bi-Weekly: ${ca$c(mo2bw(l60)+ob)}/2wk` : '',
+    l60 ? `  Monthly: ${ca$c(l60+om)}/mo +tax  ·  Bi-Weekly: ${ca$c(mo2bw(l60)+ob)}/2wk +tax` : '',
     l60 ? `  Residual: ${ca$(res60)} (${Math.round(r.rv60*100)}% — estimate)` : '',
     ``,
     `── FINANCE ────────────────────────────────────────`,
     `5 Year / ${r.fr60}% APR`,
-    `  Monthly: ${ca$c(f60)}/mo  ·  Bi-Weekly: ${ca$c(fbw(cap,60,r.fr60))}/2wk`,
-    `  + GAP Insurance ($${gapAmt.toLocaleString()}): ${ca$c(f60g)}/mo  ·  ${ca$c(fbw(cap+gapAmt,60,r.fr60))}/2wk`,
+    `  Monthly: ${ca$c(f60)}/mo +tax  ·  Bi-Weekly: ${ca$c(fbw(cap,60,r.fr60))}/2wk +tax`,
+    `  + GAP Insurance ($${gapAmt.toLocaleString()}): ${ca$c(f60g)}/mo +tax  ·  ${ca$c(fbw(cap+gapAmt,60,r.fr60))}/2wk +tax`,
     ``,
     `7 Year / ${r.fr84}% APR`,
-    `  Monthly: ${ca$c(f84)}/mo  ·  Bi-Weekly: ${ca$c(fbw(cap,84,r.fr84))}/2wk`,
-    `  + GAP Insurance ($${gapAmt.toLocaleString()}): ${ca$c(f84g)}/mo  ·  ${ca$c(fbw(cap+gapAmt,84,r.fr84))}/2wk`,
+    `  Monthly: ${ca$c(f84)}/mo +tax  ·  Bi-Weekly: ${ca$c(fbw(cap,84,r.fr84))}/2wk +tax`,
+    `  + GAP Insurance ($${gapAmt.toLocaleString()}): ${ca$c(f84g)}/mo +tax  ·  ${ca$c(fbw(cap+gapAmt,84,r.fr84))}/2wk +tax`,
     ob > 0 ? `\nOptions included: +${ca$c(ob)}/2wk · +${ca$c(om)}/mo` : '',
     m.inc ? `\nIncentives: ${m.inc.join(' · ')}` : '',
     `\n*All payments before HST. Rates & residuals are estimates.*`,
