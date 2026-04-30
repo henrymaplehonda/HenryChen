@@ -1871,8 +1871,8 @@ function printQuote(autoSave) {
       </div>
       <div class="pr-arrow">+</div>
       <div class="price-col">
-        <div class="pr-lbl">+ Fees</div>
-        <div class="pr-val">${ca$(fees.total)}</div>
+        <div class="pr-lbl">+ Fees${feesUpfront ? ' · paid on delivery' : ''}</div>
+        <div class="pr-val">${ca$(feesUpfront ? Math.round(fees.total * 1.13) : fees.total)}${feesUpfront ? '<span style="font-size:10px;color:#888;margin-left:3px">+tax</span>' : ''}</div>
       </div>
       <div class="pr-arrow">−</div>
       <div class="price-col">
