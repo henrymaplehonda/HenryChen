@@ -95,6 +95,42 @@ body{font-family:-apple-system,'Segoe UI',system-ui,sans-serif;font-size:15px;}
 .veh-chip.price{color:var(--text);font-weight:700;font-size:13px;background:rgba(228,5,33,.1);border-color:rgba(228,5,33,.25);}
 .veh-chip.otd{color:var(--dim);}
 
+/* ── PRICE SUMMARY ── */
+.psum{
+  background:var(--s1);border:1px solid var(--border);border-radius:10px;
+  padding:10px 12px;margin-bottom:10px;
+  display:grid;grid-template-columns:1fr 1fr;gap:8px 12px;
+}
+.psum-row{display:flex;flex-direction:column;gap:1px;}
+.psum-lbl{font-size:9px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);}
+.psum-val{font-size:14px;font-weight:700;color:var(--text);}
+.psum-val.dim{color:var(--dim);font-weight:600;}
+.psum-val.hi{color:var(--red);}
+
+/* ── ADJUST INPUTS ── */
+.adj{
+  background:var(--s1);border:1px solid var(--border);border-radius:10px;
+  padding:10px 12px;margin-bottom:12px;
+  display:grid;grid-template-columns:1fr 1fr;gap:10px;
+}
+.adj-row{display:flex;flex-direction:column;gap:4px;}
+.adj-lbl{font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--dim);}
+.adj-input{
+  width:100%;background:var(--s3);border:1px solid var(--border);
+  color:var(--text);padding:7px 9px;border-radius:6px;
+  font-size:14px;font-weight:600;font-family:inherit;outline:none;
+  -moz-appearance:textfield;
+}
+.adj-input::-webkit-outer-spin-button,
+.adj-input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
+.adj-input:focus{border-color:var(--red);}
+.adj-net{
+  margin-top:8px;padding-top:8px;border-top:1px solid var(--border);
+  grid-column:1/-1;display:flex;justify-content:space-between;align-items:center;
+}
+.adj-net-lbl{font-size:11px;font-weight:700;color:var(--dim);text-transform:uppercase;letter-spacing:.5px;}
+.adj-net-val{font-size:15px;font-weight:800;color:var(--text);}
+
 /* ── SECTION LABEL ── */
 .sec{
   font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
@@ -177,7 +213,7 @@ body{font-family:-apple-system,'Segoe UI',system-ui,sans-serif;font-size:15px;}
   </div>
   <div class="hdr-right">
     <div class="data-date">📅 Apr 25, 2026</div>
-    <div class="data-date" style="color:var(--yellow)">⚠ Estimate · No down</div>
+    <div class="data-date" style="color:var(--yellow)">⚠ Estimate · Tax-in</div>
   </div>
 </div>
 
@@ -405,6 +441,16 @@ function resForTerm(m,mo){
   return Math.round(m.msrp * pct);
 }
 
+// ── ADJUSTMENTS STATE (tax-in dollars) ────────────────────────────
+const HST = 1.13;
+let curId = null;
+const dpMap = {};   // { modelId: tax-in down payment }
+const incMap = {};  // { modelId: tax-in incentive }
+function getDP(id){ return dpMap[id] || 0; }
+function getInc(id){ return incMap[id] || 0; }
+function setDP(v){ if(!curId)return; dpMap[curId]=Math.max(0,parseFloat(v)||0); pick(curId); }
+function setInc(v){ if(!curId)return; incMap[curId]=Math.max(0,parseFloat(v)||0); pick(curId); }
+
 // ── SIDEBAR ───────────────────────────────────────────────────────
 (function buildSb(){
   const cats=[...new Set(M.map(m=>m.cat))];
@@ -424,45 +470,91 @@ function resForTerm(m,mo){
 function pick(id){
   const m=M.find(x=>x.id===id);
   if(!m)return;
+  curId=id;
   document.querySelectorAll('.sb-item').forEach(el=>el.classList.remove('active'));
   document.getElementById('si-'+id)?.classList.add('active');
 
-  const cap=m.price; // no down payment in quick ref
+  // Adjustments (tax-in dollars from user)
+  const dp=getDP(id), inc=getInc(id);
+  const reductionTaxIn=dp+inc;
+  const reductionPre=reductionTaxIn/HST;
 
-  // Lease rows: 24/30/36/42/48/54/60
+  // Lease tax-in: compute pre-tax payment, then ×1.13
+  // Pre-tax cap = price − (reductions converted to pre-tax)
+  // Pre-tax residual = msrp × pct
+  const leaseCapPre=Math.max(0, m.price - reductionPre);
   const leaseTerms=[24,30,36,42,48,54,60];
   const leaseRows=leaseTerms.map(mo=>{
     const rt=lrForTerm(m,mo);
     if(!rt)return {mo,na:true};
     const res=resForTerm(m,mo);
-    const bw=mo2bw(lmo(cap,res,mo,rt));
-    const mo_p=lmo(cap,res,mo,rt);
-    return {mo,rt,bw,mo_p,res};
+    const moPre=lmo(leaseCapPre,res,mo,rt);
+    const moTax=moPre*HST;
+    return {mo,rt,bw:mo2bw(moTax),mo_p:moTax,res};
   });
 
-  // Finance rows: 24/36/48/60/72/84/96
+  // Finance tax-in: principal = OTD − reductions (both tax-in)
+  const finPrincipal=Math.max(0, m.otd - reductionTaxIn);
   const finTerms=[24,36,48,60,72,84,96];
   const finRows=finTerms.map(mo=>{
     const rt=frForTerm(m,mo);
     if(!rt)return {mo,na:true};
-    const bw=fbw(cap,mo,rt);
-    const mo_p=fmo(cap,mo,rt);
-    return {mo,rt,bw,mo_p};
+    return {mo,rt,bw:fbw(finPrincipal,mo,rt),mo_p:fmo(finPrincipal,mo,rt)};
   });
+
+  const netOTD=Math.max(0, m.otd - reductionTaxIn);
 
   document.getElementById('main').innerHTML=`
     <div class="veh-hdr">
       <div class="veh-name">2026 ${m.name} <span class="veh-trim">${m.trim}</span></div>
       <div class="veh-meta">
-        <span class="veh-chip price">${ca$(m.price)} before tax</span>
-        <span class="veh-chip otd">OTD ${ca$(m.otd)}</span>
-        <span class="veh-chip">MSRP ${ca$(m.msrp)}</span>
         <span class="veh-chip">${m.engine}</span>
         <span class="veh-chip">${m.drive}</span>
       </div>
     </div>
 
-    <div class="sec" style="color:var(--blue)">Lease · ${ca$(cap)} cap · est. residuals</div>
+    <div class="psum">
+      <div class="psum-row">
+        <div class="psum-lbl">MSRP</div>
+        <div class="psum-val dim">${ca$(m.msrp)}</div>
+      </div>
+      <div class="psum-row">
+        <div class="psum-lbl">Selling Price</div>
+        <div class="psum-val dim">${ca$(m.price)}</div>
+      </div>
+      <div class="psum-row">
+        <div class="psum-lbl">OTD (tax-in)</div>
+        <div class="psum-val">${ca$(m.otd)}</div>
+      </div>
+      <div class="psum-row">
+        <div class="psum-lbl">HST included</div>
+        <div class="psum-val dim">${ca$(m.otd-m.price)}</div>
+      </div>
+    </div>
+
+    <div class="sec">Down Payment & Incentive (tax-in)</div>
+    <div class="adj">
+      <div class="adj-row">
+        <div class="adj-lbl">Down Payment</div>
+        <input class="adj-input" type="number" inputmode="numeric" min="0" step="100"
+          value="${dp||''}" placeholder="$0"
+          onchange="setDP(this.value)"
+          onkeydown="if(event.key==='Enter'){setDP(this.value);this.blur();}">
+      </div>
+      <div class="adj-row">
+        <div class="adj-lbl">Incentive / Rebate</div>
+        <input class="adj-input" type="number" inputmode="numeric" min="0" step="100"
+          value="${inc||''}" placeholder="$0"
+          onchange="setInc(this.value)"
+          onkeydown="if(event.key==='Enter'){setInc(this.value);this.blur();}">
+      </div>
+      <div class="adj-net">
+        <span class="adj-net-lbl">Net OTD (tax-in)</span>
+        <span class="adj-net-val">${ca$(netOTD)}</span>
+      </div>
+    </div>
+
+    <div class="sec" style="color:var(--blue)">Lease · tax-in payments</div>
     <div class="pay-table">
       <div class="pay-table-hdr">
         <span>Term</span>
@@ -487,9 +579,9 @@ function pick(id){
         </div>
       `).join('')}
     </div>
-    <div style="font-size:10px;color:var(--muted);margin-bottom:14px;text-align:right">Residuals estimated — verify with HFS</div>
+    <div style="font-size:10px;color:var(--muted);margin-bottom:14px;text-align:right">Residuals estimated · payments include 13% HST</div>
 
-    <div class="sec" style="color:var(--green)">Finance · ${ca$(cap)} principal</div>
+    <div class="sec" style="color:var(--green)">Finance · tax-in payments · ${ca$(finPrincipal)} principal</div>
     <div class="pay-table">
       <div class="pay-table-hdr">
         <span>Term</span>
@@ -514,7 +606,7 @@ function pick(id){
     </div>
 
     <div class="disc">
-      ⚠ Payments estimated · $0 down · before HST · residuals are estimates.
+      ⚠ All payments tax-in (13% HST) · residuals are estimates.
       For full quote tool: <a href="qt.html" style="color:var(--blue)">Open Desktop Tool ↗</a>
     </div>
     <div style="text-align:center;padding:10px 0 4px;font-size:11px;color:var(--muted)">
