@@ -624,7 +624,7 @@ function getRes(m, term) {
 
   // Manual dollar override always wins
   if (override != null) {
-    return { val: override, pct: override / m.msrp, confirmed: true, src: 'Manual entry' };
+    return { val: override, pct: override / m.msrp, confirmed: false, src: 'Estimate' };
   }
 
   // Use per-model confirmed km residual % table
@@ -635,13 +635,13 @@ function getRes(m, term) {
     const resPct = m.resKm[kmKey] ?? pct;
     const resVal = m.msrp * resPct;
     const isExact = m.resKm[kmKey] !== undefined;
-    return { val: resVal, pct: resPct, confirmed: isExact, src: isExact ? `Honda Canada ${kmAllowance/1000}k km (confirmed)` : 'Estimate' };
+    return { val: resVal, pct: resPct, confirmed: false, src: 'Estimate' };
   }
 
   // Standard: MSRP × published % + km adjustment
   const adjPct = pct + kmResAdjPct(kmAllowance);
   const val = m.msrp * Math.max(0, adjPct);
-  return { val, pct: adjPct, confirmed: false, src: 'Honda Canada (est. km adj)' };
+  return { val, pct: adjPct, confirmed: false, src: 'Estimate' };
 }
 
 // KM adjustment: ±2 percentage points per 4,000 km/yr from 24k base
@@ -1145,7 +1145,7 @@ function render() {
       <span class="km-note">
         ${kmAllowance === 20000 ? 'Standard · honda.ca default' :
           kmAllowance < 20000 ? `Fewer km → higher residual (est. +${ca$(Math.abs(m.msrp * kmResAdjPct(kmAllowance)))} vs 20k)` :
-          kmAllowance === 24000 ? `Confirmed residual from honda.ca` :
+          kmAllowance === 24000 ? `Higher km → lower residual (est. −${ca$(Math.abs(m.msrp * kmResAdjPct(kmAllowance)))} vs 20k)` :
           kmAllowance === 32000 ? `Higher km → lower residual (est. −${ca$(Math.abs(m.msrp * kmResAdjPct(kmAllowance)))} vs 20k)` :
           `40k = 24k + 16k prepaid @ $0.08/km × 5yr = $6,400 baked in`}
       </span>
