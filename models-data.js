@@ -19,7 +19,7 @@ const M = [
  lr:{36:3.49,60:4.49}, rv:{24:.70,30:.66,36:.58,42:.54,48:.47,54:.44,60:.40}, fr:{60:4.49,84:4.99},
  // Confirmed residuals honda.ca Apr 26 2026 (60mo, 4.49%, cap $34,675.50 after $500 Lease Bonus):
  // Dollar values ÷ MSRP $32,200 → percentages
- resKm:{20000:.42, 24000:.40, 32000:.30, 40000:.20}},
+ resKm:{12000:.44,16000:.43,20000:.42,24000:.40,32000:.36,40000:.32}},
 
 // rv60=43% of MSRP @ 24k confirmed: $34,100×43%=$14,663 ✓ honda.ca Apr 25
 // rv60=45% of MSRP @ 20k confirmed: $34,100×45%=$15,345 ✓ honda.ca Apr 25
