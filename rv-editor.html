@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='18' fill='%23E40521'/><text x='50' y='76' font-size='72' text-anchor='middle' fill='white' font-weight='900' font-family='Arial,sans-serif'>%</text></svg>">
-<title>RV Editor — Maple Honda</title>
+<title>Program Update — Maple Honda</title>
 <script src="models-data.js"></script>
 <style>
 :root{
@@ -88,6 +88,12 @@ body{font-family:'Segoe UI',system-ui,sans-serif;font-size:14px;line-height:1.4;
 .pct-wrap{display:flex;align-items:center;justify-content:center;gap:1px;}
 .pct-sym{font-size:10px;color:var(--muted);}
 
+/* DOLLAR INPUT (wider, for MSRP/price/OTD) */
+.rv-input.dollar{width:88px;text-align:right;padding-right:8px;}
+.dollar-wrap{display:flex;align-items:center;justify-content:flex-end;gap:2px;}
+.dollar-sym{font-size:10px;color:var(--muted);}
+.fee-derived{font-size:10px;color:var(--muted);text-align:center;font-variant-numeric:tabular-nums;}
+
 /* KM GRID EXTRAS */
 .km-car-name{font-size:12px;color:var(--muted);}
 
@@ -104,8 +110,8 @@ body{font-family:'Segoe UI',system-ui,sans-serif;font-size:14px;line-height:1.4;
 <div id="gate">
   <div class="gate-box">
     <div class="gate-logo">%</div>
-    <div class="gate-title">RV Editor</div>
-    <div class="gate-sub">Maple Honda · Admin Access Required</div>
+    <div class="gate-title">Program Update</div>
+    <div class="gate-sub">Maple Honda · Residuals · KM Grid · Pricing &amp; Fees</div>
     <input class="gate-input" id="pw" type="password" placeholder="••••" maxlength="10"
       onkeydown="if(event.key==='Enter')unlock()">
     <button class="gate-btn" onclick="unlock()">Sign In</button>
@@ -121,8 +127,8 @@ body{font-family:'Segoe UI',system-ui,sans-serif;font-size:14px;line-height:1.4;
   <div class="hdr-left">
     <div class="logo">%</div>
     <div>
-      <div class="hdr-title">RV Editor</div>
-      <div class="hdr-sub">Maple Honda · Residual Value Management</div>
+      <div class="hdr-title">Program Update</div>
+      <div class="hdr-sub">Maple Honda · Residuals · KM Grid · Pricing</div>
     </div>
     <div class="badge">LIVE — models-data.js</div>
   </div>
@@ -137,6 +143,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;font-size:14px;line-height:1.4;
 <div class="tabs">
   <div class="tab active" data-tab="rv" onclick="switchTab('rv')">Residual Values (% of MSRP)</div>
   <div class="tab" data-tab="km" onclick="switchTab('km')">KM Grid Adjustments</div>
+  <div class="tab" data-tab="px" onclick="switchTab('px')">Pricing &amp; Fees ($)</div>
 </div>
 
 <!-- CONTENT -->
@@ -168,6 +175,22 @@ body{font-family:'Segoe UI',system-ui,sans-serif;font-size:14px;line-height:1.4;
       </div>
     </div>
     <div id="km-body"></div>
+  </div>
+
+  <!-- ── PRICING & FEES TAB ── -->
+  <div class="panel" id="panel-px">
+    <div class="info-bar">
+      <strong>MSRP</strong> = manufacturer suggested retail
+      <span>|</span>
+      <strong>Selling Price</strong> = MSRP + freight/PDI + dealer fee + gov fees (pre-HST)
+      <span>|</span>
+      <strong>OTD</strong> = Selling Price + 13% HST + small registration fees
+      <div class="info-tip">
+        <div class="dot"></div>
+        <span>Edit any value · "Total Fees" = OTD − MSRP (auto-derived)</span>
+      </div>
+    </div>
+    <div id="px-body"></div>
   </div>
 
 </div>
@@ -336,21 +359,113 @@ function renderKM() {
   container.innerHTML = html;
 }
 
+// ── RENDER PRICING & FEES TABLE ────────────────────────────────────────────
+function renderPX() {
+  const container = document.getElementById('px-body');
+  const groups = groupByCat(edited);
+  let html = '';
+
+  groups.forEach((cars, catLabel) => {
+    html += `<div class="cat-block">
+      <div class="cat-label">${catLabel}</div>
+      <table class="rv-table">
+        <thead><tr>
+          <th class="col-trim">Trim</th>
+          <th>MSRP</th>
+          <th>Selling Price</th>
+          <th>OTD (incl HST)</th>
+          <th>Total Fees</th>
+        </tr></thead>
+        <tbody>`;
+
+    cars.forEach(m => {
+      const yr = (m.year && m.year !== 2026) ? `<span class="yr-badge">${m.year}</span>` : '';
+      const orig = original.find(o => o.id === m.id);
+      const dollarCell = (field, val, origVal) => {
+        const isEdited = val !== origVal;
+        return `<td>
+          <div class="dollar-wrap">
+            <span class="dollar-sym">$</span>
+            <input class="rv-input dollar${isEdited?' edited':''}" type="number"
+              min="0" max="999999" step="1"
+              value="${val}"
+              data-id="${m.id}" data-field="${field}" data-type="px"
+              oninput="handleInput(this)">
+          </div></td>`;
+      };
+      const totalFees = m.otd - m.msrp;
+      html += `<tr>
+        <td class="col-trim">${m.trim}${yr}</td>
+        ${dollarCell('msrp', m.msrp, orig?.msrp)}
+        ${dollarCell('price', m.price, orig?.price)}
+        ${dollarCell('otd', m.otd, orig?.otd)}
+        <td class="fee-derived" id="fees-${m.id}">$${totalFees.toLocaleString('en-CA')}</td>
+      </tr>`;
+    });
+
+    html += `</tbody></table></div>`;
+  });
+
+  container.innerHTML = html;
+}
+
 // ── INPUT HANDLER ──────────────────────────────────────────────────────────
 function handleInput(el) {
   const id   = el.dataset.id;
   const type = el.dataset.type;
-  const val  = parseFloat(el.value);
   const m    = edited.find(x => x.id === id);
   const orig = original.find(x => x.id === id);
   if (!m) return;
 
-  if (isNaN(val) || val < 0 || val > 100) {
-    el.classList.add('edited');
+  let val = parseFloat(el.value);
+
+  // ── DOLLAR FIELDS (msrp / price / otd) ──
+  if (type === 'px') {
+    const field = el.dataset.field;
+    if (el.value === '' || isNaN(val)) {
+      val = orig?.[field] ?? 0;
+      el.value = val;
+      m[field] = val;
+      el.classList.remove('edited');
+      updateEditedCount();
+      updateFeeCell(m);
+      return;
+    }
+    if (val < 0) val = 0;
+    if (val > 999999) val = 999999;
+    val = Math.round(val);
+    if (parseFloat(el.value) !== val) el.value = val;
+    m[field] = val;
+    el.classList.toggle('edited', val !== orig?.[field]);
+    updateEditedCount();
+    updateFeeCell(m);
     return;
   }
 
-  const dec = Math.round(val) / 100;
+  // ── PERCENTAGE FIELDS (rv / km) ──
+  // Empty / NaN → restore original value
+  if (el.value === '' || isNaN(val)) {
+    const term = el.dataset.term ? parseInt(el.dataset.term) : null;
+    const km   = el.dataset.km   ? parseInt(el.dataset.km)   : null;
+    const origDec = type === 'rv'
+      ? (orig?.rv[term] ?? 0)
+      : (orig?.resKm?.[km] ?? 0);
+    val = Math.round(origDec * 100);
+    el.value = val;
+    if (type === 'rv') m.rv[term] = origDec;
+    else if (type === 'km' && m.resKm) m.resKm[km] = origDec;
+    el.classList.remove('edited');
+    updateEditedCount();
+    return;
+  }
+
+  // Clamp to [0, 100]
+  if (val < 0)   val = 0;
+  if (val > 100) val = 100;
+  val = Math.round(val);
+  if (parseFloat(el.value) !== val) el.value = val;
+
+  const dec = val / 100;
 
   if (type === 'rv') {
     const term = parseInt(el.dataset.term);
@@ -367,12 +482,18 @@ function handleInput(el) {
   updateEditedCount();
 }
 
+function updateFeeCell(m) {
+  const cell = document.getElementById('fees-' + m.id);
+  if (cell) cell.textContent = '$' + (m.otd - m.msrp).toLocaleString('en-CA');
+}
+
 // ── RESET ──────────────────────────────────────────────────────────────────
 function resetAll() {
   const fresh = JSON.parse(JSON.stringify(original));
   edited.splice(0, edited.length, ...fresh);
   renderRV();
   renderKM();
+  renderPX();
   updateEditedCount();
 }
 
@@ -438,7 +559,7 @@ function serializeModelsData() {
 //  Residuals: Official Honda Canada 2026 Residual Values sheet
 //  Residual basis: % of MSRP · KM basis: 24,000 km/yr
 //  km adjustment: ±2% of MSRP per 4,000 km/yr from 24k base
-//  Last edited via RV Editor: ${today}
+//  Last edited via Program Update tool: ${today}
 // ═══════════════════════════════════════════════════════════════════════
 
 const M = [
@@ -494,6 +615,7 @@ document.getElementById('footer-stamp').textContent =
 
 renderRV();
 renderKM();
+renderPX();
 
 // ── AUTH ───────────────────────────────────────────────────────────────────
 const ADMIN_PW  = '0512';

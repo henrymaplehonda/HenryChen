@@ -133,7 +133,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;font-size:16px;background:var(-
 <div class="picker-bar">
   <span class="picker-label">Compare:</span>
   <div class="slots" id="slots"></div>
-  <div style="font-size:11px;color:var(--muted);margin-left:auto">Apr 25, 2026 · ⚠ Estimates only</div>
+  <div id="data-stamp" style="font-size:11px;color:var(--muted);margin-left:auto">⚠ Estimates only</div>
 </div>
 
 <!-- MODEL PICKER MODAL -->
@@ -186,6 +186,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;font-size:16px;background:var(-
 <script src="models-data.js"></script>
 <script>
 // Model data (M array) lives in models-data.js — shared with qt.html
+document.getElementById('data-stamp').textContent = DATA_UPDATE_DATE + ' · ⚠ Estimates only';
 
 // ── CALC ───────────────────────────────────────────────────────────
 function lmo(c,r,mo,rt){const mf=rt/2400;return(c-r)/mo+(c+r)*mf;}
@@ -348,7 +349,7 @@ function renderCompare() {
         </td>
         ${active.map((m,i) => `
           <td>
-            <div style="font-size:15px;font-weight:800;letter-spacing:-.3px">${m.year} ${m.name}</div>
+            <div style="font-size:15px;font-weight:800;letter-spacing:-.3px">${m.year} ${m.name}${m.year > 2026 ? '<span style="margin-left:5px;font-size:9px;font-weight:700;color:var(--yellow);background:rgba(245,166,35,.12);border:1px solid rgba(245,166,35,.25);padding:1px 5px;border-radius:3px;letter-spacing:.3px;vertical-align:middle">RATES TBD</span>' : ''}</div>
             <div style="font-size:12px;color:var(--dim);margin-top:2px">${m.trim}</div>
           </td>`).join('')}
       </tr>

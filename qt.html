@@ -264,11 +264,11 @@ body{font-family:'Segoe UI',system-ui,sans-serif;font-size:16.5px;line-height:1.
     <div class="hdr-promo" id="hdr-promo">⚡ HFS PROMO ACTIVE · Expires Apr 30, 2026</div>
   </div>
   <div class="hdr-right">
-    <div class="data-stamp">📅 Prices pulled: Apr 25, 2026</div>
+    <div class="data-stamp" id="data-stamp">📅 Prices pulled: …</div>
     <div class="data-stamp" style="color:var(--yellow)">⚠ Estimate only — verify at honda.ca</div>
     <div style="display:flex;gap:10px;justify-content:flex-end">
       <a href="compare.html" style="font-size:10px;color:var(--muted);text-decoration:none;letter-spacing:.3px;transition:color .15s" onmouseover="this.style.color='var(--dim)'" onmouseout="this.style.color='var(--muted)'">⚖ Compare</a>
-      <a href="admin.html" style="font-size:10px;color:var(--muted);text-decoration:none;letter-spacing:.3px;transition:color .15s" onmouseover="this.style.color='var(--dim)'" onmouseout="this.style.color='var(--muted)'">⚙ Admin</a>
+      <a href="rv-editor.html" style="font-size:10px;color:var(--muted);text-decoration:none;letter-spacing:.3px;transition:color .15s" onmouseover="this.style.color='var(--dim)'" onmouseout="this.style.color='var(--muted)'">⚙ Program Update</a>
     </div>
   </div>
 </div>
@@ -300,7 +300,8 @@ body{font-family:'Segoe UI',system-ui,sans-serif;font-size:16.5px;line-height:1.
 //  Lease & finance RATES confirmed from April 2026 Honda Programs (NAS081-26)
 //  Residuals = ESTIMATES — enter actual $ from HFS portal on each card
 // ═══════════════════════════════════════════════════════════════════════
-const DATA_DATE = 'April 25, 2026';
+const DATA_DATE = (typeof DATA_UPDATE_DATE !== 'undefined') ? DATA_UPDATE_DATE : 'April 25, 2026';
+document.getElementById('data-stamp').textContent = '📅 Prices pulled: ' + DATA_DATE;
 
 
 // ═══════════════════════════════════════════════════════════════════════
@@ -616,7 +617,7 @@ function renderSb() {
   document.getElementById('sb').innerHTML =
     `<div style="padding:8px 10px;border-bottom:1px solid var(--border);">
       <select onchange="selectedYear=parseInt(this.value);renderSb()" style="width:100%;background:var(--s2);border:1px solid var(--border2);color:var(--text);padding:7px 10px;border-radius:6px;font-size:14.3px;font-weight:700;font-family:inherit;cursor:pointer;outline:none;appearance:none;-webkit-appearance:none;text-align:center;">
-        ${years.map(y => `<option value="${y}"${y === selectedYear ? ' selected' : ''}>${y} Model Year</option>`).join('')}
+        ${years.map(y => `<option value="${y}"${y === selectedYear ? ' selected' : ''}>${y} Model Year${y > 2026 ? ' · rates TBD' : ''}</option>`).join('')}
       </select>
     </div>`
     + cats.map(cat => {
@@ -728,6 +729,7 @@ function render() {
   if (hasPromo) hp.classList.add('show'); else hp.classList.remove('show');
 
   document.getElementById('main').innerHTML = `
+    ${m.year > 2026 ? `<div style="margin:0 0 14px;padding:9px 14px;background:rgba(245,166,35,.08);border:1px solid rgba(245,166,35,.25);border-radius:7px;font-size:12px;color:var(--yellow);line-height:1.4;">⚠ <strong>${m.year} model year</strong> — Honda has not released ${m.year} lease/finance programs yet. Numbers below use ${m.year - 1} rates and residuals as a placeholder. <strong>Verify with HFS before quoting.</strong></div>` : ''}
 
     <!-- TOP -->
     <div class="q-top">
@@ -1044,7 +1046,7 @@ function render() {
         <strong>Cash selling price: ${ca$(r.price)}</strong> before applicable taxes. HST (13%) additional — estimated OTD: ${ca$(dynamicOTD)}.
         All payment calculations are <strong>estimates only</strong> and do not constitute an offer of financing, lease, or any purchase commitment.
         Finance and lease on <strong>approved credit (OAC)</strong>. Rates, residuals, and terms subject to change without notice.
-        Residuals are <strong>HFS estimates</strong> — verified 60mo residuals for Civic Sport Hybrid (honda.ca Apr 25, 2026); all others are estimates. Enter actual HFS residual on each lease card for accuracy.
+        Residuals are <strong>HFS estimates</strong> — verified 60mo residuals for Civic Sport Hybrid (honda.ca, sheet dated ${DATA_DATE}); all others are estimates. Enter actual HFS residual on each lease card for accuracy.
         Lease based on <strong>${kmAllowance.toLocaleString()} km/yr</strong>; excess km approximately $0.15/km at lease-end (confirm with HFS).
         All prices from Maple Honda internal sheet dated <strong>${DATA_DATE}</strong>.
         GAP Insurance ($${gapAmt.toLocaleString()}) and Protection Plan are optional products; costs added to financed principal.
@@ -1110,7 +1112,7 @@ function leaseCard(term, data, slot, optBWval, optMOval) {
         <div style="background:rgba(168,124,245,.06);border:1px solid rgba(168,124,245,.15);border-radius:6px;padding:9px 12px;margin-top:10px;display:flex;align-items:center;justify-content:space-between;gap:8px">
           <div>
             <div style="font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--purple);margin-bottom:3px">Lease Guard Pro</div>
-            <div style="font-size:12px;color:rgba(168,124,245,.6)">+$${OPT_LEASEGUARD_PRO.toFixed(2)}/2wk · +${ca$c(bw2mo(OPT_LEASEGUARD_PRO))}/mo</div>
+            <div style="font-size:12px;color:rgba(168,124,245,.6)">+$${OPT_LEASEGUARD_PRO.toFixed(2)}/2wk<span class="tax-tag">+tax</span> · +${ca$c(bw2mo(OPT_LEASEGUARD_PRO))}/mo<span class="tax-tag">+tax</span></div>
           </div>
           <label style="display:flex;align-items:center;gap:7px;cursor:pointer">
             <input type="checkbox" ${optLeaseGuard?'checked':''} onchange="optLeaseGuard=this.checked;render()"

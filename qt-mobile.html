@@ -176,6 +176,9 @@ body{font-family:-apple-system,'Segoe UI',system-ui,sans-serif;font-size:15px;}
 .pay-amt.mo{color:var(--dim);font-size:13px;font-weight:500;}
 .pay-amt.na{color:var(--muted);font-size:12px;font-weight:400;}
 
+/* ── TAX-IN INLINE TAG ── */
+.tax-in-tag{font-size:9.5px;font-weight:500;color:var(--muted);margin-left:3px;letter-spacing:.2px;opacity:.85;}
+
 /* ── RESIDUAL BADGE ── */
 .res-line{
   font-size:11px;color:var(--blue);margin-top:3px;text-align:right;
@@ -212,7 +215,7 @@ body{font-family:-apple-system,'Segoe UI',system-ui,sans-serif;font-size:15px;}
     </div>
   </div>
   <div class="hdr-right">
-    <div class="data-date">📅 Apr 25, 2026</div>
+    <div class="data-date" id="data-date-stamp">📅 …</div>
     <div class="data-date" style="color:var(--yellow)">⚠ Estimate · Tax-in</div>
   </div>
 </div>
@@ -235,6 +238,7 @@ body{font-family:-apple-system,'Segoe UI',system-ui,sans-serif;font-size:15px;}
 
 <script>
 // ── DATA ──────────────────────────────────────────────────────────
+const DATA_UPDATE_DATE = 'Apr 30, 2026';
 const M = [
 {id:'cs-lx', cat:'Civic Sedan', name:'Civic Sedan', trim:'LX',
  msrp:28340, price:31306, otd:35376, engine:'2.0L 150hp / CVT', drive:'FWD',
@@ -242,8 +246,7 @@ const M = [
 
 {id:'cs-sp', cat:'Civic Sedan', name:'Civic Sedan', trim:'Sport',
  msrp:32200, price:35175, otd:39748, engine:'2.0L 150hp / CVT', drive:'FWD',
- lr:{36:3.49,60:4.49}, rv:{36:.58,60:.40}, fr:{60:4.49,84:4.99},
- resKm:{12000:14168,16000:13846,20000:13524,24000:12880,32000:11592,40000:10304}},
+ lr:{36:3.49,60:4.49}, rv:{36:.58,60:.40}, fr:{60:4.49,84:4.99}},
 
 {id:'cs-sh', cat:'Civic Sedan', name:'Civic Sedan', trim:'Sport Hybrid',
  msrp:34100, price:37071, otd:41879, engine:'2.0L Hybrid / e-CVT', drive:'FWD',
@@ -279,7 +282,7 @@ const M = [
 
 {id:'ac-sl', cat:'Accord', name:'Accord', trim:'Sport-L Hybrid',
  msrp:43700, price:46671, otd:52738, engine:'2.0L Hybrid / e-CVT', drive:'FWD',
- lr:{36:3.99,60:4.99}, rv:{36:.59,60:.39}, fr:{60:3.99,84:4.49}},
+ lr:{36:3.49,60:4.49}, rv:{36:.59,60:.39}, fr:{60:3.99,84:4.49}},
 
 {id:'ac-tr', cat:'Accord', name:'Accord', trim:'Touring Hybrid',
  msrp:46200, price:49171, otd:55563, engine:'2.0L Hybrid / e-CVT', drive:'FWD',
@@ -330,7 +333,7 @@ const M = [
  lr:{36:3.99,60:4.99}, rv:{36:.60,60:.43}, fr:{60:5.19,84:5.19}},
 
 {id:'pp-ts', cat:'Passport', name:'Passport', trim:'TrailSport',
- msrp:56981, price:60126, otd:67942, engine:'3.5L V6 285hp / 10AT', drive:'AWD',
+ msrp:56990, price:60126, otd:67942, engine:'3.5L V6 285hp / 10AT', drive:'AWD',
  lr:{36:5.69,60:5.69}, rv:{36:.56,60:.40}, fr:{60:5.79,84:5.79}},
 
 {id:'pp-tb', cat:'Passport', name:'Passport', trim:'TrailSport Blackout',
@@ -450,6 +453,9 @@ function getDP(id){ return dpMap[id] || 0; }
 function getInc(id){ return incMap[id] || 0; }
 function setDP(v){ if(!curId)return; dpMap[curId]=Math.max(0,parseFloat(v)||0); pick(curId); }
 function setInc(v){ if(!curId)return; incMap[curId]=Math.max(0,parseFloat(v)||0); pick(curId); }
+
+// ── DATE STAMP ────────────────────────────────────────────────────
+document.getElementById('data-date-stamp').textContent = '📅 ' + DATA_UPDATE_DATE;
 
 // ── SIDEBAR ───────────────────────────────────────────────────────
 (function buildSb(){
@@ -574,8 +580,8 @@ function pick(id){
             <div class="pay-mo">${r.mo}mo</div>
           </div>
           <div style="font-size:11px;color:var(--muted);text-align:right">${r.rt}%</div>
-          <div class="pay-amt bw" style="text-align:right">${ca$c(r.bw)}</div>
-          <div class="pay-amt mo" style="text-align:right">${ca$c(r.mo_p)}</div>
+          <div class="pay-amt bw" style="text-align:right">${ca$c(r.bw)}<span class="tax-in-tag">incl tax</span></div>
+          <div class="pay-amt mo" style="text-align:right">${ca$c(r.mo_p)}<span class="tax-in-tag">incl tax</span></div>
         </div>
       `).join('')}
     </div>
@@ -599,8 +605,8 @@ function pick(id){
         <div class="pay-row">
           <div class="pay-mo">${r.mo}mo</div>
           <div style="font-size:11px;color:var(--muted);text-align:right">${r.rt}%</div>
-          <div class="pay-amt bw" style="text-align:right">${ca$c(r.bw)}</div>
-          <div class="pay-amt mo" style="text-align:right">${ca$c(r.mo_p)}</div>
+          <div class="pay-amt bw" style="text-align:right">${ca$c(r.bw)}<span class="tax-in-tag">incl tax</span></div>
+          <div class="pay-amt mo" style="text-align:right">${ca$c(r.mo_p)}<span class="tax-in-tag">incl tax</span></div>
         </div>
       `).join('')}
     </div>
