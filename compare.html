@@ -304,7 +304,7 @@ function renderCompare() {
 
   // Lease calcs
   const lrt  = m => leaseTerm <= 36 ? m.lr[36] : m.lr[60];
-  const lrvp  = m => leaseTerm <= 36 ? m.rv[36] : m.rv[60];
+  const lrvp  = m => m.rv[leaseTerm] ?? (leaseTerm <= 36 ? m.rv[36] : m.rv[60]);
   const lres  = m => Math.round(m.msrp * lrvp(m));
   const lbw   = m => { const rt=lrt(m); if(!rt)return null; return mo2bw(lmo(cap(m),lres(m),leaseTerm,rt)); };
   const lmop  = m => { const rt=lrt(m); if(!rt)return null; return lmo(cap(m),lres(m),leaseTerm,rt); };

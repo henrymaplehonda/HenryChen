@@ -393,26 +393,12 @@ function setResOv(term, val) {
 }
 
 function getRes(m, term) {
-  const pct = m.rv[term] ?? (term <= 36 ? m.rv[36] : m.rv[60]);
   const override = resOv[m.id]?.[term];
-
-  // Manual dollar override always wins
   if (override != null) {
     return { val: override, pct: override / m.msrp, confirmed: false, src: 'Estimate' };
   }
-
-  // Use per-model confirmed km residual % table
-  if (m.resKm) {
-    const kmKey = kmAllowance >= 40000 ? 40000 : kmAllowance <= 12000 ? 12000 :
-                  kmAllowance <= 16000 ? 16000 : kmAllowance <= 20000 ? 20000 :
-                  kmAllowance <= 24000 ? 24000 : kmAllowance <= 32000 ? 32000 : 40000;
-    const resPct = m.resKm[kmKey] ?? pct;
-    const resVal = m.msrp * resPct;
-    const isExact = m.resKm[kmKey] !== undefined;
-    return { val: resVal, pct: resPct, confirmed: false, src: 'Estimate' };
-  }
-
-  // Standard: MSRP × published % + km adjustment
+  // Pull RV % directly from models-data.js for the exact term, then adjust for km
+  const pct = m.rv[term] ?? (term <= 36 ? m.rv[36] : m.rv[60]);
   const adjPct = pct + kmResAdjPct(kmAllowance);
   const val = m.msrp * Math.max(0, adjPct);
   return { val, pct: adjPct, confirmed: false, src: 'Estimate' };
@@ -505,8 +491,6 @@ function R(m) {
     price: priceOv[m.id] ?? (m.price - Math.round(incAdj / 1.13)),
     lr36:  o.lr36  ?? m.lr[36],
     lr60:  o.lr60  ?? m.lr[60],
-    rv36:  o.rv36  ?? m.rv[36],
-    rv60:  o.rv60  ?? m.rv[60],
     fr60:  o.fr60  ?? m.fr[60],
     fr84:  o.fr84  ?? m.fr[84],
     fr96:  o.fr96  ?? m.fr[96] ?? 6.69,
@@ -945,10 +929,6 @@ function render() {
           <input type="number" step=".01" value="${r.lr36}" onchange="save('lr36',this.value)"></div>
         <div class="rf"><label>Lease 5yr Rate (%)</label>
           <input type="number" step=".01" value="${r.lr60??''}" placeholder="N/A" onchange="save('lr60',this.value)"></div>
-        <div class="rf"><label>Residual 3yr (%)</label>
-          <input type="number" step=".5" value="${(r.rv36*100).toFixed(1)}" onchange="save('rv36',this.value/100)"></div>
-        <div class="rf"><label>Residual 5yr (%)</label>
-          <input type="number" step=".5" value="${r.rv60?(r.rv60*100).toFixed(1):''}" placeholder="N/A" onchange="save('rv60',this.value/100)"></div>
         <div class="rf"><label>Finance 5yr Rate (%)</label>
           <input type="number" step=".01" value="${r.fr60}" onchange="save('fr60',this.value)"></div>
         <div class="rf"><label>Finance 7yr Rate (%)</label>
@@ -1716,15 +1696,19 @@ ${(addons||warrantySelected||optGAP) ? `
 
 function copyQ() {
   const cap  = r.price - downPayment;
-  const res36 = r.price * r.rv36;
-  const res60 = r.rv60 ? r.price * r.rv60 : null;
-  const l36 = lmo(cap, res36, 36, r.lr36);
-  const l60 = (r.lr60 && res60!==null) ? lmo(cap, res60, 60, r.lr60) : null;
+  const resObj1 = getRes(m, leaseTerm1);
+  const resObj2 = getRes(m, leaseTerm2);
+  const rt1 = lrForTerm(r, leaseTerm1);
+  const rt2 = lrForTerm(r, leaseTerm2);
+  const lp1 = rt1 ? lmo(cap, resObj1.val, leaseTerm1, rt1) : null;
+  const lp2 = rt2 ? lmo(cap, resObj2.val, leaseTerm2, rt2) : null;
   const f60 = fmo(cap, 60, r.fr60);
   const f84 = fmo(cap, 84, r.fr84);
   const f60g = fmo(cap+gapAmt,60,r.fr60);
   const f84g = fmo(cap+gapAmt,84,r.fr84);
   const ob = optBW(), om = bw2mo(ob);
+
+  const termLabel = mo => mo === 36 ? '3 Year' : mo === 60 ? '5 Year' : `${mo} Month`;
 
   const lines = [
     `${m.name} ${m.trim} — Quick Quote`,
@@ -1736,13 +1720,13 @@ function copyQ() {
     downPayment > 0 ? `Down Payment: ${ca$(downPayment)} → Adj. Cap/Principal: ${ca$(cap)}` : '',
     ``,
     `── LEASE ──────────────────────────────────────────`,
-    `3 Year / ${r.lr36}% APR${m.promo&&m.promo.term===36?' (HFS Promo)':' (est. buy rate)'}`,
-    `  Monthly: ${ca$c(l36+om)}/mo +tax  ·  Bi-Weekly: ${ca$c(mo2bw(l36)+ob)}/2wk +tax`,
-    `  Residual: ${ca$(res36)} (${Math.round(r.rv36*100)}% — estimate)`,
+    lp1 ? `${termLabel(leaseTerm1)} (${leaseTerm1}mo) / ${rt1}% APR` : `${termLabel(leaseTerm1)}: N/A`,
+    lp1 ? `  Monthly: ${ca$c(lp1+om)}/mo +tax  ·  Bi-Weekly: ${ca$c(mo2bw(lp1)+ob)}/2wk +tax` : '',
+    lp1 ? `  Residual: ${ca$(resObj1.val)} (${(resObj1.pct*100).toFixed(1)}% — estimate)` : '',
     ``,
-    l60 ? `5 Year / ${r.lr60}% APR${m.promo&&m.promo.term===60?' (HFS Promo)':''}` : `5 Year: N/A`,
-    l60 ? `  Monthly: ${ca$c(l60+om)}/mo +tax  ·  Bi-Weekly: ${ca$c(mo2bw(l60)+ob)}/2wk +tax` : '',
-    l60 ? `  Residual: ${ca$(res60)} (${Math.round(r.rv60*100)}% — estimate)` : '',
+    lp2 ? `${termLabel(leaseTerm2)} (${leaseTerm2}mo) / ${rt2}% APR` : `${termLabel(leaseTerm2)}: N/A`,
+    lp2 ? `  Monthly: ${ca$c(lp2+om)}/mo +tax  ·  Bi-Weekly: ${ca$c(mo2bw(lp2)+ob)}/2wk +tax` : '',
+    lp2 ? `  Residual: ${ca$(resObj2.val)} (${(resObj2.pct*100).toFixed(1)}% — estimate)` : '',
     ``,
     `── FINANCE ────────────────────────────────────────`,
     `5 Year / ${r.fr60}% APR`,
