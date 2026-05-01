@@ -601,7 +601,7 @@ function renderSb() {
   document.getElementById('sb').innerHTML =
     `<div style="padding:8px 10px;border-bottom:1px solid var(--border);">
       <select onchange="selectedYear=parseInt(this.value);renderSb()" style="width:100%;background:var(--s2);border:1px solid var(--border2);color:var(--text);padding:7px 10px;border-radius:6px;font-size:14.3px;font-weight:700;font-family:inherit;cursor:pointer;outline:none;appearance:none;-webkit-appearance:none;text-align:center;">
-        ${years.map(y => `<option value="${y}"${y === selectedYear ? ' selected' : ''}>${y} Model Year${y > 2026 ? ' · rates TBD' : ''}</option>`).join('')}
+        ${years.map(y => `<option value="${y}"${y === selectedYear ? ' selected' : ''}>${y} Model Year</option>`).join('')}
       </select>
     </div>`
     + cats.map(cat => {
@@ -713,7 +713,6 @@ function render() {
   if (hasPromo) hp.classList.add('show'); else hp.classList.remove('show');
 
   document.getElementById('main').innerHTML = `
-    ${m.year > 2026 ? `<div style="margin:0 0 14px;padding:9px 14px;background:rgba(245,166,35,.08);border:1px solid rgba(245,166,35,.25);border-radius:7px;font-size:12px;color:var(--yellow);line-height:1.4;">⚠ <strong>${m.year} model year</strong> — Honda has not released ${m.year} lease/finance programs yet. Numbers below use ${m.year - 1} rates and residuals as a placeholder. <strong>Verify with HFS before quoting.</strong></div>` : ''}
 
     <!-- TOP -->
     <div class="q-top">
