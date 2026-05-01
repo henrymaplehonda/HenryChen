@@ -652,6 +652,8 @@ function updateResLive(input) {
   clearTimeout(window._resTimer);
   window._resTimer = setTimeout(() => localStorage.setItem(STORAGE_KEY, JSON.stringify(models)), 600);
 }
+
+function renderModels() {
   const cats = [...new Set(models.map(m => m.cat))];
   document.getElementById('tab-models-body').innerHTML = cats.map(cat => `
     <div class="cat-section">
