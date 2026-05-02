@@ -189,9 +189,20 @@ body{font-family:'Segoe UI',system-ui,sans-serif;font-size:16px;background:var(-
 document.getElementById('data-stamp').textContent = DATA_UPDATE_DATE + ' · ⚠ Estimates only';
 
 // ── CALC ───────────────────────────────────────────────────────────
-function lmo(c,r,mo,rt){const mf=rt/2400;return(c-r)/mo+(c+r)*mf;}
+// Lease: native bi-weekly annuity-due amort with residual as balloon (matches honda.ca).
+// Monthly is derived as bw × 26/12 so monthly and bi-weekly displays stay aligned.
+function lbw(c,r,mo,rt){
+  const n=Math.round(mo*26/12);
+  if(!rt)return Math.max(0,c-r)/n;
+  const i=rt/100/26;
+  const v=Math.pow(1+i,-n);
+  const ord=(c-r*v)*i/(1-v);
+  return ord/(1+i);
+}
+function lmo(c,r,mo,rt){return lbw(c,r,mo,rt)*26/12;}
+// Finance: monthly amort is canonical; bi-weekly = monthly × 12/26 (aligned).
 function fmo(p,mo,rt){if(!rt)return null;const r=rt/100/12;return p*r*Math.pow(1+r,mo)/(Math.pow(1+r,mo)-1);}
-function fbw(p,mo,rt){if(!rt)return null;const r=rt/100/26,n=Math.round(mo*26/12);return p*r*Math.pow(1+r,n)/(Math.pow(1+r,n)-1);}
+function fbw(p,mo,rt){const m=fmo(p,mo,rt);return m===null?null:m*12/26;}
 const mo2bw=m=>m*12/26;
 const ca$=n=>'$'+Math.round(n).toLocaleString('en-CA');
 const ca$c=n=>'$'+n.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g,',');
@@ -306,7 +317,7 @@ function renderCompare() {
   const lrt  = m => leaseTerm <= 36 ? m.lr[36] : m.lr[60];
   const lrvp  = m => m.rv[leaseTerm] ?? (leaseTerm <= 36 ? m.rv[36] : m.rv[60]);
   const lres  = m => Math.round(m.msrp * lrvp(m));
-  const lbw   = m => { const rt=lrt(m); if(!rt)return null; return mo2bw(lmo(cap(m),lres(m),leaseTerm,rt)); };
+  const lbwv  = m => { const rt=lrt(m); if(!rt)return null; return lbw(cap(m),lres(m),leaseTerm,rt); };
   const lmop  = m => { const rt=lrt(m); if(!rt)return null; return lmo(cap(m),lres(m),leaseTerm,rt); };
 
   // Finance calcs
@@ -330,7 +341,7 @@ function renderCompare() {
 
   // (down payment controlled by top bar)
 
-  const bestLbw = best(active, m => { const v=lbw(m); return v ? ca$c(v) : 'Z'; });
+  const bestLbw = best(active, m => { const v=lbwv(m); return v ? ca$c(v) : 'Z'; });
   const bestFbw = best(active, m => { const v=fbwv(m); return v ? ca$c(v) : 'Z'; });
 
   function valCell(val, isBest, color='') {
@@ -392,7 +403,7 @@ function renderCompare() {
       </tr>
       <tr class="ct-row">
         <td class="ct-label">Bi-Weekly</td>
-        ${active.map((m,i)=>valCell(lbw(m)?ca$c(lbw(m))+'<span class="tax-tag">+tax</span>':null, bestLbw[i], 'blue')).join('')}
+        ${active.map((m,i)=>valCell(lbwv(m)?ca$c(lbwv(m))+'<span class="tax-tag">+tax</span>':null, bestLbw[i], 'blue')).join('')}
       </tr>
       <tr class="ct-row">
         <td class="ct-label">Monthly</td>

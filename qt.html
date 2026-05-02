@@ -307,19 +307,27 @@ document.getElementById('data-stamp').textContent = '📅 Prices pulled: ' + DAT
 // ═══════════════════════════════════════════════════════════════════════
 //  CALCULATOR
 // ═══════════════════════════════════════════════════════════════════════
-function lmo(cap, res, mo, rate) {
-  const mf = rate / 2400;
-  return (cap - res) / mo + (cap + res) * mf;
+// Lease: native bi-weekly annuity-due amort with residual as balloon (matches honda.ca).
+// Monthly is derived as bw × 26/12 so monthly and bi-weekly displays stay aligned.
+function lbw(cap, res, mo, rate) {
+  const n = Math.round(mo * 26 / 12);
+  if (!rate) return Math.max(0, cap - res) / n;
+  const i = rate / 100 / 26;
+  const v = Math.pow(1 + i, -n);
+  const ord = (cap - res * v) * i / (1 - v);
+  return ord / (1 + i);
 }
+function lmo(cap, res, mo, rate) {
+  return lbw(cap, res, mo, rate) * 26 / 12;
+}
+// Finance: monthly amort is canonical; bi-weekly = monthly × 12/26 (aligned).
 function fmo(p, mo, rate) {
   if (!rate) return p / mo;
   const r = rate / 100 / 12;
   return p * r * Math.pow(1+r,mo) / (Math.pow(1+r,mo)-1);
 }
 function fbw(p, mo, rate) {
-  if (!rate) return p / (mo * 26/12);
-  const r = rate / 100 / 26, n = Math.round(mo * 26/12);
-  return p * r * Math.pow(1+r,n) / (Math.pow(1+r,n)-1);
+  return fmo(p, mo, rate) * 12 / 26;
 }
 const bw2mo = bw => bw * 26 / 12;
 const mo2bw = mo => mo * 12 / 26;
