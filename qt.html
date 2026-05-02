@@ -407,16 +407,22 @@ function getRes(m, term) {
   }
   // Pull RV % directly from models-data.js for the exact term, then adjust for km
   const pct = m.rv[term] ?? (term <= 36 ? m.rv[36] : m.rv[60]);
-  const adjPct = pct + kmResAdjPct(kmAllowance);
+  const adjPct = pct + kmResAdjPct(kmAllowance, term, m.msrp);
   const val = m.msrp * Math.max(0, adjPct);
   return { val, pct: adjPct, confirmed: false, src: 'Estimate' };
 }
 
-// KM adjustment: ±2 percentage points per 4,000 km/yr from 24k base
-// Basis: confirmed Passport data (12k=44%, 20k=42%, 24k=40%)
-function kmResAdjPct(km) {
-  const bands = (24000 - km) / 4000;  // positive = fewer km than 24k = higher residual
-  return bands * 0.02;
+// KM adjustment vs 24k/yr base (matches honda.ca):
+//   ↓km (12/16/20k)  → flat % uplift on residual  (term-independent)
+//   ↑km (32/40k)     → residual $ drops by (km−24k) × yrs × $0.08  (term-dependent)
+function kmResAdjPct(km, termMonths, msrp) {
+  if (km === 12000) return 0.04;
+  if (km === 16000) return 0.03;
+  if (km === 20000) return 0.02;
+  if (km === 24000) return 0;
+  // Above base — dollar reduction divided by MSRP gives % adjustment
+  const years = termMonths / 12;
+  return -((km - 24000) * 0.08 * years) / msrp;
 }
 
 // Fee breakdown helper
@@ -910,13 +916,11 @@ function render() {
       </div>
       <span class="km-note">
         ${kmAllowance === 20000 ? 'Standard · honda.ca default' :
-          kmAllowance < 20000 ? `Fewer km → higher residual (est. +${ca$(Math.abs(m.msrp * kmResAdjPct(kmAllowance)))} vs 20k)` :
-          kmAllowance === 24000 ? `Higher km → lower residual (est. −${ca$(Math.abs(m.msrp * kmResAdjPct(kmAllowance)))} vs 20k)` :
-          kmAllowance === 32000 ? `Higher km → lower residual (est. −${ca$(Math.abs(m.msrp * kmResAdjPct(kmAllowance)))} vs 20k)` :
-          `40k = 24k + 16k prepaid @ $0.08/km × 5yr = $6,400 baked in`}
+          kmAllowance < 24000 ? `Fewer km → higher residual (+${(kmResAdjPct(kmAllowance,60,m.msrp)*100).toFixed(0)}% of MSRP = ${ca$(Math.round(m.msrp * kmResAdjPct(kmAllowance,60,m.msrp)))})` :
+          kmAllowance === 24000 ? 'Base · matches rv60' :
+          `Above 24k → residual reduced by (km−24k) × yrs × $0.08 (36mo: −${ca$((kmAllowance-24000)*3*0.08)} · 60mo: −${ca$((kmAllowance-24000)*5*0.08)})`}
       </span>
     </div>
-    ${kmAllowance === 40000 ? `<div style="font-size:11px;color:var(--yellow);margin:-6px 0 10px;padding:6px 16px;background:rgba(245,166,35,.06);border-radius:6px;border:1px solid rgba(245,166,35,.15)">* 40k/yr = 24k standard + 16k prepaid. Extra ${(kmAllowance-24000).toLocaleString()} km × 5yr × $0.08 = <strong>$${((kmAllowance-24000)*5*0.08).toLocaleString()}</strong> added to amortization. Residual reduced accordingly.</div>` : ''}
 
 
 
