@@ -168,7 +168,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;font-size:14px;line-height:1.4;
     <div class="info-bar">
       <strong>Base:</strong> 24,000 km/yr · Values shown as % of MSRP
       <span>|</span>
-      <strong>Rule:</strong> 20k +2% · 16k +3% · 12k +4% · 32k −$640 · 40k −$1,280 (above base = $0.08/km)
+      <strong>Rule:</strong> 20k +2% · 16k +3% · 12k +4% · above base: residual$ − total_km × $0.08 (32k −$2,560 · 40k −$3,200)
       <div class="info-tip">
         <div class="dot"></div>
         <span>Only cars with published Honda km grids shown</span>
@@ -559,7 +559,7 @@ function serializeModelsData() {
 //  Residuals: Official Honda Canada 2026 Residual Values sheet
 //  Residual basis: % of MSRP · KM basis: 24,000 km/yr
 //  km adjustment vs 24k base: 20k +2% · 16k +3% · 12k +4% (% of MSRP)
-//  Above base: residual $ drops by $0.08/km of overage (32k −$640 · 40k −$1,280)
+//  Above base: residual $ = base $ − total_km × $0.08 (32k −$2,560 · 40k −$3,200)
 //  Last edited via Program Update tool: ${today}
 // ═══════════════════════════════════════════════════════════════════════
 
