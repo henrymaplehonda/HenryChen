@@ -671,7 +671,7 @@ function render() {
   const colorCharge   = optColorCharge ? COLOR_CHARGE_AMT : 0;  // premium paint upcharge — financed but NOT residualized
   const cap  = r.price - downPayment - leaseEquityPreTax - tradeInPreTax - feesReduction + colorCharge;
   const finP = cap;
-  const grossOTD  = Math.round(r.price * 1.13);        // full OTD before any cash reductions
+  const grossOTD  = Math.round((r.price + colorCharge) * 1.13);  // full OTD before any cash reductions (incl. premium paint)
   const dpTaxIn   = Math.round(downPayment * 1.13);    // down payment expressed as tax-in value
   const dynamicOTD = grossOTD - dpTaxIn;               // net OTD after down payment
 
@@ -768,12 +768,12 @@ function render() {
       <!-- COLOR CHARGE (MSRP $550, not residualized) -->
       <div class="pt-item" style="flex-direction:column;align-items:flex-start;gap:3px;padding:10px 14px;flex-shrink:0;min-width:130px;">
         <div class="pt-lbl">
-          <span class="tip-wrap">+ Color Charge
+          <span class="tip-wrap">+ Premium Paint
             <span class="tip-icon">i</span>
             <span class="tip-box">
-              <div style="font-weight:700;margin-bottom:6px;color:var(--blue)">Premium Paint Color Charge</div>
-              <div style="padding:2px 0">$${COLOR_CHARGE_AMT} MSRP one-time charge for premium paint.</div>
-              <div style="padding:2px 0">Added to Adj. Cap / Principal — affects all lease &amp; finance payments.</div>
+              <div style="font-weight:700;margin-bottom:6px;color:var(--blue)">Premium Paint</div>
+              <div style="padding:2px 0">$${COLOR_CHARGE_AMT} MSRP one-time upcharge for premium paint colors.</div>
+              <div style="padding:2px 0">Added to Adj. Cap / Principal and OTD — affects all lease &amp; finance payments.</div>
               <div style="padding:4px 0;margin-top:4px;border-top:1px solid var(--border);font-size:11px;color:var(--yellow)">⚠ Not residualized — full $${COLOR_CHARGE_AMT} amortized over the term.</div>
             </span>
           </span>
@@ -817,12 +817,6 @@ function render() {
           ${incOv[m.id]!=null?`<button onclick="delete incOv[cur.id];delete priceOv[cur.id];render()" style="font-size:10px;background:none;border:1px solid var(--border);color:var(--dim);padding:2px 7px;border-radius:4px;cursor:pointer;font-family:inherit">×</button>`:''}
         </div>
         ${incOv[m.id]>0?`<div style="font-size:10px;color:var(--muted);margin-top:1px;">Price ↓ ${ca$(Math.round(incOv[m.id]/1.13))} (pre-tax)</div>`:''}
-      </div>
-      <div class="pt-sep"></div>
-      <!-- SELLING PRICE -->
-      <div class="pt-item" style="flex-direction:column;align-items:flex-start;gap:4px;padding:10px 14px;flex-shrink:0;min-width:100px;">
-        <div class="pt-lbl">Selling Price</div>
-        <div style="font-size:16px;font-weight:700;color:var(--text);padding:4px 0;">${ca$(r.price)}</div>
       </div>
       ${downPayment > 0 ? `
       <div class="pt-sep"></div>
@@ -1369,7 +1363,7 @@ function renderBreakdown(m, r, res36obj, res60obj, l36mo, l36bw, l60mo, l60bw, f
         <div class="bk-row"><span class="bk-lbl">Selling Price (Cap Cost)</span><span class="bk-val">${ca$(p)}</span></div>
         ${dp > 0 ? `<div class="bk-row deduct"><span class="bk-lbl indent">− Down Payment</span><span class="bk-val">(${ca$(dp)})</span></div>` : ''}
         ${(tradeInVal-tradeInOwing)!==0?`<div class="bk-row deduct"><span class="bk-lbl indent">${tradeInVal-tradeInOwing>0?'− Trade-In Equity':'+ Neg. Equity'}</span><span class="bk-val">(${ca$(Math.abs(tradeInVal-tradeInOwing))})</span></div>`:''}
-        ${colorCharge>0?`<div class="bk-row"><span class="bk-lbl indent">+ Color Charge <span class="bk-estimate">not residualized</span></span><span class="bk-val">${ca$(colorCharge)}</span></div>`:''}
+        ${colorCharge>0?`<div class="bk-row"><span class="bk-lbl indent">+ Premium Paint <span class="bk-estimate">not residualized</span></span><span class="bk-val">${ca$(colorCharge)}</span></div>`:''}
         <div class="bk-row"><span class="bk-lbl">Adjusted Cap Cost</span><span class="bk-val">${ca$(cap)}</span></div>
         <div class="bk-row">
           <span class="bk-lbl">Residual Value
@@ -1404,7 +1398,7 @@ function renderBreakdown(m, r, res36obj, res60obj, l36mo, l36bw, l60mo, l60bw, f
     return `
       <div class="bk-section" id="${anchorId}">
         <div class="bk-sec-title-big">💳 Finance · ${months} months @ ${rate}% APR</div>
-        ${colorCharge>0?`<div class="bk-row indent"><span class="bk-lbl">+ Color Charge <span class="bk-estimate">non-residualized</span></span><span class="bk-val">${ca$(colorCharge)}</span></div>`:''}
+        ${colorCharge>0?`<div class="bk-row indent"><span class="bk-lbl">+ Premium Paint <span class="bk-estimate">non-residualized</span></span><span class="bk-val">${ca$(colorCharge)}</span></div>`:''}
         <div class="bk-row"><span class="bk-lbl">Principal (after down payment)</span><span class="bk-val">${ca$(cap)}</span></div>
         <div class="bk-row total"><span class="bk-lbl">Bi-Weekly Payment</span><span class="bk-val">${ca$c(biw)}/2wk<span class="tax-tag">+tax</span></span></div>
         <div class="bk-row"><span class="bk-lbl">Monthly Payment</span><span class="bk-val">${ca$c(monthly)}/mo<span class="tax-tag">+tax</span></span></div>
@@ -1482,7 +1476,7 @@ function printQuote(autoSave) {
   const feesReduction   = feesUpfront ? fees.total : 0;
   const colorCharge     = optColorCharge ? COLOR_CHARGE_AMT : 0;
   const cap  = r.price - downPayment - leaseEquityPreTax - tradeInPreTax - feesReduction + colorCharge;
-  const grossOTD = Math.round(r.price * 1.13);
+  const grossOTD = Math.round((r.price + colorCharge) * 1.13);
   const dpTaxIn  = Math.round(downPayment * 1.13);
   const netOTD   = grossOTD - dpTaxIn;
   const ob   = optBW(), om = bw2mo(ob);
@@ -1499,7 +1493,7 @@ function printQuote(autoSave) {
   const fc2p = fc2r ? {bw:fbw(cap,finTerm2,fc2r),mo:fmo(cap,finTerm2,fc2r),bwg:fbw(cap+gapBase+wCost,finTerm2,fc2r),mog:fmo(cap+gapBase+wCost,finTerm2,fc2r),bwGapOnly:fbw(cap+gapBase,finTerm2,fc2r),rt:fc2r} : null;
 
   const addons = [
-    optColorCharge ? `Color Charge +$${COLOR_CHARGE_AMT} (not residualized)` : '',
+    optColorCharge ? `Premium Paint +$${COLOR_CHARGE_AMT} (not residualized)` : '',
     optColor ? `Colour +$${OPT_COLOR}/2wk` : '',
     optWheelLock ? `Wheel Locks +$${OPT_WHEELLOCK}/2wk` : '',
     optLeaseGuard ? `Lease Guard Pro +$${OPT_LEASEGUARD_PRO}/2wk` : '',
@@ -1721,7 +1715,7 @@ ${(addons||warrantySelected||optGAP) ? `
   <b>⚠ Quick Quote — For Reference Only.</b>
   Prices from Maple Honda internal sheet (${DATA_DATE}). Selling Price = MSRP + Freight/PDI + Dealer Fee + Gov Fees, before HST.
   Lease rates & residuals are <b>estimates</b> — verify monthly with HFS at honda.ca before quoting.
-  ${optColorCharge ? `Color Charge ($${COLOR_CHARGE_AMT}) added to cap/principal — not residualized; full amount amortized over term. ` : ''}
+  ${optColorCharge ? `Premium Paint ($${COLOR_CHARGE_AMT}) added to cap/principal and OTD — not residualized; full amount amortized over term. ` : ''}
   ${optGAP ? `GAP Insurance adds $${gapAmt.toLocaleString()} to financed amount. ` : ''}
   ${warrantySelected ? `Honda Plus Warranty ($${warrantySelected.cost.toLocaleString()}) added to financed principal. Dealer may sell for less. ` : ''}
   ${feesUpfront ? `Fees ($${fees.total.toLocaleString()} +HST) paid at delivery, removed from cap. ` : ''}
