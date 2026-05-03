@@ -345,6 +345,8 @@ let gapAmt = 2500;
 let optGAP = true;
 
 let optColor = false, optWheelLock = false, optLeaseGuard = false;
+let optColorCharge = false;
+const COLOR_CHARGE_AMT = 550;
 let resOv = {};   // Per-model HFS residual overrides
 let incOv = {};   // Per-model incentive overrides { modelId: number }
 let priceOv = {}; // Per-model selling price override { modelId: number }
@@ -370,6 +372,7 @@ function resetAll() {
   feesUpfront = false;
   kmAllowance = 20000;
   optColor = false;
+  optColorCharge = false;
   optWheelLock = false;
   optLeaseGuard = false;
   optProtection = false;
@@ -665,7 +668,8 @@ function render() {
   const tradeInPreTax = tradeInEquity / 1.13;
   const leaseEquityPreTax = leaseEquity / 1.13;
   const feesReduction = feesUpfront ? fees.total : 0;  // fees paid cash upfront, removed from cap
-  const cap  = r.price - downPayment - leaseEquityPreTax - tradeInPreTax - feesReduction;
+  const colorCharge   = optColorCharge ? COLOR_CHARGE_AMT : 0;  // premium paint upcharge — financed but NOT residualized
+  const cap  = r.price - downPayment - leaseEquityPreTax - tradeInPreTax - feesReduction + colorCharge;
   const finP = cap;
   const grossOTD  = Math.round(r.price * 1.13);        // full OTD before any cash reductions
   const dpTaxIn   = Math.round(downPayment * 1.13);    // down payment expressed as tax-in value
@@ -759,6 +763,27 @@ function render() {
       <div class="pt-item" style="flex-direction:column;gap:3px;padding:10px 14px;flex-shrink:0;min-width:90px;">
         <div class="pt-lbl">MSRP</div>
         <div style="font-size:14px;font-weight:600;color:var(--dim);padding:5px 0;">${ca$(getEffMsrp(m))}</div>
+      </div>
+      <div class="pt-sep"></div>
+      <!-- COLOR CHARGE (MSRP $550, not residualized) -->
+      <div class="pt-item" style="flex-direction:column;align-items:flex-start;gap:3px;padding:10px 14px;flex-shrink:0;min-width:130px;">
+        <div class="pt-lbl">
+          <span class="tip-wrap">+ Color Charge
+            <span class="tip-icon">i</span>
+            <span class="tip-box">
+              <div style="font-weight:700;margin-bottom:6px;color:var(--blue)">Premium Paint Color Charge</div>
+              <div style="padding:2px 0">$${COLOR_CHARGE_AMT} MSRP one-time charge for premium paint.</div>
+              <div style="padding:2px 0">Added to Adj. Cap / Principal — affects all lease &amp; finance payments.</div>
+              <div style="padding:4px 0;margin-top:4px;border-top:1px solid var(--border);font-size:11px;color:var(--yellow)">⚠ Not residualized — full $${COLOR_CHARGE_AMT} amortized over the term.</div>
+            </span>
+          </span>
+        </div>
+        <label style="display:flex;align-items:center;gap:7px;cursor:pointer;padding:4px 0;">
+          <input type="checkbox" ${optColorCharge?'checked':''} onchange="optColorCharge=this.checked;render()"
+            style="width:15px;height:15px;accent-color:var(--blue);cursor:pointer">
+          <span style="font-size:14px;font-weight:700;color:${optColorCharge?'var(--blue)':'var(--dim)'};">$${COLOR_CHARGE_AMT}</span>
+          <span style="font-size:10px;color:var(--muted);letter-spacing:.3px;">not residualized</span>
+        </label>
       </div>
       <div class="pt-sep"></div>
       <!-- FEES -->
@@ -1170,7 +1195,7 @@ function finCard(term, data, slot, m2) {
   const { mo, bw, mog, bwg, rt } = data;
   const wOpen  = finWarrantyOpen[term] || false;
   const wCost  = warrantySelected ? warrantySelected.cost : 0;
-  const cap2   = cur ? R(cur).price - downPayment : 0;
+  const cap2   = cur ? R(cur).price - downPayment + (optColorCharge ? COLOR_CHARGE_AMT : 0) : 0;
   const termVar = slot === 1 ? 'finTerm1' : 'finTerm2';
   const gapBase = optGAP ? gapAmt : 0;
   // All-in payment: GAP + warranty
@@ -1314,7 +1339,8 @@ function renderBreakdown(m, r, res36obj, res60obj, l36mo, l36bw, l60mo, l60bw, f
   const fees   = getFees(m);
   const p      = r.price;
   const dp     = downPayment;
-  const cap    = p - dp;
+  const colorCharge = optColorCharge ? COLOR_CHARGE_AMT : 0;
+  const cap    = p - dp + colorCharge;
   const ob     = optBW(), om = bw2mo(ob);
 
   // Incentive totals
@@ -1343,6 +1369,7 @@ function renderBreakdown(m, r, res36obj, res60obj, l36mo, l36bw, l60mo, l60bw, f
         <div class="bk-row"><span class="bk-lbl">Selling Price (Cap Cost)</span><span class="bk-val">${ca$(p)}</span></div>
         ${dp > 0 ? `<div class="bk-row deduct"><span class="bk-lbl indent">− Down Payment</span><span class="bk-val">(${ca$(dp)})</span></div>` : ''}
         ${(tradeInVal-tradeInOwing)!==0?`<div class="bk-row deduct"><span class="bk-lbl indent">${tradeInVal-tradeInOwing>0?'− Trade-In Equity':'+ Neg. Equity'}</span><span class="bk-val">(${ca$(Math.abs(tradeInVal-tradeInOwing))})</span></div>`:''}
+        ${colorCharge>0?`<div class="bk-row"><span class="bk-lbl indent">+ Color Charge <span class="bk-estimate">not residualized</span></span><span class="bk-val">${ca$(colorCharge)}</span></div>`:''}
         <div class="bk-row"><span class="bk-lbl">Adjusted Cap Cost</span><span class="bk-val">${ca$(cap)}</span></div>
         <div class="bk-row">
           <span class="bk-lbl">Residual Value
@@ -1377,6 +1404,7 @@ function renderBreakdown(m, r, res36obj, res60obj, l36mo, l36bw, l60mo, l60bw, f
     return `
       <div class="bk-section" id="${anchorId}">
         <div class="bk-sec-title-big">💳 Finance · ${months} months @ ${rate}% APR</div>
+        ${colorCharge>0?`<div class="bk-row indent"><span class="bk-lbl">+ Color Charge <span class="bk-estimate">non-residualized</span></span><span class="bk-val">${ca$(colorCharge)}</span></div>`:''}
         <div class="bk-row"><span class="bk-lbl">Principal (after down payment)</span><span class="bk-val">${ca$(cap)}</span></div>
         <div class="bk-row total"><span class="bk-lbl">Bi-Weekly Payment</span><span class="bk-val">${ca$c(biw)}/2wk<span class="tax-tag">+tax</span></span></div>
         <div class="bk-row"><span class="bk-lbl">Monthly Payment</span><span class="bk-val">${ca$c(monthly)}/mo<span class="tax-tag">+tax</span></span></div>
@@ -1452,7 +1480,8 @@ function printQuote(autoSave) {
   const tradeInPreTax   = tradeInEquity / 1.13;
   const leaseEquityPreTax = leaseEquity / 1.13;
   const feesReduction   = feesUpfront ? fees.total : 0;
-  const cap  = r.price - downPayment - leaseEquityPreTax - tradeInPreTax - feesReduction;
+  const colorCharge     = optColorCharge ? COLOR_CHARGE_AMT : 0;
+  const cap  = r.price - downPayment - leaseEquityPreTax - tradeInPreTax - feesReduction + colorCharge;
   const grossOTD = Math.round(r.price * 1.13);
   const dpTaxIn  = Math.round(downPayment * 1.13);
   const netOTD   = grossOTD - dpTaxIn;
@@ -1470,6 +1499,7 @@ function printQuote(autoSave) {
   const fc2p = fc2r ? {bw:fbw(cap,finTerm2,fc2r),mo:fmo(cap,finTerm2,fc2r),bwg:fbw(cap+gapBase+wCost,finTerm2,fc2r),mog:fmo(cap+gapBase+wCost,finTerm2,fc2r),bwGapOnly:fbw(cap+gapBase,finTerm2,fc2r),rt:fc2r} : null;
 
   const addons = [
+    optColorCharge ? `Color Charge +$${COLOR_CHARGE_AMT} (not residualized)` : '',
     optColor ? `Colour +$${OPT_COLOR}/2wk` : '',
     optWheelLock ? `Wheel Locks +$${OPT_WHEELLOCK}/2wk` : '',
     optLeaseGuard ? `Lease Guard Pro +$${OPT_LEASEGUARD_PRO}/2wk` : '',
@@ -1691,6 +1721,7 @@ ${(addons||warrantySelected||optGAP) ? `
   <b>⚠ Quick Quote — For Reference Only.</b>
   Prices from Maple Honda internal sheet (${DATA_DATE}). Selling Price = MSRP + Freight/PDI + Dealer Fee + Gov Fees, before HST.
   Lease rates & residuals are <b>estimates</b> — verify monthly with HFS at honda.ca before quoting.
+  ${optColorCharge ? `Color Charge ($${COLOR_CHARGE_AMT}) added to cap/principal — not residualized; full amount amortized over term. ` : ''}
   ${optGAP ? `GAP Insurance adds $${gapAmt.toLocaleString()} to financed amount. ` : ''}
   ${warrantySelected ? `Honda Plus Warranty ($${warrantySelected.cost.toLocaleString()}) added to financed principal. Dealer may sell for less. ` : ''}
   ${feesUpfront ? `Fees ($${fees.total.toLocaleString()} +HST) paid at delivery, removed from cap. ` : ''}
@@ -1706,7 +1737,7 @@ ${(addons||warrantySelected||optGAP) ? `
 }
 
 function copyQ() {
-  const cap  = r.price - downPayment;
+  const cap  = r.price - downPayment + (optColorCharge ? COLOR_CHARGE_AMT : 0);
   const resObj1 = getRes(m, leaseTerm1);
   const resObj2 = getRes(m, leaseTerm2);
   const rt1 = lrForTerm(r, leaseTerm1);
