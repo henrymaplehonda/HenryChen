@@ -1522,14 +1522,22 @@ function printQuote(autoSave) {
   // Build print rows using selected terms
   function makeLeaseRows(lc, term) {
     if (!lc) return [['N/A','STD rate — no promo',false]];
-    return [
-      ['Bi-Weekly', ca$c(lc.bw + ob + lgBW)+' +tax', false],
-      ['Monthly',   ca$c(lc.mo + om + lgMO)+' +tax', true],
+    const baseBW = lc.bw + ob + lgBW;
+    const baseMO = lc.mo + om + lgMO;
+    const rows = [
+      ['Bi-Weekly', ca$c(baseBW)+' +tax', false],
+      ['Monthly',   ca$c(baseMO)+' +tax', true],
       ['Rate',      `${lc.rt}% APR`, true],
       ['Residual',  `${ca$(lc.res.val)} (${(lc.res.pct*100).toFixed(1)}%)`, true],
       ['KM/yr',     `${kmAllowance.toLocaleString()} km`, true],
       ...(optLeaseGuard ? [['Lease Guard Pro',`+${ca$c(OPT_LEASEGUARD_PRO)}/2wk`,true]] : []),
     ];
+    if (warrantySelected) {
+      rows.push(['','',true]);
+      rows.push(['+ Warranty 2wk', ca$c(baseBW + fbw(wCost, term, lc.rt))+' +tax', false]);
+      rows.push(['+ Warranty mo',  ca$c(baseMO + fmo(wCost, term, lc.rt))+' +tax', true]);
+    }
+    return rows;
   }
 
   function makeFinRows(fcp, term) {
@@ -1546,9 +1554,13 @@ function printQuote(autoSave) {
     }
     if (warrantySelected) {
       rows.push(['','',true]);
-      const allInLabel = [optGAP?'GAP':null, warrantySelected?'+ Warranty':null].filter(Boolean).join(' ');
-      rows.push([allInLabel+' 2wk', ca$c(fcp.bwg), false]);
-      rows.push([allInLabel+' mo', ca$c(fcp.mog), true]);
+      rows.push(['+ Warranty 2wk', ca$c(fbw(cap+wCost,term,fcp.rt))+' +tax', false]);
+      rows.push(['+ Warranty mo',  ca$c(fmo(cap+wCost,term,fcp.rt))+' +tax', true]);
+      if (optGAP) {
+        rows.push(['','',true]);
+        rows.push(['GAP + Warranty 2wk', ca$c(fcp.bwg)+' +tax', false]);
+        rows.push(['GAP + Warranty mo',  ca$c(fcp.mog)+' +tax', true]);
+      }
     }
     return rows;
   }
@@ -1652,7 +1664,7 @@ function printQuote(autoSave) {
 
 <!-- VEHICLE -->
 <div class="veh">
-  <div class="veh-name">2026 ${m.name} <span class="veh-trim">${m.trim}</span></div>
+  <div class="veh-name">${m.name} <span class="veh-trim">${m.trim}</span></div>
   <div class="veh-sub">
     <div class="price-row">
       <div class="price-col">
