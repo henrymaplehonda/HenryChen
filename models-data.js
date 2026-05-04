@@ -22,12 +22,12 @@ const M = [
  resKm:{12000:.43,16000:.42,20000:.41,24000:.39,32000:.37,40000:.34}},
 
 {id:'cs-sp', cat:'Civic Sedan', name:'2026 Civic Sedan', trim:'Sport',
- msrp:32200, price:35175, otd:39748, engine:'2.0L 150hp', drive:'FWD',
+ msrp:32200, price:35166, otd:39738, engine:'2.0L 150hp', drive:'FWD',
  lr:{36:2.99,60:3.99}, rv:{24:.69,30:.65,36:.57,42:.53,48:.46,54:.43,60:.39}, fr:{60:4.49,84:4.99},
  resKm:{12000:.43,16000:.42,20000:.41,24000:.39,32000:.37,40000:.35}},
 
 {id:'cs-sh', cat:'Civic Sedan', name:'2026 Civic Sedan', trim:'Sport Hybrid',
- msrp:34100, price:37071, otd:41879, engine:'2.0L Hybrid 200hp', drive:'FWD',
+ msrp:34100, price:37061, otd:41879, engine:'2.0L Hybrid 200hp', drive:'FWD',
  lr:{36:2.99,60:3.99}, rv:{24:.72,30:.68,36:.60,42:.56,48:.49,54:.46,60:.42}, fr:{60:4.49,84:4.99},
  resKm:{12000:.46,16000:.45,20000:.44,24000:.42,32000:.4,40000:.38}},
 
@@ -43,17 +43,17 @@ const M = [
 
 // ── CIVIC HATCHBACK (5D) ──────────────────────────────────────────────────
 {id:'ch-sp', cat:'Civic Hatchback', name:'2026 Civic Hatchback', trim:'Sport',
- msrp:32195, price:35166, otd:39738, engine:'2.0L 150hp', drive:'FWD',
+ msrp:32191, price:35166, otd:39738, engine:'2.0L 150hp', drive:'FWD',
  lr:{36:3.99,60:4.99}, rv:{24:.70,30:.66,36:.58,42:.54,48:.47,54:.44,60:.40}, fr:{60:4.99,84:5.49},
  resKm:{12000:.44,16000:.43,20000:.42,24000:.4,32000:.38,40000:.36}},
 
 {id:'ch-sh', cat:'Civic Hatchback', name:'2026 Civic Hatchback', trim:'Sport Hybrid',
- msrp:35991, price:38962, otd:44027, engine:'2.0L Hybrid 200hp', drive:'FWD',
+ msrp:35987, price:38962, otd:44027, engine:'2.0L Hybrid 200hp', drive:'FWD',
  lr:{36:4.49,60:5.49}, rv:{24:.73,30:.69,36:.61,42:.57,48:.50,54:.47,60:.43}, fr:{60:5.49,84:5.99},
  resKm:{12000:.47,16000:.46,20000:.45,24000:.43,32000:.41,40000:.39}},
 
 {id:'ch-sth', cat:'Civic Hatchback', name:'2026 Civic Hatchback', trim:'Sport Touring Hybrid',
- msrp:39491, price:42462, otd:47982, engine:'2.0L Hybrid 200hp', drive:'FWD',
+ msrp:39487, price:42462, otd:47982, engine:'2.0L Hybrid 200hp', drive:'FWD',
  lr:{36:4.49,60:5.49}, rv:{24:.73,30:.69,36:.61,42:.57,48:.50,54:.47,60:.43}, fr:{60:5.49,84:5.99},
  resKm:{12000:.47,16000:.46,20000:.45,24000:.43,32000:.41,40000:.4}},
 
@@ -81,37 +81,37 @@ const M = [
 
 // ── CR-V ─────────────────────────────────────────────────────────────────
 {id:'cv-lf', cat:'CR-V', name:'2026 CR-V', trim:'LX 2WD',
- msrp:36975, price:40111, otd:45325, engine:'1.5T 190hp', drive:'FWD',
+ msrp:36975, price:40120, otd:45336, engine:'1.5T 190hp', drive:'FWD',
  lr:{36:3.39,60:4.39}, rv:{24:.68,30:.64,36:.57,42:.53,48:.46,54:.43,60:.40}, fr:{60:4.79,84:4.79},
  resKm:{12000:.44,16000:.43,20000:.42,24000:.4,32000:.38,40000:.37}},
 
 {id:'cv-la', cat:'CR-V', name:'2026 CR-V', trim:'LX AWD',
- msrp:39775, price:42911, otd:48489, engine:'1.5T 190hp', drive:'AWD',
+ msrp:39775, price:42920, otd:48500, engine:'1.5T 190hp', drive:'AWD',
  lr:{36:3.39,60:4.39}, rv:{24:.68,30:.64,36:.57,42:.53,48:.46,54:.43,60:.40}, fr:{60:4.79,84:4.79},
  resKm:{12000:.44,16000:.43,20000:.42,24000:.4,32000:.38,40000:.37}},
 
 {id:'cv-sp', cat:'CR-V', name:'2026 CR-V', trim:'Sport AWD',
- msrp:43375, price:46511, otd:52557, engine:'1.5T 190hp', drive:'AWD',
+ msrp:43375, price:46520, otd:52568, engine:'1.5T 190hp', drive:'AWD',
  lr:{36:3.39,60:4.39}, rv:{24:.68,30:.64,36:.57,42:.53,48:.46,54:.43,60:.40}, fr:{60:4.79,84:4.79},
  resKm:{12000:.44,16000:.43,20000:.42,24000:.4,32000:.39,40000:.37}},
 
 {id:'cv-sh', cat:'CR-V', name:'2026 CR-V', trim:'Sport Hybrid AWD',
- msrp:45900, price:49032, otd:55406, engine:'2.0L Hybrid 204hp', drive:'AWD',
+ msrp:45900, price:49045, otd:55421, engine:'2.0L Hybrid 204hp', drive:'AWD',
  lr:{36:3.39,60:4.39}, rv:{24:.69,30:.66,36:.59,42:.55,48:.48,54:.45,60:.42}, fr:{60:4.79,84:4.79},
  resKm:{12000:.46,16000:.45,20000:.44,24000:.42,32000:.41,40000:.39}},
 
 {id:'cv-ts', cat:'CR-V', name:'2026 CR-V', trim:'TrailSport Hybrid AWD',
- msrp:47300, price:50432, otd:56988, engine:'2.0L Hybrid 204hp', drive:'AWD',
+ msrp:47300, price:50445, otd:57003, engine:'2.0L Hybrid 204hp', drive:'AWD',
  lr:{36:3.39,60:4.39}, rv:{24:.69,30:.66,36:.59,42:.55,48:.48,54:.45,60:.42}, fr:{60:4.79,84:4.79},
  resKm:{12000:.46,16000:.45,20000:.44,24000:.42,32000:.41,40000:.39}},
 
 {id:'cv-ex', cat:'CR-V', name:'2026 CR-V', trim:'EX-L Hybrid AWD',
- msrp:48700, price:51832, otd:58570, engine:'2.0L Hybrid 204hp', drive:'AWD',
+ msrp:48700, price:51845, otd:58585, engine:'2.0L Hybrid 204hp', drive:'AWD',
  lr:{36:3.39,60:4.39}, rv:{24:.69,30:.66,36:.59,42:.55,48:.48,54:.45,60:.42}, fr:{60:4.79,84:4.79},
  resKm:{12000:.46,16000:.45,20000:.44,24000:.42,32000:.41,40000:.39}},
 
 {id:'cv-th', cat:'CR-V', name:'2026 CR-V', trim:'Touring Hybrid AWD',
- msrp:51200, price:54332, otd:61395, engine:'2.0L Hybrid 204hp', drive:'AWD',
+ msrp:51200, price:54345, otd:61410, engine:'2.0L Hybrid 204hp', drive:'AWD',
  lr:{36:3.39,60:4.39}, rv:{24:.69,30:.66,36:.59,42:.55,48:.48,54:.45,60:.42}, fr:{60:4.79,84:4.79},
  resKm:{12000:.46,16000:.45,20000:.44,24000:.42,32000:.41,40000:.39}},
 
@@ -123,19 +123,19 @@ const M = [
  fr:{60:5.79,84:5.79}},
 
 {id:'pp-tb', cat:'Passport', name:'2026 Passport', trim:'TrailSport Blackout',
- msrp:58181, price:61326, otd:69298, engine:'3.5L V6 285hp', drive:'i-VTM4 AWD',
+ msrp:58190, price:61326, otd:69298, engine:'3.5L V6 285hp', drive:'i-VTM4 AWD',
  lr:{36:5.69,60:5.69}, rv:{24:.64,30:.61,36:.55,42:.52,48:.46,54:.43,60:.39},
  resKm:{12000:.43,16000:.42,20000:.41,24000:.39,32000:.38,40000:.37},
  fr:{60:5.79,84:5.79}},
 
 {id:'pp-tr', cat:'Passport', name:'2026 Passport', trim:'Touring',
- msrp:60531, price:63676, otd:71954, engine:'3.5L V6 285hp', drive:'i-VTM4 AWD',
+ msrp:60540, price:63676, otd:71954, engine:'3.5L V6 285hp', drive:'i-VTM4 AWD',
  lr:{36:5.69,60:5.69}, rv:{24:.64,30:.61,36:.55,42:.52,48:.46,54:.43,60:.39},
  resKm:{12000:.43,16000:.42,20000:.41,24000:.39,32000:.38,40000:.37},
  fr:{60:5.79,84:5.79}},
 
 {id:'pp-trb', cat:'Passport', name:'2026 Passport', trim:'Touring Blackout',
- msrp:61731, price:64876, otd:73310, engine:'3.5L V6 285hp', drive:'i-VTM4 AWD',
+ msrp:61740, price:64876, otd:73310, engine:'3.5L V6 285hp', drive:'i-VTM4 AWD',
  lr:{36:5.69,60:5.69}, rv:{24:.64,30:.61,36:.55,42:.52,48:.46,54:.43,60:.39},
  resKm:{12000:.43,16000:.42,20000:.41,24000:.39,32000:.38,40000:.37},
  fr:{60:5.79,84:5.79}},
@@ -205,17 +205,17 @@ const M = [
 
 // ── PROLOGUE (EV) ─────────────────────────────────────────────────────────
 {id:'pr-ex', cat:'Prologue', name:'2026 Prologue', trim:'EX',
- msrp:54990, price:58131, otd:66338, engine:'Electric / Single Motor', drive:'FWD',
+ msrp:54990, price:58131, otd:65688, engine:'Electric / Single Motor', drive:'FWD',
  lr:{36:null,60:null}, rv:{24:.56,30:.53,36:.48,42:.44,48:.37,54:.34,60:.30}, fr:{60:0.99,84:0.99,96:0.99},
  resKm:{12000:.34,16000:.33,20000:.32,24000:.3,32000:.29,40000:.28}},
 
 {id:'pr-el', cat:'Prologue', name:'2026 Prologue', trim:'EX-L',
- msrp:59990, price:63131, otd:71988, engine:'Electric / Dual Motor', drive:'AWD',
+ msrp:59990, price:63131, otd:71338, engine:'Electric / Dual Motor', drive:'AWD',
  lr:{36:null,60:null}, rv:{24:.54,30:.51,36:.46,42:.43,48:.36,54:.33,60:.29}, fr:{60:0.99,84:0.99,96:0.99},
  resKm:{12000:.33,16000:.32,20000:.31,24000:.29,32000:.28,40000:.27}},
 
 {id:'pr-tr', cat:'Prologue', name:'2026 Prologue', trim:'Touring',
- msrp:64990, price:68131, otd:77638, engine:'Electric / Dual Motor', drive:'AWD',
+ msrp:64990, price:68135, otd:76993, engine:'Electric / Dual Motor', drive:'AWD',
  lr:{36:null,60:null}, rv:{24:.52,30:.49,36:.44,42:.41,48:.35,54:.32,60:.28}, fr:{60:0.99,84:0.99,96:0.99},
  resKm:{12000:.32,16000:.31,20000:.3,24000:.28,32000:.27,40000:.26}},
 
