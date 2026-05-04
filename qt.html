@@ -486,6 +486,9 @@ const OPT_COLOR          = 4.78;
 const OPT_WHEELLOCK      = 1.50;
 const OPT_LEASEGUARD_PRO = 14.00; // 5yr lease only
 
+// PPSA registration fee — rolled into financed/leased principal (not paid at delivery)
+const PPSA_FEE = 65;
+
 // Global add-ons (colour + wheel locks only — Lease Guard Pro is 5yr lease card only)
 function optBW() {
   return (optColor ? OPT_COLOR : 0)
@@ -573,7 +576,7 @@ function renderWarrantyPanel(m) {
             if (cost === null) return '';
             const isSelected = warrantySelected?.label === p.label;
             const r2 = R(m);
-            const cap = r2.price - downPayment;
+            const cap = r2.price - downPayment + PPSA_FEE;
             const bw60 = fbw(cap + gapAmt + cost, 60, r2.fr60);
             const bw84 = fbw(cap + gapAmt + cost, 84, r2.fr84);
             const bg = isSelected ? 'background:rgba(0,212,122,.07)' : (i%2===0?'background:var(--s2)':'background:var(--s1)');
@@ -669,7 +672,7 @@ function render() {
   const leaseEquityPreTax = leaseEquity / 1.13;
   const feesReduction = feesUpfront ? fees.total : 0;  // fees paid cash upfront, removed from cap
   const colorCharge   = optColorCharge ? COLOR_CHARGE_AMT : 0;  // premium paint upcharge — financed but NOT residualized
-  const cap  = r.price - downPayment - leaseEquityPreTax - tradeInPreTax - feesReduction + colorCharge;
+  const cap  = r.price - downPayment - leaseEquityPreTax - tradeInPreTax - feesReduction + colorCharge + PPSA_FEE;
   const finP = cap;
   const grossOTD  = Math.round((r.price + colorCharge) * 1.13);  // full OTD before any cash reductions (incl. premium paint)
   const dpTaxIn   = Math.round(downPayment * 1.13);    // down payment expressed as tax-in value
@@ -1189,7 +1192,7 @@ function finCard(term, data, slot, m2) {
   const { mo, bw, mog, bwg, rt } = data;
   const wOpen  = finWarrantyOpen[term] || false;
   const wCost  = warrantySelected ? warrantySelected.cost : 0;
-  const cap2   = cur ? R(cur).price - downPayment + (optColorCharge ? COLOR_CHARGE_AMT : 0) : 0;
+  const cap2   = cur ? R(cur).price - downPayment + (optColorCharge ? COLOR_CHARGE_AMT : 0) + PPSA_FEE : 0;
   const termVar = slot === 1 ? 'finTerm1' : 'finTerm2';
   const gapBase = optGAP ? gapAmt : 0;
   // All-in payment: GAP + warranty
@@ -1334,7 +1337,7 @@ function renderBreakdown(m, r, res36obj, res60obj, l36mo, l36bw, l60mo, l60bw, f
   const p      = r.price;
   const dp     = downPayment;
   const colorCharge = optColorCharge ? COLOR_CHARGE_AMT : 0;
-  const cap    = p - dp + colorCharge;
+  const cap    = p - dp + colorCharge + PPSA_FEE;
   const ob     = optBW(), om = bw2mo(ob);
 
   // Incentive totals
@@ -1354,7 +1357,7 @@ function renderBreakdown(m, r, res36obj, res60obj, l36mo, l36bw, l60mo, l60bw, f
     const nPmtR = Math.round(months * 26 / 12);
     const firstPmt  = monthly + om + (months===60&&optLeaseGuard?OPT_LEASEGUARD_PRO:0);
     const totalPmts = firstPmt * nPmtR;
-    const dueDel    = firstPmt + 8.50 + 40.00;
+    const dueDel    = firstPmt + 8.50;
     const totalKM   = kmAllowance * (months / 12);
     const anchorId  = months === 36 ? 'bk-l36' : 'bk-l60';
     return `
@@ -1364,6 +1367,7 @@ function renderBreakdown(m, r, res36obj, res60obj, l36mo, l36bw, l60mo, l60bw, f
         ${dp > 0 ? `<div class="bk-row deduct"><span class="bk-lbl indent">− Down Payment</span><span class="bk-val">(${ca$(dp)})</span></div>` : ''}
         ${(tradeInVal-tradeInOwing)!==0?`<div class="bk-row deduct"><span class="bk-lbl indent">${tradeInVal-tradeInOwing>0?'− Trade-In Equity':'+ Neg. Equity'}</span><span class="bk-val">(${ca$(Math.abs(tradeInVal-tradeInOwing))})</span></div>`:''}
         ${colorCharge>0?`<div class="bk-row"><span class="bk-lbl indent">+ Premium Paint <span class="bk-estimate">not residualized</span></span><span class="bk-val">${ca$(colorCharge)}</span></div>`:''}
+        <div class="bk-row"><span class="bk-lbl indent">+ PPSA Registration</span><span class="bk-val">${ca$(PPSA_FEE)}</span></div>
         <div class="bk-row"><span class="bk-lbl">Adjusted Cap Cost</span><span class="bk-val">${ca$(cap)}</span></div>
         <div class="bk-row">
           <span class="bk-lbl">Residual Value
@@ -1382,7 +1386,7 @@ function renderBreakdown(m, r, res36obj, res60obj, l36mo, l36bw, l60mo, l60bw, f
           <div class="bk-delivery-title">Due at Delivery</div>
           <div class="bk-row"><span class="bk-lbl">First Payment</span><span class="bk-val">${ca$c(firstPmt)}</span></div>
           <div class="bk-row"><span class="bk-lbl">Registering Agent Fee</span><span class="bk-val">$8.50</span></div>
-          <div class="bk-row"><span class="bk-lbl">PPSA Registration</span><span class="bk-val">$40.00</span></div>
+          <div class="bk-row indent"><span class="bk-lbl" style="color:var(--dim);font-size:11px">PPSA Registration ($${PPSA_FEE}) — financed in payment</span><span class="bk-val" style="color:var(--dim);font-size:11px">incl.</span></div>
           <div class="bk-row total"><span class="bk-lbl">Total Due at Delivery</span><span class="bk-val">${ca$c(dueDel)}</span></div>
         </div>
       </div>`;
@@ -1399,7 +1403,8 @@ function renderBreakdown(m, r, res36obj, res60obj, l36mo, l36bw, l60mo, l60bw, f
       <div class="bk-section" id="${anchorId}">
         <div class="bk-sec-title-big">💳 Finance · ${months} months @ ${rate}% APR</div>
         ${colorCharge>0?`<div class="bk-row indent"><span class="bk-lbl">+ Premium Paint <span class="bk-estimate">non-residualized</span></span><span class="bk-val">${ca$(colorCharge)}</span></div>`:''}
-        <div class="bk-row"><span class="bk-lbl">Principal (after down payment)</span><span class="bk-val">${ca$(cap)}</span></div>
+        <div class="bk-row indent"><span class="bk-lbl">+ PPSA Registration</span><span class="bk-val">${ca$(PPSA_FEE)}</span></div>
+        <div class="bk-row"><span class="bk-lbl">Principal (incl. PPSA, after down payment)</span><span class="bk-val">${ca$(cap)}</span></div>
         <div class="bk-row total"><span class="bk-lbl">Bi-Weekly Payment</span><span class="bk-val">${ca$c(biw)}/2wk<span class="tax-tag">+tax</span></span></div>
         <div class="bk-row"><span class="bk-lbl">Monthly Payment</span><span class="bk-val">${ca$c(monthly)}/mo<span class="tax-tag">+tax</span></span></div>
         <div class="bk-row indent"><span class="bk-lbl"># of Monthly Payments</span><span class="bk-val">${nPmt}</span></div>
@@ -1475,7 +1480,7 @@ function printQuote(autoSave) {
   const leaseEquityPreTax = leaseEquity / 1.13;
   const feesReduction   = feesUpfront ? fees.total : 0;
   const colorCharge     = optColorCharge ? COLOR_CHARGE_AMT : 0;
-  const cap  = r.price - downPayment - leaseEquityPreTax - tradeInPreTax - feesReduction + colorCharge;
+  const cap  = r.price - downPayment - leaseEquityPreTax - tradeInPreTax - feesReduction + colorCharge + PPSA_FEE;
   const grossOTD = Math.round((r.price + colorCharge) * 1.13);
   const dpTaxIn  = Math.round(downPayment * 1.13);
   const netOTD   = grossOTD - dpTaxIn;
@@ -1743,7 +1748,7 @@ ${(addons||warrantySelected||optGAP) ? `
 }
 
 function copyQ() {
-  const cap  = r.price - downPayment + (optColorCharge ? COLOR_CHARGE_AMT : 0);
+  const cap  = r.price - downPayment + (optColorCharge ? COLOR_CHARGE_AMT : 0) + PPSA_FEE;
   const resObj1 = getRes(m, leaseTerm1);
   const resObj2 = getRes(m, leaseTerm2);
   const rt1 = lrForTerm(r, leaseTerm1);
